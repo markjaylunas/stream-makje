@@ -24,6 +24,8 @@ export type NavItemWithChildren = NavItem & {
 
 export type MainNavItem = NavItem & {};
 
+export type SearchParams = { [key: string]: string | string[] | undefined };
+
 // Start: Consumet API types
 
 export type ASType = (typeof ASTypeArray)[number];
@@ -68,3 +70,76 @@ export type AniwatchSearchParams = {
 };
 
 // End: Consumet API types
+
+// Start: UI prop types
+
+export type CardInfo = {
+  id: string;
+  name: string;
+  image: string;
+  cover?: string;
+  rank?: number;
+  other?: string[] | null;
+};
+
+export type CardCategory = {
+  name: string;
+  list: CardInfo[];
+};
+
+export type Episode = {
+  title: string | null;
+  episodeId: string;
+  number: number;
+  image?: string | null;
+  isFiller?: boolean | null;
+};
+
+export type EpisodeList = {
+  list: Episode[];
+  totalEpisodes: number;
+};
+
+export type OtherInfo = { key: string; value: string | string[] }[];
+
+export type AnimeInfo = {
+  id?: string | null;
+  malId: string;
+  name: string;
+  description: string | null;
+  poster: string;
+  genres: string[];
+  cover: string | null;
+  synonyms: string | null;
+  type: string | null;
+  sub?: number | null;
+  dub?: number | null;
+
+  otherInfo: OtherInfo;
+};
+
+export type EpisodeStream = {
+  sources: Source[];
+  tracks: Track[];
+  intro?: TimeLine;
+  outro?: TimeLine;
+};
+
+export type Track = {
+  file: string;
+  kind: string;
+  default?: boolean | null | undefined;
+  label?: string | null | undefined;
+};
+export type TimeLine = {
+  start: number;
+  end: number;
+};
+
+export type Source = {
+  url: string;
+  type: string;
+  quality?: string | null;
+};
+
+// End: UI prop types
