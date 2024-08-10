@@ -20,7 +20,6 @@ export default async function PopularList({
 
   if (!data) throw new Error("Failed to fetch (Anime List) data");
 
-  console.log(data);
   const animeList =
     metaAnimeObjectMapper(data.results, { isRanked: true }) || [];
 

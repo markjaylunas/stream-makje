@@ -19,7 +19,7 @@ type RoutesConfig = {
 export const routesConfig: RoutesConfig = {
   mainNav: [
     {
-      title: "Home",
+      title: "Anime",
       href: "/anime",
     },
   ],
