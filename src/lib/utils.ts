@@ -62,3 +62,9 @@ export function searchKeysInObject(
 
   return results;
 }
+export function createURL({ path, params }: { path: string; params: object }) {
+  const paramString = Object.entries(params)
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
+  return `${path}?${paramString}`;
+}

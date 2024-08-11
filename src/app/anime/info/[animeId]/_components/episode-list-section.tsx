@@ -11,7 +11,7 @@ import {
   EpisodeList,
   Status,
 } from "@/lib/types";
-import { cn, encodeEpisodeId, toTitleCase } from "@/lib/utils";
+import { cn, createURL, encodeEpisodeId } from "@/lib/utils";
 import { Button, ButtonGroup } from "@nextui-org/button";
 import {
   Chip,
@@ -60,7 +60,7 @@ export default function EpisodeListSection({
     paramProvider as ASProvider
   )
     ? (paramProvider as ASProvider)
-    : "aniwatch";
+    : "gogoanime";
 
   const { animeId } = useParams<{
     animeId: string;
@@ -325,9 +325,14 @@ const EpisodeListView = ({
         startContent={episode.number}
         color={episode.isFiller ? "warning" : "primary"}
         textValue={episode.title || `${episode.number}`}
-        href={`/info/${animeId}/watch?episodeId=${encodeEpisodeId(
-          episode.episodeId
-        )}&episodeNumber=${episode.number}&provider=${provider}`}
+        href={createURL({
+          path: "/anime/watch",
+          params: {
+            episodeId: episode.episodeId,
+            episodeNumber: `${episode.number}`,
+            provider: `${provider}`,
+          },
+        })}
         className={cn(
           "pl-2",
           spotlightEpisodeNumber === episode.number && "text-secondary-500"
@@ -372,9 +377,14 @@ const EpisodeGridView = ({
     {list.map((episode, episodeIdx) => (
       <Button
         as={NextLink}
-        href={`/info/${animeId}/watch?episodeId=${encodeEpisodeId(
-          episode.episodeId
-        )}&episodeNumber=${episode.number}&provider=${provider}`}
+        href={createURL({
+          path: "/anime/watch",
+          params: {
+            episodeId: episode.episodeId,
+            episodeNumber: `${episode.number}`,
+            provider: `${provider}`,
+          },
+        })}
         variant={episode.number === spotlightEpisodeNumber ? "shadow" : "flat"}
         color="primary"
         isIconOnly
