@@ -67,6 +67,7 @@ export default function InfoSection({ anime, className, children }: Props) {
             )}
 
             <ReadMore
+              className="indent-8 text-justify"
               text={
                 anime.description ? `${anime.description}` : "No description"
               }
