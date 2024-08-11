@@ -4,22 +4,29 @@ import {
   AnimeSortedSchema,
   EpisodeSchema,
 } from "@/api/consumet-validations";
+import { CardDataProps } from "@/components/card-data/card-data";
 import moment from "moment";
-import { AnimeInfo, CardInfo, Episode, OtherInfo } from "./types";
-import { pickTitle } from "./utils";
+import { AnimeInfo, DataObject, Episode, OtherInfo, Tag } from "./types";
+import { pickTitle, searchKeysInObject } from "./utils";
 
-export const consumetAnimeObjectMapper = (
-  animeList: AnimeSortedSchema[],
-  { isRanked = false }
-): CardInfo[] =>
+export const consumetAnimeObjectMapper = ({
+  animeList,
+  tagList,
+  isRanked,
+}: {
+  animeList: AnimeSortedSchema[];
+  isRanked?: boolean;
+  tagList: Tag[];
+}): CardDataProps[] =>
   animeList.map((anime, animeIdx) => {
+    const { id, title, image, cover, ...others } = anime;
     return {
-      id: anime.id,
-      name: pickTitle(anime.title),
-      image: anime.image,
-      cover: anime.cover ? anime.cover : undefined,
+      id,
+      name: pickTitle(title),
+      image,
+      cover: cover ? cover : undefined,
       rank: isRanked ? animeIdx + 1 : undefined,
-      other: [],
+      tagList: searchKeysInObject(tagList, others as DataObject),
     };
   });
 
@@ -98,13 +105,23 @@ export const consumetAnimeInfoEpisodesObjectMapper = (
     isFiller: null,
   }));
 
-export const consumetInfoAnimeObjectMapper = (
-  animeList: AnimeSchema[]
-): CardInfo[] =>
-  animeList.map((anime) => {
+export const consumetInfoAnimeObjectMapper = ({
+  animeList,
+  tagList,
+  isRanked,
+}: {
+  animeList: AnimeSchema[];
+  isRanked?: boolean;
+  tagList: Tag[];
+}): CardDataProps[] =>
+  animeList.map((anime, animeIdx) => {
+    const { id, title, image, cover, ...others } = anime;
     return {
-      id: anime.id ? `${anime.id}` : "",
-      name: pickTitle(anime.title),
-      image: anime.image,
+      id: `${id}`,
+      name: pickTitle(title),
+      image,
+      cover: cover ? cover : undefined,
+      rank: isRanked ? animeIdx + 1 : undefined,
+      tagList: searchKeysInObject(tagList, others as unknown as DataObject),
     };
   });

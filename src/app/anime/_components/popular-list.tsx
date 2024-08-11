@@ -1,10 +1,7 @@
 import { fetchPopularAnimeData } from "@/actions/consumet";
-import {
-  default as AnimeList,
-  default as CardList,
-} from "@/components/card-data/card-list";
+import { default as CardList } from "@/components/card-data/card-list";
 import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
-import { SearchParams } from "@/lib/types";
+import { SearchParams, Tag } from "@/lib/types";
 
 export default async function PopularList({
   searchParams,
@@ -20,8 +17,15 @@ export default async function PopularList({
 
   if (!data) throw new Error("Failed to fetch (Anime List) data");
 
-  const animeList =
-    consumetAnimeObjectMapper(data.results, { isRanked: true }) || [];
+  const tagList: Tag[] = [
+    { name: "type", color: "warning" },
+    { name: "releaseDate", color: "success" },
+  ];
+  const animeList = consumetAnimeObjectMapper({
+    animeList: data.results,
+    tagList,
+    isRanked: true,
+  });
 
-  return <CardList infoList={animeList} />;
+  return <CardList title="Popular" infoList={animeList} />;
 }

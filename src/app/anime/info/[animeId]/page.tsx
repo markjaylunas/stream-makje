@@ -1,6 +1,6 @@
 import { fetchAnimeData, fetchEpisodeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
-import Heading from "@/components/ui/heading";
+import { Icons } from "@/components/ui/Icons";
 import {
   consumetAnimeInfoEpisodesObjectMapper,
   consumetAnimeInfoObjectMapper,
@@ -12,6 +12,7 @@ import {
   CardCategory,
   EpisodeList,
   SearchParams,
+  Tag,
 } from "@/lib/types";
 import { encodeEpisodeId } from "@/lib/utils";
 import { Button, ButtonGroup } from "@nextui-org/react";
@@ -75,14 +76,26 @@ export default async function InfoPage({
     totalEpisodes: episodeData ? infoData.totalEpisodes || 0 : 0,
   };
 
+  const tagList: Tag[] = [
+    { name: "type", color: "warning" },
+    {
+      name: "rating",
+      color: "primary",
+      startContent: <Icons.star className="size-3" />,
+    },
+  ];
+
   animeCategoryList = [
     {
-      name: "Related",
-      list: consumetInfoAnimeObjectMapper(relations || []),
+      name: "Relations",
+      list: consumetInfoAnimeObjectMapper({ animeList: relations, tagList }),
     },
     {
-      name: "Recommendation",
-      list: consumetInfoAnimeObjectMapper(recommendations || []),
+      name: "Recommendations",
+      list: consumetInfoAnimeObjectMapper({
+        animeList: recommendations || [],
+        tagList,
+      }),
     },
   ].filter((category) => category.list.length > 0);
 
@@ -137,15 +150,11 @@ export default async function InfoPage({
       </InfoSection>
 
       {animeCategoryList.map((category) => (
-        <section
-          className="max-w-7xl px-4 sm:mx-auto space-y-2 mt-4 sm:mt-8"
+        <CardList
+          title={category.name}
+          infoList={category.list}
           key={category.name}
-        >
-          <Heading order="xl" className="text-gray-700 dark:text-gray-300 mb-2">
-            {category.name}
-          </Heading>
-          <CardList infoList={category.list} />
-        </section>
+        />
       ))}
     </main>
   );

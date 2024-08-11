@@ -1,3 +1,5 @@
+import { CardDataProps } from "@/components/card-data/card-data";
+import { ChipProps } from "@nextui-org/react";
 import {
   ASFormatArray,
   ASGenresArray,
@@ -22,6 +24,18 @@ export type NavItemWithChildren = NavItem & {
 export type MainNavItem = NavItem & {};
 
 export type SearchParams = { [key: string]: string | string[] | undefined };
+
+export type DataObject =
+  | { [key: string]: string | string[] | DataObject }
+  | string[];
+
+export type Tag = {
+  name: string;
+  value?: string | string[];
+  variant?: ChipProps["variant"];
+  color?: ChipProps["color"];
+  startContent?: React.ReactNode;
+};
 
 // Start: Consumet API types
 
@@ -76,12 +90,12 @@ export type CardInfo = {
   image: string;
   cover?: string;
   rank?: number;
-  other?: string[] | null;
+  otherInfo: DataObject | null | undefined;
 };
 
 export type CardCategory = {
   name: string;
-  list: CardInfo[];
+  list: CardDataProps[];
 };
 
 export type Episode = {

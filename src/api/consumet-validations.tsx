@@ -41,7 +41,7 @@ const animeSchema = z.object({
   status: z.string(),
   episodes: z.number().nullable(),
   ...imageSchema.shape,
-  rating: z.number().nullable(),
+  rating: z.number().nullable().optional(),
   type: z.string().nullable(),
 });
 
@@ -83,7 +83,7 @@ export const animeDataSchema = z.object({
     .optional(),
   totalEpisodes: z.number().nullable(),
   currentEpisode: z.number(),
-  rating: z.number().nullable(),
+  rating: z.number().nullable().optional(),
   duration: z.number().nullable().optional(),
   genres: z.array(z.string()),
   studios: z.array(z.string()),
@@ -122,7 +122,7 @@ export const animeSearchSchema = z.object({
   countryOfOrigin: z.string(),
   description: z.string().optional().nullable(),
   genres: z.array(z.string()),
-  rating: z.number().nullable(),
+  rating: z.number().nullable().optional(),
   color: z.string().nullable().optional(),
   type: z.string().nullable(),
   releaseDate: z.number().nullable(),
