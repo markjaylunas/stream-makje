@@ -100,4 +100,4 @@ export const ASStatusArray = [
   "HIATUS",
 ] as const;
 
-export const ASProviderArray = ["zoro", "gogoanime"] as const;
+export const ASProviderArray = ["gogoanime", "aniwatch"] as const;

@@ -50,7 +50,7 @@ export type ASGenres = (typeof ASGenresArray)[number];
 export type ASStatus = (typeof ASStatusArray)[number];
 export type ASProvider = (typeof ASProviderArray)[number];
 
-export type AnimeProviders = "gogoanime" | "zoro";
+export type AnimeProviders = "gogoanime" | "aniwatch";
 
 export type AnimeAdvancedSearchParams = {
   query?: string;

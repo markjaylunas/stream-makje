@@ -1,6 +1,7 @@
 import { fetchAnimeData, fetchEpisodeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
 import { Icons } from "@/components/ui/Icons";
+import { ASProviderArray } from "@/lib/constants";
 import {
   consumetAnimeInfoEpisodesObjectMapper,
   consumetAnimeInfoObjectMapper,
@@ -30,13 +31,12 @@ export default async function InfoPage({
 }) {
   const { animeId } = params;
 
-  const providers: AnimeProviders[] = ["gogoanime", "zoro"];
   const provider =
     typeof searchParams?.server === "string"
-      ? searchParams?.server === providers[1]
-        ? providers[1]
-        : providers[0] || providers[0]
-      : providers[0];
+      ? searchParams?.server === ASProviderArray[1]
+        ? ASProviderArray[1]
+        : ASProviderArray[0] || ASProviderArray[0]
+      : ASProviderArray[0];
 
   const toWatch =
     typeof searchParams?.watch === "string"

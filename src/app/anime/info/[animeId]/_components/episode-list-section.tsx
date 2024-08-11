@@ -36,6 +36,7 @@ import {
   HTMLProps,
   MutableRefObject,
   ReactElement,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -59,7 +60,7 @@ export default function EpisodeListSection({
     paramProvider as ASProvider
   )
     ? (paramProvider as ASProvider)
-    : "zoro";
+    : "aniwatch";
 
   const { animeId } = useParams<{
     animeId: string;
@@ -71,7 +72,12 @@ export default function EpisodeListSection({
     useState<number>(-1);
   const [episodeListData, setEpisodeListData] = useState(animeEpisodeList);
   const [status, setStatus] = useState<Status>("idle");
+  const [selectedProvider, setSelectedProvider] = useState(new Set([provider]));
 
+  const selectedProviderValue = useMemo(
+    () => Array.from(selectedProvider).join(", ").replaceAll("_", " "),
+    [selectedProvider]
+  );
   // const handleEpisodeSearchChange = useDebouncedCallback((value: string) => {
   //   const episodeNumber = parseInt(value, 10);
   //   const episodeIndex = list.findIndex(
@@ -186,18 +192,21 @@ export default function EpisodeListSection({
             <Button
               isDisabled={status === "loading"}
               endContent={<Icons.chevronDown />}
+              variant="shadow"
+              color="primary"
             >
-              {provider}
+              {selectedProviderValue.toUpperCase()}
             </Button>
           </DropdownTrigger>
           <DropdownMenu
             disallowEmptySelection
             aria-label="Provider Options"
-            selectedKeys={provider}
+            selectedKeys={selectedProvider}
             selectionMode="single"
             onSelectionChange={(keySet) => {
               const keyArray = Array.from(keySet);
               const key = keyArray[0];
+              setSelectedProvider(new Set([key as AnimeProviders]));
               handleChangeProvider(`${key}` as AnimeProviders);
             }}
             className="max-w-[300px]"
@@ -369,6 +378,7 @@ const EpisodeGridView = ({
         variant={episode.number === spotlightEpisodeNumber ? "shadow" : "flat"}
         color="primary"
         isIconOnly
+        key={episode.episodeId}
       >
         <div
           ref={(el) => {
