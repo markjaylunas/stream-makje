@@ -14,7 +14,7 @@ export default function CardData({ info }: Props) {
   return (
     <Card
       as={NextLink}
-      href={`/anime/${info.id}`}
+      href={`/anime/info/${info.id}`}
       className="relative
        h-full w-full mx-auto aspect-2/3 bg-gray-600 select-none hover:cursor-pointer overflow-hidden"
     >

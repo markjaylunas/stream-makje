@@ -1,5 +1,3 @@
-import { Icons } from "../components/ui/icons";
-
 import {
   ASFormatArray,
   ASGenresArray,
@@ -14,7 +12,6 @@ export type NavItem = {
   href?: string;
   disabled?: boolean;
   external?: boolean;
-  icon?: keyof typeof Icons;
   label?: string;
 };
 

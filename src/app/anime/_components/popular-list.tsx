@@ -3,7 +3,7 @@ import {
   default as AnimeList,
   default as CardList,
 } from "@/components/card-data/card-list";
-import { metaAnimeObjectMapper } from "@/lib/object-mapper";
+import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams } from "@/lib/types";
 
 export default async function PopularList({
@@ -21,7 +21,7 @@ export default async function PopularList({
   if (!data) throw new Error("Failed to fetch (Anime List) data");
 
   const animeList =
-    metaAnimeObjectMapper(data.results, { isRanked: true }) || [];
+    consumetAnimeObjectMapper(data.results, { isRanked: true }) || [];
 
   return <CardList infoList={animeList} />;
 }
