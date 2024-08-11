@@ -3,6 +3,7 @@ import { ChipProps } from "@nextui-org/react";
 import {
   ASFormatArray,
   ASGenresArray,
+  ASProviderArray,
   ASSeasonArray,
   ASSortArray,
   ASStatusArray,
@@ -37,6 +38,8 @@ export type Tag = {
   startContent?: React.ReactNode;
 };
 
+export type Status = "idle" | "loading" | "error";
+
 // Start: Consumet API types
 
 export type ASType = (typeof ASTypeArray)[number];
@@ -45,6 +48,7 @@ export type ASFormat = (typeof ASFormatArray)[number];
 export type ASSort = (typeof ASSortArray)[number];
 export type ASGenres = (typeof ASGenresArray)[number];
 export type ASStatus = (typeof ASStatusArray)[number];
+export type ASProvider = (typeof ASProviderArray)[number];
 
 export type AnimeProviders = "gogoanime" | "zoro";
 

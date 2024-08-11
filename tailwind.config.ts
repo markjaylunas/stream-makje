@@ -33,6 +33,7 @@ const config = {
     },
   },
   plugins: [
+    require("tailwind-scrollbar"),
     nextui({
       layout: {
         radius: {

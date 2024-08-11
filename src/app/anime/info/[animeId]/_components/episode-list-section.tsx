@@ -1,14 +1,44 @@
 "use client";
 
+import { fetchEpisodeData } from "@/actions/consumet";
 import { Icons } from "@/components/ui/Icons";
-import { Episode, EpisodeList } from "@/lib/types";
-import { cn, encodeEpisodeId } from "@/lib/utils";
+import { ASProviderArray } from "@/lib/constants";
+import { consumetAnimeInfoEpisodesObjectMapper } from "@/lib/object-mapper";
+import {
+  AnimeProviders,
+  ASProvider,
+  Episode,
+  EpisodeList,
+  Status,
+} from "@/lib/types";
+import { cn, encodeEpisodeId, toTitleCase } from "@/lib/utils";
 import { Button, ButtonGroup } from "@nextui-org/button";
-import { Chip, Input, Listbox, ListboxItem } from "@nextui-org/react";
+import {
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  Listbox,
+  ListboxItem,
+  Skeleton,
+} from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import NextLink from "next/link";
-import { useParams } from "next/navigation";
-import { useRef, useState } from "react";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import {
+  HTMLProps,
+  MutableRefObject,
+  ReactElement,
+  useRef,
+  useState,
+} from "react";
 
 type Props = {
   animeEpisodeList: EpisodeList;
@@ -19,22 +49,35 @@ export default function EpisodeListSection({
   animeEpisodeList,
   className,
 }: Props) {
-  const { serverId, animeId, episodeSlug } = useParams<{
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const paramProvider = searchParams.get("provider");
+
+  const provider: AnimeProviders = ASProviderArray.includes(
+    paramProvider as ASProvider
+  )
+    ? (paramProvider as ASProvider)
+    : "zoro";
+
+  const { animeId } = useParams<{
     animeId: string;
-    serverId: string;
-    episodeSlug: string[];
   }>();
 
-  const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const ref = useRef<(HTMLDivElement | null)[]>([]);
   const [isListView, setIsListView] = useState(true);
-  const [episodeSpotlight, setEpisodeSpotlight] = useState<number>(-1);
+  const [spotlightEpisodeNumber, setSpotlightEpisodeNumber] =
+    useState<number>(-1);
+  const [episodeListData, setEpisodeListData] = useState(animeEpisodeList);
+  const [status, setStatus] = useState<Status>("idle");
 
   // const handleEpisodeSearchChange = useDebouncedCallback((value: string) => {
   //   const episodeNumber = parseInt(value, 10);
   //   const episodeIndex = list.findIndex(
   //     (episode) => episode.number === episodeNumber
   //   );
-  //   setEpisodeSpotlight(episodeNumber);
+  //   setspotlightEpisodeNumber(episodeNumber);
 
   //   if (episodeIndex !== -1 && episodeRefs.current[episodeIndex]) {
   //     episodeRefs.current[episodeIndex]?.scrollIntoView({
@@ -47,47 +90,90 @@ export default function EpisodeListSection({
 
   if (animeEpisodeList.list.length <= 0) return <UpcomingAnimeChip />;
 
-  const { list, totalEpisodes } = animeEpisodeList;
+  const { list, totalEpisodes } = episodeListData;
 
   let activeEpisodeNumber = -1;
-  let prevEpisode: Episode | null = null;
-  let nextEpisode: Episode | null = null;
-  let title = "";
-  if (episodeSlug && episodeSlug.length > 0) {
-    activeEpisodeNumber = parseInt(episodeSlug[1]);
-    const episodeIndex = list.findIndex(
-      (episode) => episode.number === activeEpisodeNumber
-    );
-    title = `You are watching episode ${activeEpisodeNumber} of ${totalEpisodes}  ${
-      list[episodeIndex].title ? `- ${list[episodeIndex].title}` : ""
-    }`;
+  // let prevEpisode: Episode | null = null;
+  // let nextEpisode: Episode | null = null;
+  // let title = "";
+  // if (episodeSlug && episodeSlug.length > 0) {
+  //   activeEpisodeNumber = parseInt(episodeSlug[1]);
+  //   const episodeIndex = list.findIndex(
+  //     (episode) => episode.number === activeEpisodeNumber
+  //   );
+  //   title = `You are watching episode ${activeEpisodeNumber} of ${totalEpisodes}  ${
+  //     list[episodeIndex].title ? `- ${list[episodeIndex].title}` : ""
+  //   }`;
 
-    prevEpisode = list[episodeIndex - 1];
-    nextEpisode = list[episodeIndex + 1];
-  }
+  //   prevEpisode = list[episodeIndex - 1];
+  //   nextEpisode = list[episodeIndex + 1];
+  // }
 
-  const meltCDString = "U+1FAE0";
-  const meltCD = parseInt(meltCDString.replace("U+", ""), 16);
-  const meltCharacter = String.fromCodePoint(meltCD);
+  // const meltCDString = "U+1FAE0";
+  // const meltCD = parseInt(meltCDString.replace("U+", ""), 16);
+  // const meltCharacter = String.fromCodePoint(meltCD);
 
-  const saluteCDString = "U+1FAE1";
-  const saluteCD = parseInt(saluteCDString.replace("U+", ""), 16);
-  const saluteCharacter = String.fromCodePoint(saluteCD);
+  // const saluteCDString = "U+1FAE1";
+  // const saluteCD = parseInt(saluteCDString.replace("U+", ""), 16);
+  // const saluteCharacter = String.fromCodePoint(saluteCD);
 
+  const descriptionsMap = {
+    zoro: "Watch anime with subs, dubs, and various subtitles.",
+    gogoanime: "Watch anime with English subs only.",
+  };
+
+  const labelsMap = {
+    zoro: "Zoro",
+    gogoanime: "Gogoanime",
+  };
+
+  const handleChangeProvider = async (provider: AnimeProviders) => {
+    if (!animeId) return;
+    try {
+      setStatus("loading");
+      const episodeData = await fetchEpisodeData({
+        animeId,
+        provider,
+      });
+      const mappedEpisodeList = consumetAnimeInfoEpisodesObjectMapper(
+        episodeData || []
+      );
+
+      const newEpisodeList = {
+        list: mappedEpisodeList,
+        totalEpisodes: episodeData ? episodeData.length || 0 : 0,
+      };
+      setEpisodeListData(newEpisodeList);
+      const params = new URLSearchParams(searchParams);
+      if (provider) {
+        params.set("provider", provider);
+      } else {
+        params.delete(provider);
+      }
+      replace(`${pathname}?${params.toString()}`);
+    } catch (error) {
+      console.log(error);
+      setStatus("error");
+    } finally {
+      setStatus("idle");
+    }
+  };
   return (
     <section className={cn("space-y-3 min-w-[300px]", className)}>
-      {activeEpisodeNumber && (
+      {/* {activeEpisodeNumber && (
         <p className="text-gray-500 line-clamp-2 text-tiny">{title}</p>
-      )}
+      )} */}
       <div className="flex justify-start gap-3">
         <Button
           onPress={() => setIsListView((v) => !v)}
           isIconOnly
           variant="bordered"
+          isDisabled={status === "loading"}
           startContent={isListView ? <Icons.listOrdered /> : <Icons.grid />}
         />
 
         <Input
+          isDisabled={status === "loading"}
           type="number"
           aria-label="search episode number"
           startContent={<Icons.search />}
@@ -95,8 +181,39 @@ export default function EpisodeListSection({
           placeholder="Episode #"
           // onValueChange={handleEpisodeSearchChange}
         />
-
-        {activeEpisodeNumber > 0 && (
+        <Dropdown placement="bottom-end">
+          <DropdownTrigger>
+            <Button
+              isDisabled={status === "loading"}
+              endContent={<Icons.chevronDown />}
+            >
+              {provider}
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            disallowEmptySelection
+            aria-label="Provider Options"
+            selectedKeys={provider}
+            selectionMode="single"
+            onSelectionChange={(keySet) => {
+              const keyArray = Array.from(keySet);
+              const key = keyArray[0];
+              handleChangeProvider(`${key}` as AnimeProviders);
+            }}
+            className="max-w-[300px]"
+          >
+            <DropdownItem key="zoro" description={descriptionsMap["zoro"]}>
+              {labelsMap["zoro"]}
+            </DropdownItem>
+            <DropdownItem
+              key="gogoanime"
+              description={descriptionsMap["gogoanime"]}
+            >
+              {labelsMap["gogoanime"]}
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+        {/* {activeEpisodeNumber > 0 && (
           <ButtonGroup variant="bordered">
             <Button
               as={NextLink}
@@ -127,78 +244,32 @@ export default function EpisodeListSection({
               {nextEpisode ? nextEpisode.number : meltCharacter}
             </Button>
           </ButtonGroup>
-        )}
+        )} */}
       </div>
-      <ScrollShadow className="w-full max-h-[400px] scrollbar-thin scrollbar-corner-transparent scrollbar-thumb-stone-600 scrollbar-track-stone-600/50 ">
-        {isListView ? (
-          <Listbox
-            aria-label="Single selection example"
-            variant="flat"
-            disallowEmptySelection
-            selectionMode="single"
-          >
-            {list.map((episode, episodeIdx) => (
-              <ListboxItem
-                startContent={episode.number}
-                color={episode.isFiller ? "warning" : "primary"}
-                textValue={episode.title || `${episode.number}`}
-                href={`/${serverId}/info/${animeId}/watch/${encodeEpisodeId(
-                  episode.episodeId
-                )}/${episode.number}`}
-                className={cn(
-                  "pl-2",
-                  episodeSpotlight === episode.number && "text-secondary-500"
-                )}
-                endContent={
-                  episode.number === activeEpisodeNumber ? (
-                    <Icons.playFill className="size-3" />
-                  ) : (
-                    ""
-                  )
-                }
-                key={episode.episodeId}
-              >
-                <div
-                  ref={(el) => {
-                    episodeRefs.current[episodeIdx] = el;
-                  }}
-                >
-                  <span className="text-wrap line-clamp-1">
-                    {episode.title}
-                  </span>
-                </div>
-              </ListboxItem>
-            ))}
-          </Listbox>
+      <ScrollShadow className="w-full max-h-[400px] pb-4 scrollbar-thin scrollbar-corner-transparent scrollbar-thumb-stone-600 scrollbar-track-stone-600/50 ">
+        {status === "loading" ? (
+          <EpisodeViewSkeleton
+            type={isListView ? "list" : "grid"}
+            count={totalEpisodes}
+          />
+        ) : isListView ? (
+          <EpisodeListView
+            animeId={animeId}
+            activeEpisodeNumber={activeEpisodeNumber}
+            spotlightEpisodeNumber={spotlightEpisodeNumber}
+            episodeRef={ref}
+            list={list}
+            provider={provider}
+          />
         ) : (
-          <div className="flex flex-wrap justify-start flex-grow gap-2 mx-auto">
-            {list.map((episode, episodeIdx) => (
-              <Button
-                as={NextLink}
-                href={`/${serverId}/info/${animeId}/watch/${encodeEpisodeId(
-                  episode.episodeId
-                )}/${episode.number}`}
-                variant={
-                  episode.number === episodeSpotlight ? "shadow" : "flat"
-                }
-                color="primary"
-                key={episode.episodeId}
-                isIconOnly
-              >
-                <div
-                  ref={(el) => {
-                    episodeRefs.current[episodeIdx] = el;
-                  }}
-                >
-                  {episode.number === activeEpisodeNumber ? (
-                    <Icons.playFill />
-                  ) : (
-                    episode.number
-                  )}
-                </div>
-              </Button>
-            ))}
-          </div>
+          <EpisodeGridView
+            animeId={animeId}
+            activeEpisodeNumber={activeEpisodeNumber}
+            spotlightEpisodeNumber={spotlightEpisodeNumber}
+            episodeRef={ref}
+            list={list}
+            provider={provider}
+          />
         )}
       </ScrollShadow>
     </section>
@@ -217,4 +288,129 @@ const UpcomingAnimeChip = () => (
       notified when it&apos;s out!
     </p>
   </Chip>
+);
+
+const EpisodeListView = ({
+  list,
+  provider,
+  animeId,
+  activeEpisodeNumber,
+  spotlightEpisodeNumber,
+  episodeRef,
+}: {
+  provider: AnimeProviders;
+  animeId: string;
+  list: Episode[];
+  spotlightEpisodeNumber: number;
+  activeEpisodeNumber: number;
+  episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
+}) => (
+  <Listbox
+    aria-label="Single selection example"
+    variant="flat"
+    disallowEmptySelection
+    selectionMode="single"
+  >
+    {list.map((episode, episodeIdx) => (
+      <ListboxItem
+        startContent={episode.number}
+        color={episode.isFiller ? "warning" : "primary"}
+        textValue={episode.title || `${episode.number}`}
+        href={`/info/${animeId}/watch?episodeId=${encodeEpisodeId(
+          episode.episodeId
+        )}&episodeNumber=${episode.number}&provider=${provider}`}
+        className={cn(
+          "pl-2",
+          spotlightEpisodeNumber === episode.number && "text-secondary-500"
+        )}
+        endContent={
+          episode.number === activeEpisodeNumber ? (
+            <Icons.playFill className="size-3" />
+          ) : (
+            ""
+          )
+        }
+        key={episode.episodeId}
+      >
+        <div
+          ref={(el) => {
+            episodeRef.current[episodeIdx] = el;
+          }}
+        >
+          <span className="text-wrap line-clamp-1">{episode.title}</span>
+        </div>
+      </ListboxItem>
+    ))}
+  </Listbox>
+);
+
+const EpisodeGridView = ({
+  provider,
+  list,
+  animeId,
+  activeEpisodeNumber,
+  spotlightEpisodeNumber,
+  episodeRef,
+}: {
+  provider: AnimeProviders;
+  animeId: string;
+  list: Episode[];
+  spotlightEpisodeNumber: number;
+  activeEpisodeNumber: number;
+  episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
+}) => (
+  <div className="flex flex-wrap justify-start flex-grow gap-2 mx-auto">
+    {list.map((episode, episodeIdx) => (
+      <Button
+        as={NextLink}
+        href={`/info/${animeId}/watch?episodeId=${encodeEpisodeId(
+          episode.episodeId
+        )}&episodeNumber=${episode.number}&provider=${provider}`}
+        variant={episode.number === spotlightEpisodeNumber ? "shadow" : "flat"}
+        color="primary"
+        isIconOnly
+      >
+        <div
+          ref={(el) => {
+            episodeRef.current[episodeIdx] = el;
+          }}
+        >
+          {episode.number === activeEpisodeNumber ? (
+            <Icons.playFill />
+          ) : (
+            episode.number
+          )}
+        </div>
+      </Button>
+    ))}
+  </div>
+);
+
+const EpisodeViewSkeleton = ({
+  count = 1,
+  type,
+  className,
+  ...props
+}: { count?: number; type: "list" | "grid" } & HTMLProps<HTMLDivElement>) => (
+  <div
+    className={cn(
+      type === "list" && "flex flex-col gap-2 w-full h-fit pr-2",
+      type === "grid" && "flex flex-wrap justify-start flex-grow gap-2 mx-auto"
+    )}
+    {...props}
+  >
+    {Array.from(Array(Math.min(Math.max(count, 1), 100)).keys()).map(
+      (skeleton) => (
+        <Skeleton
+          key={skeleton}
+          className={cn(
+            "rounded-lg",
+            type === "list" && "w-full h-9",
+            type === "grid" && "size-10",
+            className
+          )}
+        />
+      )
+    )}
+  </div>
 );

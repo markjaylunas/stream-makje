@@ -30,10 +30,13 @@ export default async function InfoPage({
 }) {
   const { animeId } = params;
 
-  const server =
+  const providers: AnimeProviders[] = ["gogoanime", "zoro"];
+  const provider =
     typeof searchParams?.server === "string"
-      ? searchParams?.server || null
-      : null;
+      ? searchParams?.server === providers[1]
+        ? providers[1]
+        : providers[0] || providers[0]
+      : providers[0];
 
   const toWatch =
     typeof searchParams?.watch === "string"
@@ -57,7 +60,7 @@ export default async function InfoPage({
     fetchAnimeData({ animeId }),
     fetchEpisodeData({
       animeId,
-      provider: server ? (server as AnimeProviders) : "zoro",
+      provider,
     }),
   ]);
   if (!infoData) {

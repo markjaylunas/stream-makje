@@ -1,3 +1,5 @@
+"use server";
+
 import { animeAPIQuery } from "@/api/consumet-api";
 import {
   animeDataSchema,

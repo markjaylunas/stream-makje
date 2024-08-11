@@ -99,3 +99,5 @@ export const ASStatusArray = [
   "CANCELLED",
   "HIATUS",
 ] as const;
+
+export const ASProviderArray = ["zoro", "gogoanime"] as const;
