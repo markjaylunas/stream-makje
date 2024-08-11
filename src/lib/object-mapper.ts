@@ -7,7 +7,7 @@ import {
 import { CardDataProps } from "@/components/card-data/card-data";
 import moment from "moment";
 import { AnimeInfo, DataObject, Episode, OtherInfo, Tag } from "./types";
-import { pickTitle, searchKeysInObject } from "./utils";
+import { jaroWinklerDistance, pickTitle, searchKeysInObject } from "./utils";
 
 export const consumetAnimeObjectMapper = ({
   animeList,
@@ -136,3 +136,49 @@ export const consumetInfoAnimeObjectMapper = ({
       tagList: searchKeysInObject(tagList, others as unknown as DataObject),
     };
   });
+
+// Map anime list to get closest anime by name
+export const mapAnimeByName = async ({
+  list,
+  title,
+}: {
+  title: string;
+  list: { id: string; name: string }[];
+}) => {
+  try {
+    const normalizedTitle = title.trim().toLowerCase();
+    let mappedResult = null;
+    let maxScore = 0;
+
+    // Function to calculate Jaro-Winkler similarity
+    const calculateSimilarity = (itemName: string) => {
+      const itemNameNormalized = itemName.trim().toLowerCase();
+      const score = jaroWinklerDistance(normalizedTitle, itemNameNormalized);
+      return score;
+    };
+
+    // Find exact match first
+    mappedResult = list.find(
+      (item) => item.name && item.name.toLowerCase() === normalizedTitle
+    );
+
+    // If no exact match, find closest match using Jaro-Winkler distance
+    if (!mappedResult) {
+      list.forEach((item) => {
+        const itemName = item.name;
+        if (itemName) {
+          const score = calculateSimilarity(itemName);
+          if (score > maxScore) {
+            maxScore = score;
+            mappedResult = item;
+          }
+        }
+      });
+    }
+
+    return mappedResult || null;
+  } catch (error) {
+    console.error("Error in MapAnimeByTitle:", error);
+    return null;
+  }
+};

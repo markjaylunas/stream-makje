@@ -1,5 +1,6 @@
 "use client";
 
+import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchEpisodeData } from "@/actions/consumet";
 import { Icons } from "@/components/ui/Icons";
 import { ASProviderArray } from "@/lib/constants";
@@ -43,10 +44,12 @@ import {
 
 type Props = {
   animeEpisodeList: EpisodeList;
+  animeTitle: string;
   className?: string;
 };
 
 export default function EpisodeListSection({
+  animeTitle,
   animeEpisodeList,
   className,
 }: Props) {
@@ -124,12 +127,12 @@ export default function EpisodeListSection({
   // const saluteCharacter = String.fromCodePoint(saluteCD);
 
   const descriptionsMap = {
-    zoro: "Watch anime with subs, dubs, and various subtitles.",
+    aniwatch: "Watch anime with subs, dubs, and various subtitles.",
     gogoanime: "Watch anime with English subs only.",
   };
 
   const labelsMap = {
-    zoro: "Zoro",
+    aniwatch: "Aniwatch",
     gogoanime: "Gogoanime",
   };
 
@@ -137,19 +140,13 @@ export default function EpisodeListSection({
     if (!animeId) return;
     try {
       setStatus("loading");
-      const episodeData = await fetchEpisodeData({
+      const newEpisodeList = await fetchEpisodeByProviderData({
         animeId,
         provider,
+        title: animeTitle,
       });
-      const mappedEpisodeList = consumetAnimeInfoEpisodesObjectMapper(
-        episodeData || []
-      );
 
-      const newEpisodeList = {
-        list: mappedEpisodeList,
-        totalEpisodes: episodeData ? episodeData.length || 0 : 0,
-      };
-      setEpisodeListData(newEpisodeList);
+      if (newEpisodeList) setEpisodeListData(newEpisodeList);
       const params = new URLSearchParams(searchParams);
       if (provider) {
         params.set("provider", provider);
@@ -211,8 +208,11 @@ export default function EpisodeListSection({
             }}
             className="max-w-[300px]"
           >
-            <DropdownItem key="zoro" description={descriptionsMap["zoro"]}>
-              {labelsMap["zoro"]}
+            <DropdownItem
+              key="aniwatch"
+              description={descriptionsMap["aniwatch"]}
+            >
+              {labelsMap["aniwatch"]}
             </DropdownItem>
             <DropdownItem
               key="gogoanime"
@@ -263,7 +263,7 @@ export default function EpisodeListSection({
           />
         ) : isListView ? (
           <EpisodeListView
-            animeId={animeId}
+            animeTitle={animeTitle}
             activeEpisodeNumber={activeEpisodeNumber}
             spotlightEpisodeNumber={spotlightEpisodeNumber}
             episodeRef={ref}
@@ -272,7 +272,7 @@ export default function EpisodeListSection({
           />
         ) : (
           <EpisodeGridView
-            animeId={animeId}
+            animeTitle={animeTitle}
             activeEpisodeNumber={activeEpisodeNumber}
             spotlightEpisodeNumber={spotlightEpisodeNumber}
             episodeRef={ref}
@@ -302,17 +302,17 @@ const UpcomingAnimeChip = () => (
 const EpisodeListView = ({
   list,
   provider,
-  animeId,
   activeEpisodeNumber,
   spotlightEpisodeNumber,
   episodeRef,
+  animeTitle,
 }: {
   provider: AnimeProviders;
-  animeId: string;
   list: Episode[];
   spotlightEpisodeNumber: number;
   activeEpisodeNumber: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
+  animeTitle: string;
 }) => (
   <Listbox
     aria-label="Single selection example"
@@ -331,6 +331,7 @@ const EpisodeListView = ({
             episodeId: episode.episodeId,
             episodeNumber: `${episode.number}`,
             provider: `${provider}`,
+            animeTitle: `${animeTitle}`,
           },
         })}
         className={cn(
@@ -361,13 +362,13 @@ const EpisodeListView = ({
 const EpisodeGridView = ({
   provider,
   list,
-  animeId,
+  animeTitle,
   activeEpisodeNumber,
   spotlightEpisodeNumber,
   episodeRef,
 }: {
   provider: AnimeProviders;
-  animeId: string;
+  animeTitle: string;
   list: Episode[];
   spotlightEpisodeNumber: number;
   activeEpisodeNumber: number;
@@ -383,6 +384,8 @@ const EpisodeGridView = ({
             episodeId: episode.episodeId,
             episodeNumber: `${episode.number}`,
             provider: `${provider}`,
+
+            animeTitle: `${animeTitle}`,
           },
         })}
         variant={episode.number === spotlightEpisodeNumber ? "shadow" : "flat"}

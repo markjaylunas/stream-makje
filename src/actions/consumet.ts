@@ -6,6 +6,7 @@ import {
   animeSortedDataSchema,
   episodeDataSchema,
 } from "@/api/consumet-validations";
+import { ONE_WEEK } from "@/lib/constants";
 import { AnimeProviders } from "@/lib/types";
 
 export async function fetchPopularAnimeData({
@@ -40,7 +41,7 @@ export async function fetchAnimeData({ animeId }: { animeId: string }) {
   try {
     const response = await fetch(
       animeAPIQuery.meta.anilist.data({ id: animeId }),
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: ONE_WEEK } }
     );
 
     const data = await response.json();

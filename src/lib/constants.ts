@@ -101,3 +101,5 @@ export const ASStatusArray = [
 ] as const;
 
 export const ASProviderArray = ["gogoanime", "aniwatch"] as const;
+
+export const ONE_WEEK = 604800;

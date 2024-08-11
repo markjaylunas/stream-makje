@@ -1,3 +1,4 @@
+import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData, fetchEpisodeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
 import { Icons } from "@/components/ui/Icons";
@@ -15,7 +16,7 @@ import {
   SearchParams,
   Tag,
 } from "@/lib/types";
-import { encodeEpisodeId } from "@/lib/utils";
+import { encodeEpisodeId, pickTitle } from "@/lib/utils";
 import { Button, ButtonGroup } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -32,8 +33,8 @@ export default async function InfoPage({
   const { animeId } = params;
 
   const provider =
-    typeof searchParams?.server === "string"
-      ? searchParams?.server === ASProviderArray[1]
+    typeof searchParams?.provider === "string"
+      ? searchParams?.provider === ASProviderArray[1]
         ? ASProviderArray[1]
         : ASProviderArray[0] || ASProviderArray[0]
       : ASProviderArray[0];
@@ -48,36 +49,19 @@ export default async function InfoPage({
       ? Boolean(searchParams?.latest) || false
       : false;
 
-  let animeCategoryList: CardCategory[] = [];
-  let episodeList: EpisodeList = {
-    list: [],
-    totalEpisodes: 0,
-  };
+  const infoData = await fetchAnimeData({ animeId });
 
-  let animeInfo: AnimeInfo | null = null;
-
-  const [infoData, episodeData] = await Promise.all([
-    fetchAnimeData({ animeId }),
-    fetchEpisodeData({
-      animeId,
-      provider,
-    }),
-  ]);
   if (!infoData) {
     notFound();
   }
+  const episodeList = await fetchEpisodeByProviderData({
+    title: pickTitle(infoData.title),
+    animeId,
+    provider,
+  });
 
+  const animeInfo = consumetAnimeInfoObjectMapper(infoData);
   const { relations, recommendations } = infoData;
-
-  animeInfo = consumetAnimeInfoObjectMapper(infoData);
-  const mappedEpisodeList = consumetAnimeInfoEpisodesObjectMapper(
-    episodeData || []
-  );
-
-  episodeList = {
-    list: mappedEpisodeList,
-    totalEpisodes: episodeData ? infoData.totalEpisodes || 0 : 0,
-  };
 
   const tagList: Tag[] = [
     { name: "type", color: "warning" },
@@ -88,7 +72,7 @@ export default async function InfoPage({
     },
   ];
 
-  animeCategoryList = [
+  const animeCategoryList = [
     {
       name: "Relations",
       list: consumetInfoAnimeObjectMapper({ animeList: relations, tagList }),
@@ -101,8 +85,6 @@ export default async function InfoPage({
       }),
     },
   ].filter((category) => category.list.length > 0);
-
-  if (!animeInfo) notFound();
 
   const firstEpisode = episodeList.list[0];
   const latestEpisode = episodeList.list[episodeList.list.length - 1];
@@ -149,7 +131,10 @@ export default async function InfoPage({
           </ButtonGroup>
         )}
 
-        <EpisodeListSection animeEpisodeList={episodeList} />
+        <EpisodeListSection
+          animeTitle={animeInfo.name}
+          animeEpisodeList={episodeList}
+        />
       </InfoSection>
 
       {animeCategoryList.map((category) => (
