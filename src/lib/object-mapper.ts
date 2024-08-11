@@ -78,6 +78,17 @@ export const consumetAnimeInfoObjectMapper = (
     },
   ].filter((c) => Boolean(c.value));
 
+  const otherTitle = [
+    rawInfo.title.userPreferred,
+    rawInfo.title.english,
+    rawInfo.title.romaji,
+    rawInfo.title.native,
+  ].filter((v) => Boolean(v));
+
+  const synonyms =
+    [...otherTitle, ...rawInfo.synonyms]
+      .filter((v, i, a) => a.indexOf(v) == i)
+      .join(" | ") || null;
   return {
     id: rawInfo.id ? `${rawInfo.id}` : "",
     malId: rawInfo.malId ? `${rawInfo.malId}` : "",
@@ -86,7 +97,7 @@ export const consumetAnimeInfoObjectMapper = (
     cover: rawInfo.cover || null,
     type: rawInfo.type,
     genres: rawInfo.genres,
-    synonyms: rawInfo.synonyms.join(" | ") || null,
+    synonyms,
     sub: rawInfo.totalEpisodes,
     dub: null,
     description: rawInfo.description || null,
