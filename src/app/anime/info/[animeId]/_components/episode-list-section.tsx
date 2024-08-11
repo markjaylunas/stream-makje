@@ -63,7 +63,7 @@ export default function EpisodeListSection({
     paramProvider as ASProvider
   )
     ? (paramProvider as ASProvider)
-    : "gogoanime";
+    : "aniwatch";
 
   const { animeId } = useParams<{
     animeId: string;

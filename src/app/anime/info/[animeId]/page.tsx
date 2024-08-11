@@ -34,10 +34,10 @@ export default async function InfoPage({
 
   const provider =
     typeof searchParams?.provider === "string"
-      ? searchParams?.provider === ASProviderArray[1]
-        ? ASProviderArray[1]
-        : ASProviderArray[0] || ASProviderArray[0]
-      : ASProviderArray[0];
+      ? searchParams?.provider === ASProviderArray[0]
+        ? ASProviderArray[0]
+        : ASProviderArray[1] || ASProviderArray[1]
+      : ASProviderArray[1];
 
   const toWatch =
     typeof searchParams?.watch === "string"
