@@ -1,4 +1,9 @@
-import { AnimeAdvancedSearchParams, AnimeProviders } from "@/lib/types";
+import {
+  AnimeAdvancedSearchParams,
+  AnimeProviderAPI,
+  AnimeProviders,
+} from "@/lib/types";
+import { episodeSourceDataSchema } from "./consumet-validations";
 
 const anilistBase = `${process.env.CONSUMET_API_BASE_URL}/meta/anilist`;
 
@@ -45,7 +50,7 @@ export const animeAPIQuery = {
         ...params
       }: {
         id: string;
-        provider?: AnimeProviders;
+        provider?: AnimeProviderAPI;
         fetchFiller?: string | boolean;
         dub?: string | boolean;
         locale?: string;
@@ -56,7 +61,7 @@ export const animeAPIQuery = {
         ...params
       }: {
         episodeId: string;
-        provider: AnimeProviders;
+        provider: AnimeProviderAPI;
       }) => createURL(anilistBase, `watch/${episodeId}`, params),
 
       trending: (params: { page?: number; perPage?: number }) =>
@@ -82,3 +87,30 @@ export const animeAPIQuery = {
     },
   },
 };
+
+export async function fetchAnimeEpisodeSource({
+  episodeId,
+}: {
+  episodeId: string;
+}) {
+  try {
+    const response = await fetch(
+      animeAPIQuery.meta.anilist.watch({ episodeId, provider: "gogoanime" }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = episodeSourceDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}

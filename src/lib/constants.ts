@@ -1,3 +1,5 @@
+import { AnimeProviders } from "./types";
+
 export const sourcePriority = [
   "1080p",
   "720p",
@@ -100,6 +102,14 @@ export const ASStatusArray = [
   "HIATUS",
 ] as const;
 
-export const ASProviderArray = ["gogoanime", "aniwatch"] as const;
-
 export const ONE_WEEK = 604800;
+
+export const ANIME_PROVIDER = {
+  P1: "provider_1" as AnimeProviders,
+  P2: "provider_2" as AnimeProviders,
+};
+
+export const ANIME_PROVIDER_LIST: AnimeProviders[] = [
+  "provider_1",
+  "provider_2",
+];

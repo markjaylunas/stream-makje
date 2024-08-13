@@ -1,22 +1,14 @@
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
-import { fetchAnimeData, fetchEpisodeData } from "@/actions/consumet";
+import { fetchAnimeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
 import { Icons } from "@/components/ui/Icons";
-import { ASProviderArray } from "@/lib/constants";
+import { ANIME_PROVIDER, ANIME_PROVIDER_LIST } from "@/lib/constants";
 import {
-  consumetAnimeInfoEpisodesObjectMapper,
   consumetAnimeInfoObjectMapper,
   consumetInfoAnimeObjectMapper,
 } from "@/lib/object-mapper";
-import {
-  AnimeInfo,
-  AnimeProviders,
-  CardCategory,
-  EpisodeList,
-  SearchParams,
-  Tag,
-} from "@/lib/types";
-import { encodeEpisodeId, pickTitle } from "@/lib/utils";
+import { SearchParams, Tag } from "@/lib/types";
+import { createURL, encodeEpisodeId, pickTitle } from "@/lib/utils";
 import { Button, ButtonGroup } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -34,10 +26,10 @@ export default async function InfoPage({
 
   const provider =
     typeof searchParams?.provider === "string"
-      ? searchParams?.provider === ASProviderArray[0]
-        ? ASProviderArray[0]
-        : ASProviderArray[1] || ASProviderArray[1]
-      : ASProviderArray[1];
+      ? searchParams?.provider === ANIME_PROVIDER.P2
+        ? ANIME_PROVIDER.P2
+        : ANIME_PROVIDER.P1
+      : ANIME_PROVIDER.P1;
 
   const toWatch =
     typeof searchParams?.watch === "string"
@@ -54,6 +46,7 @@ export default async function InfoPage({
   if (!infoData) {
     notFound();
   }
+
   const episodeList = await fetchEpisodeByProviderData({
     title: pickTitle(infoData.title),
     animeId,
@@ -88,16 +81,22 @@ export default async function InfoPage({
 
   const firstEpisode = episodeList.list[0];
   const latestEpisode = episodeList.list[episodeList.list.length - 1];
-  const watchLink = firstEpisode
-    ? `/anime/info/${animeId}/watch?episodeId=${encodeEpisodeId(
-        firstEpisode.episodeId
-      )}&episodeNumber=${firstEpisode.number}`
-    : null;
-  const latestLink = latestEpisode
-    ? `/anime/info/${animeId}/watch?episodeId=${encodeEpisodeId(
-        latestEpisode.episodeId
-      )}&episodeNumber=${latestEpisode.number}`
-    : null;
+  const watchLink = createURL({
+    path: `/anime/watch/${animeId}`,
+    params: {
+      episodeId: firstEpisode.episodeId,
+      episodeNumber: `${firstEpisode.number}`,
+      provider: `${provider}`,
+    },
+  });
+  const latestLink = createURL({
+    path: `/anime/watch/${animeId}`,
+    params: {
+      episodeId: latestEpisode.episodeId,
+      episodeNumber: `${latestEpisode.number}`,
+      provider: `${provider}`,
+    },
+  });
 
   if (toWatch && watchLink) redirect(watchLink);
   if (toLatest && latestLink) redirect(latestLink);

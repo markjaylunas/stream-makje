@@ -1,12 +1,22 @@
+import { AWEpisodeSourceDataSchema } from "@/api/aniwatch-validations";
 import {
   AnimeDataSchema,
   AnimeSchema,
   AnimeSortedSchema,
   EpisodeSchema,
+  EpisodeSourceDataSchema,
 } from "@/api/consumet-validations";
 import { CardDataProps } from "@/components/card-data/card-data";
 import moment from "moment";
-import { AnimeInfo, DataObject, Episode, OtherInfo, Tag } from "./types";
+import { sourcePriority } from "./constants";
+import {
+  AnimeInfo,
+  DataObject,
+  Episode,
+  EpisodeStream,
+  OtherInfo,
+  Tag,
+} from "./types";
 import { jaroWinklerDistance, pickTitle, searchKeysInObject } from "./utils";
 
 export const consumetAnimeObjectMapper = ({
@@ -182,3 +192,34 @@ export const mapAnimeByName = async ({
     return null;
   }
 };
+
+export const metaEpisodeStreamObjectMapper = (
+  source: EpisodeSourceDataSchema
+): EpisodeStream => {
+  const sources = source.sources
+    ? source.sources.map((source) => ({
+        url: source.url,
+        type: source.isM3U8 ? "m3u8" : "",
+        quality: source.quality,
+      }))
+    : [];
+
+  const sortedSourceList = sources.sort((a, b) => {
+    return (
+      sourcePriority.indexOf(a.quality) - sourcePriority.indexOf(b.quality)
+    );
+  });
+  return {
+    sources: sortedSourceList,
+    tracks: [],
+  };
+};
+
+export const aniwatchEpisodeStreamObjectMapper = (
+  source: AWEpisodeSourceDataSchema
+): EpisodeStream => ({
+  sources: source.sources,
+  tracks: source.tracks ? source.tracks : [],
+  intro: source.intro,
+  outro: source.outro,
+});

@@ -543,4 +543,30 @@ export const Icons = {
       ></path>
     </svg>
   ),
+  sortAscending: (props: IconProps) => (
+    <svg
+      height="16"
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      width="16"
+      {...props}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12.5303 1.21967C12.2374 0.926777 11.7626 0.926777 11.4697 1.21967L9.21967 3.46967L8.68934 4L9.75 5.06066L10.2803 4.53033L11.25 3.56066V13.25V14H12.75V13.25V3.56066L13.7197 4.53033L14.25 5.06066L15.3107 4L14.7803 3.46967L12.5303 1.21967ZM1.75 4H1V5.5H1.75H5.25H6V4H5.25H1.75ZM1.75 8.25H1V9.75H1.75H4.25H5V8.25H4.25H1.75ZM1.75 12.5H1V14H1.75H7.25H8V12.5H7.25H1.75Z"
+        fill="currentColor"
+      ></path>
+    </svg>
+  ),
+  sortDescending: (props: IconProps) => (
+    <svg height="16" strokeLinejoin="round" viewBox="0 0 16 16" width="16">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M1.75 12H1V10.5H1.75H5.25H6V12H5.25H1.75ZM1.75 7.75H1V6.25H1.75H4.25H5V7.75H4.25H1.75ZM1.75 3.5H1V2H1.75H7.25H8V3.5H7.25H1.75ZM12.5303 14.7803C12.2374 15.0732 11.7626 15.0732 11.4697 14.7803L9.21967 12.5303L8.68934 12L9.75 10.9393L10.2803 11.4697L11.25 12.4393V2.75V2H12.75V2.75V12.4393L13.7197 11.4697L14.25 10.9393L15.3107 12L14.7803 12.5303L12.5303 14.7803Z"
+        fill="currentColor"
+      ></path>
+    </svg>
+  ),
 };

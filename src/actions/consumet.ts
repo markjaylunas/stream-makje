@@ -7,7 +7,7 @@ import {
   episodeDataSchema,
 } from "@/api/consumet-validations";
 import { ONE_WEEK } from "@/lib/constants";
-import { AnimeProviders } from "@/lib/types";
+import { AnimeProviderAPI, AnimeProviders } from "@/lib/types";
 
 export async function fetchPopularAnimeData({
   page = 1,
@@ -65,7 +65,7 @@ export async function fetchEpisodeData({
   provider,
 }: {
   animeId: string;
-  provider?: AnimeProviders;
+  provider?: AnimeProviderAPI;
 }) {
   try {
     const response = await fetch(

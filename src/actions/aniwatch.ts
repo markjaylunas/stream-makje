@@ -3,8 +3,11 @@
 import { aniwatchAPIQuery } from "@/api/aniwatch-api";
 import {
   aWEpisodesDataSchema,
+  aWEpisodeServersDataSchema,
+  aWEpisodeSourceDataSchema,
   aWSearchDataSchema,
 } from "@/api/aniwatch-validations";
+import { ANIME_PROVIDER } from "@/lib/constants";
 import {
   consumetAnimeInfoEpisodesObjectMapper,
   mapAnimeByName,
@@ -48,7 +51,7 @@ export async function fetchEpisodeByProviderData({
     totalEpisodes: 0,
   };
   try {
-    if (provider === "aniwatch") {
+    if (provider === "provider_1") {
       const response = await fetch(
         aniwatchAPIQuery.search({ q: encodeURIComponent(title) }),
         {
@@ -100,7 +103,7 @@ export async function fetchEpisodeByProviderData({
     } else {
       const episodeData = await fetchEpisodeData({
         animeId,
-        provider,
+        provider: "gogoanime",
       });
       const mappedEpisodeList = consumetAnimeInfoEpisodesObjectMapper(
         episodeData || []
@@ -115,5 +118,64 @@ export async function fetchEpisodeByProviderData({
   } catch (error) {
     console.log(error);
     return empty;
+  }
+}
+
+export async function fetchAWEpisodeServersData({
+  episodeId,
+}: {
+  episodeId: string;
+}) {
+  try {
+    const response = await fetch(
+      aniwatchAPIQuery.episodeServers({ episodeId }),
+      {
+        next: { revalidate: 3600 },
+      }
+    );
+
+    const data = await response.json();
+    const parsed = aWEpisodeServersDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchAWEpisodeSourceData({
+  episodeId,
+  category,
+  server,
+}: {
+  episodeId: string;
+  category?: string;
+  server?: string;
+}) {
+  try {
+    const response = await fetch(
+      aniwatchAPIQuery.episodeSource({ id: episodeId, category, server }),
+      {
+        next: { revalidate: 3600 },
+      }
+    );
+    const data = await response.json();
+    const parsed = aWEpisodeSourceDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      // console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 }

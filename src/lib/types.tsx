@@ -3,7 +3,6 @@ import { ChipProps } from "@nextui-org/react";
 import {
   ASFormatArray,
   ASGenresArray,
-  ASProviderArray,
   ASSeasonArray,
   ASSortArray,
   ASStatusArray,
@@ -48,9 +47,9 @@ export type ASFormat = (typeof ASFormatArray)[number];
 export type ASSort = (typeof ASSortArray)[number];
 export type ASGenres = (typeof ASGenresArray)[number];
 export type ASStatus = (typeof ASStatusArray)[number];
-export type ASProvider = (typeof ASProviderArray)[number];
 
-export type AnimeProviders = "gogoanime" | "aniwatch";
+export type AnimeProviders = "provider_1" | "provider_2";
+export type AnimeProviderAPI = "aniwatch" | "gogoanime";
 
 export type AnimeAdvancedSearchParams = {
   query?: string;

@@ -1,19 +1,11 @@
 "use client";
 
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
-import { fetchEpisodeData } from "@/actions/consumet";
 import { Icons } from "@/components/ui/Icons";
-import { ASProviderArray } from "@/lib/constants";
-import { consumetAnimeInfoEpisodesObjectMapper } from "@/lib/object-mapper";
-import {
-  AnimeProviders,
-  ASProvider,
-  Episode,
-  EpisodeList,
-  Status,
-} from "@/lib/types";
-import { cn, createURL, encodeEpisodeId } from "@/lib/utils";
-import { Button, ButtonGroup } from "@nextui-org/button";
+import { ANIME_PROVIDER, ANIME_PROVIDER_LIST } from "@/lib/constants";
+import { AnimeProviders, Episode, EpisodeList, Status } from "@/lib/types";
+import { cn, createURL } from "@/lib/utils";
+import { Button } from "@nextui-org/button";
 import {
   Chip,
   Dropdown,
@@ -33,10 +25,9 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import {
+import React, {
   HTMLProps,
   MutableRefObject,
-  ReactElement,
   useMemo,
   useRef,
   useState,
@@ -45,25 +36,26 @@ import {
 type Props = {
   animeEpisodeList: EpisodeList;
   animeTitle: string;
+  episodeTitle?: string;
+  currentEpisodeNumber?: string;
   className?: string;
 };
 
 export default function EpisodeListSection({
   animeTitle,
   animeEpisodeList,
+  episodeTitle,
+  currentEpisodeNumber,
   className,
 }: Props) {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
   const paramProvider = searchParams.get("provider");
-
-  const provider: AnimeProviders = ASProviderArray.includes(
-    paramProvider as ASProvider
-  )
-    ? (paramProvider as ASProvider)
-    : "aniwatch";
+  const provider =
+    typeof paramProvider === "string"
+      ? paramProvider === ANIME_PROVIDER.P2
+        ? ANIME_PROVIDER.P2
+        : ANIME_PROVIDER.P1
+      : ANIME_PROVIDER.P1;
 
   const { animeId } = useParams<{
     animeId: string;
@@ -76,11 +68,15 @@ export default function EpisodeListSection({
   const [episodeListData, setEpisodeListData] = useState(animeEpisodeList);
   const [status, setStatus] = useState<Status>("idle");
   const [selectedProvider, setSelectedProvider] = useState(new Set([provider]));
-
-  const selectedProviderValue = useMemo(
-    () => Array.from(selectedProvider).join(", ").replaceAll("_", " "),
-    [selectedProvider]
+  const [sort, setSort] = useState<"asc" | "desc">("asc");
+  const sortedList = useMemo(
+    () =>
+      episodeListData.list.sort((a, b) =>
+        sort === "asc" ? a.number - b.number : b.number - a.number
+      ),
+    [sort, episodeListData]
   );
+
   // const handleEpisodeSearchChange = useDebouncedCallback((value: string) => {
   //   const episodeNumber = parseInt(value, 10);
   //   const episodeIndex = list.findIndex(
@@ -97,9 +93,12 @@ export default function EpisodeListSection({
   //   return value;
   // }, 500);
 
-  if (animeEpisodeList.list.length <= 0) return <UpcomingAnimeChip />;
-
-  const { list, totalEpisodes } = episodeListData;
+  const { totalEpisodes } = episodeListData;
+  const description =
+    currentEpisodeNumber &&
+    `You are watching episode ${currentEpisodeNumber} of ${
+      episodeListData.totalEpisodes
+    } ${Boolean(episodeTitle) && " - " + episodeTitle}`;
 
   let activeEpisodeNumber = -1;
   // let prevEpisode: Episode | null = null;
@@ -127,13 +126,13 @@ export default function EpisodeListSection({
   // const saluteCharacter = String.fromCodePoint(saluteCD);
 
   const descriptionsMap = {
-    aniwatch: "Watch anime with subs, dubs, and various subtitles.",
-    gogoanime: "Watch anime with English subs only.",
+    provider_1: "Watch anime with subs, dubs, and various subtitles.",
+    provider_2: "Watch anime with English embedded subs only.",
   };
 
   const labelsMap = {
-    aniwatch: "Aniwatch",
-    gogoanime: "Gogoanime",
+    provider_1: "Provider 1",
+    provider_2: "Provider 2",
   };
 
   const handleChangeProvider = async (provider: AnimeProviders) => {
@@ -153,7 +152,8 @@ export default function EpisodeListSection({
       } else {
         params.delete(provider);
       }
-      replace(`${pathname}?${params.toString()}`);
+
+      window.history.pushState(null, "", `?${params.toString()}`);
     } catch (error) {
       console.log(error);
       setStatus("error");
@@ -161,12 +161,22 @@ export default function EpisodeListSection({
       setStatus("idle");
     }
   };
+
   return (
-    <section className={cn("space-y-3 min-w-[300px]", className)}>
-      {/* {activeEpisodeNumber && (
-        <p className="text-gray-500 line-clamp-2 text-tiny">{title}</p>
-      )} */}
-      <div className="flex justify-start gap-3">
+    <section className={cn("space-y-2 min-w-[300px]", className)}>
+      {activeEpisodeNumber && (
+        <p className="text-gray-500 line-clamp-2 text-tiny">{description}</p>
+      )}
+      <div className="flex justify-start gap-2">
+        <Button
+          onPress={() => setSort((v) => (v === "asc" ? "desc" : "asc"))}
+          isIconOnly
+          variant="bordered"
+          isDisabled={status === "loading"}
+          startContent={
+            sort === "asc" ? <Icons.sortAscending /> : <Icons.sortDescending />
+          }
+        />
         <Button
           onPress={() => setIsListView((v) => !v)}
           isIconOnly
@@ -192,7 +202,7 @@ export default function EpisodeListSection({
               variant="shadow"
               color="primary"
             >
-              {selectedProviderValue.toUpperCase()}
+              {labelsMap[provider] || ANIME_PROVIDER.P1}
             </Button>
           </DropdownTrigger>
           <DropdownMenu
@@ -209,16 +219,16 @@ export default function EpisodeListSection({
             className="max-w-[300px]"
           >
             <DropdownItem
-              key="aniwatch"
-              description={descriptionsMap["aniwatch"]}
+              key="provider_1"
+              description={descriptionsMap["provider_1"]}
             >
-              {labelsMap["aniwatch"]}
+              {labelsMap["provider_1"]}
             </DropdownItem>
             <DropdownItem
-              key="gogoanime"
-              description={descriptionsMap["gogoanime"]}
+              key="provider_2"
+              description={descriptionsMap["provider_2"]}
             >
-              {labelsMap["gogoanime"]}
+              {labelsMap["provider_2"]}
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
@@ -255,6 +265,11 @@ export default function EpisodeListSection({
           </ButtonGroup>
         )} */}
       </div>
+
+      {episodeListData.list.length <= 0 && (
+        <NoEpisodesFound provider={provider} />
+      )}
+
       <ScrollShadow className="w-full max-h-[400px] pb-4 scrollbar-thin scrollbar-corner-transparent scrollbar-thumb-stone-600 scrollbar-track-stone-600/50 ">
         {status === "loading" ? (
           <EpisodeViewSkeleton
@@ -263,21 +278,21 @@ export default function EpisodeListSection({
           />
         ) : isListView ? (
           <EpisodeListView
-            animeTitle={animeTitle}
             activeEpisodeNumber={activeEpisodeNumber}
             spotlightEpisodeNumber={spotlightEpisodeNumber}
             episodeRef={ref}
-            list={list}
+            list={sortedList}
             provider={provider}
+            animeId={animeId}
           />
         ) : (
           <EpisodeGridView
-            animeTitle={animeTitle}
             activeEpisodeNumber={activeEpisodeNumber}
             spotlightEpisodeNumber={spotlightEpisodeNumber}
             episodeRef={ref}
-            list={list}
+            list={sortedList}
             provider={provider}
+            animeId={animeId}
           />
         )}
       </ScrollShadow>
@@ -285,19 +300,31 @@ export default function EpisodeListSection({
   );
 }
 
-const UpcomingAnimeChip = () => (
-  <Chip radius="lg" variant="flat" className="w-full mx-auto h-fit px-8 py-4">
-    <h3 className="text-center text-2xl font-bold text-warning">
-      Upcoming Anime
-    </h3>
-    <p className="text-foreground-500 text-center text-pretty mt-2">
-      This anime hasn&apos;t been released yet so no episodes are available. Add
-      it to your{" "}
-      <span className="text-secondary-500">&ldquo;Watchlist&ldquo;</span> to get
-      notified when it&apos;s out!
-    </p>
-  </Chip>
-);
+const NoEpisodesFound = ({ provider }: { provider: AnimeProviders }) => {
+  const currentProvider: AnimeProviders =
+    provider === "provider_1" ? ANIME_PROVIDER_LIST[0] : ANIME_PROVIDER_LIST[1];
+  const otherProvider: AnimeProviders =
+    provider === "provider_1" ? ANIME_PROVIDER_LIST[1] : ANIME_PROVIDER_LIST[0];
+  return (
+    <Chip
+      radius="lg"
+      variant="flat"
+      color="warning"
+      className="w-full mx-auto h-fit px-8 py-4"
+    >
+      <h3 className="text-center text-xl font-bold text-warning">
+        No Episodes found
+      </h3>
+      <p className="text-foreground-500 text-center text-pretty mt-2">
+        No episodes in {currentProvider.split("_").join(" ").toUpperCase()}?
+        Try&nbsp;
+        <span className="text-primary-500">
+          &ldquo;{otherProvider.split("_").join(" ").toUpperCase()}&ldquo; ⬆️.
+        </span>
+      </p>
+    </Chip>
+  );
+};
 
 const EpisodeListView = ({
   list,
@@ -305,20 +332,21 @@ const EpisodeListView = ({
   activeEpisodeNumber,
   spotlightEpisodeNumber,
   episodeRef,
-  animeTitle,
+  animeId,
 }: {
   provider: AnimeProviders;
   list: Episode[];
   spotlightEpisodeNumber: number;
   activeEpisodeNumber: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
-  animeTitle: string;
+  animeId: string;
 }) => (
   <Listbox
     aria-label="Single selection example"
     variant="flat"
     disallowEmptySelection
     selectionMode="single"
+    emptyContent={<></>}
   >
     {list.map((episode, episodeIdx) => (
       <ListboxItem
@@ -326,12 +354,11 @@ const EpisodeListView = ({
         color={episode.isFiller ? "warning" : "primary"}
         textValue={episode.title || `${episode.number}`}
         href={createURL({
-          path: "/anime/watch",
+          path: `/anime/watch/${animeId}`,
           params: {
             episodeId: episode.episodeId,
             episodeNumber: `${episode.number}`,
             provider: `${provider}`,
-            animeTitle: `${animeTitle}`,
           },
         })}
         className={cn(
@@ -362,30 +389,28 @@ const EpisodeListView = ({
 const EpisodeGridView = ({
   provider,
   list,
-  animeTitle,
   activeEpisodeNumber,
   spotlightEpisodeNumber,
   episodeRef,
+  animeId,
 }: {
   provider: AnimeProviders;
-  animeTitle: string;
   list: Episode[];
   spotlightEpisodeNumber: number;
   activeEpisodeNumber: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
+  animeId: string;
 }) => (
   <div className="flex flex-wrap justify-start flex-grow gap-2 mx-auto">
     {list.map((episode, episodeIdx) => (
       <Button
         as={NextLink}
         href={createURL({
-          path: "/anime/watch",
+          path: `/anime/watch/${animeId}`,
           params: {
             episodeId: episode.episodeId,
             episodeNumber: `${episode.number}`,
             provider: `${provider}`,
-
-            animeTitle: `${animeTitle}`,
           },
         })}
         variant={episode.number === spotlightEpisodeNumber ? "shadow" : "flat"}
