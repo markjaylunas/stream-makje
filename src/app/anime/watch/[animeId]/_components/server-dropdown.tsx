@@ -1,11 +1,8 @@
 "use client";
 
 import { AWEpisodeServersSchema } from "@/api/aniwatch-validations";
-import { Icons } from "@/components/ui/Icons";
-import Text from "@/components/ui/text";
-import { cn } from "@/lib/utils";
+import { SvgIcon } from "@/components/ui/svg-icons";
 import { Button } from "@nextui-org/button";
-import { Chip } from "@nextui-org/chip";
 import {
   Dropdown,
   DropdownItem,
@@ -26,7 +23,7 @@ export default function ServerDropdown({ server }: Props) {
   return (
     <Dropdown placement="bottom-start" key={server.type}>
       <DropdownTrigger>
-        <Button size="sm" variant="flat" endContent={<Icons.chevronDown />}>
+        <Button size="sm" variant="flat" endContent={<SvgIcon.chevronDown />}>
           {server.type.toUpperCase()}
         </Button>
       </DropdownTrigger>

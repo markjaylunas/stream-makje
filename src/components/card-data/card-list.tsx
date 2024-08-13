@@ -1,4 +1,3 @@
-import { Tag } from "@/lib/types";
 import Heading from "../ui/heading";
 import CardData, { CardDataProps } from "./card-data";
 

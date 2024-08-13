@@ -22,7 +22,7 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { Icons } from "../ui/Icons";
+import { SvgIcon } from "../ui/svg-icons";
 
 type Props = {
   title?: string;
@@ -108,7 +108,7 @@ export default function VideoPlayer({
                     <Tooltip.Trigger asChild>
                       <Menu.Button className="vds-button w-24 flex items-center  gap-1 mx-1">
                         {source.quality}
-                        <Icons.chevronDown className="size-5" />
+                        <SvgIcon.chevronDown className="size-5" />
                       </Menu.Button>
                     </Tooltip.Trigger>
                     <Tooltip.Content
@@ -136,7 +136,7 @@ export default function VideoPlayer({
                           <span className="vds-radio-label">
                             {quality.quality}
                           </span>
-                          <Icons.check className="vds-icon" />
+                          <SvgIcon.check className="vds-icon" />
                         </Menu.Radio>
                       ))}
                     </Menu.RadioGroup>

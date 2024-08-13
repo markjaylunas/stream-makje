@@ -5,7 +5,7 @@ import { Button, ButtonProps } from "@nextui-org/button";
 import { Skeleton } from "@nextui-org/skeleton";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Icons } from "./Icons";
+import { SvgIcon } from "./svg-icons";
 
 export function ThemeSwitcher(props: ButtonProps) {
   const [mounted, setMounted] = useState(false);
@@ -27,9 +27,9 @@ export function ThemeSwitcher(props: ButtonProps) {
       {...props}
     >
       {theme === "dark" ? (
-        <Icons.moon className="size-5" />
+        <SvgIcon.moon className="size-5" />
       ) : (
-        <Icons.sun className="size-5" />
+        <SvgIcon.sun className="size-5" />
       )}
     </Button>
   );

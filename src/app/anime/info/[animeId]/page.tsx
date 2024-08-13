@@ -1,14 +1,14 @@
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
-import { Icons } from "@/components/ui/Icons";
-import { ANIME_PROVIDER, ANIME_PROVIDER_LIST } from "@/lib/constants";
+import { SvgIcon } from "@/components/ui/svg-icons";
+import { ANIME_PROVIDER } from "@/lib/constants";
 import {
   consumetAnimeInfoObjectMapper,
   consumetInfoAnimeObjectMapper,
 } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
-import { createURL, encodeEpisodeId, pickTitle } from "@/lib/utils";
+import { createURL, pickTitle } from "@/lib/utils";
 import { Button, ButtonGroup } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -61,7 +61,7 @@ export default async function InfoPage({
     {
       name: "rating",
       color: "primary",
-      startContent: <Icons.star className="size-3" />,
+      startContent: <SvgIcon.star className="size-3" />,
     },
   ];
 

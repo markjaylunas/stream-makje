@@ -1,6 +1,6 @@
 import BackButton from "@/components/ui/back-button";
-import { Icons } from "@/components/ui/Icons";
 import MyLink from "@/components/ui/my-link";
+import { SvgIcon } from "@/components/ui/svg-icons";
 import { Button } from "@nextui-org/button";
 
 export default async function NotFound() {
@@ -18,14 +18,14 @@ export default async function NotFound() {
       <div className="flex justify-center gap-4 ">
         <BackButton
           className="flex gap-1"
-          startContent={<Icons.arrowBack className="size-4" />}
+          startContent={<SvgIcon.arrowBack className="size-4" />}
         >
           Get back
         </BackButton>
         <MyLink href="/">
           <Button
             color="primary"
-            startContent={<Icons.home className="size-4" />}
+            startContent={<SvgIcon.home className="size-4" />}
           >
             Get to home page
           </Button>

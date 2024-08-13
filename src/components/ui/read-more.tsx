@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 type ReadMoreProps = {

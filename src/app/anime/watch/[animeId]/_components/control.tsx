@@ -1,4 +1,4 @@
-import { Icons } from "@/components/ui/Icons";
+import { SvgIcon } from "@/components/ui/svg-icons";
 import Text from "@/components/ui/text";
 import { Button, Skeleton } from "@nextui-org/react";
 import NextLink from "next/link";
@@ -26,7 +26,7 @@ export default function Control({ animeId, episodeId }: Props) {
           <Button
             as={NextLink}
             href={`/anime/info/${animeId}`}
-            startContent={<Icons.information />}
+            startContent={<SvgIcon.information />}
             size="sm"
           >
             Info

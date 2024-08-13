@@ -1,7 +1,7 @@
 "use client";
 
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
-import { Icons } from "@/components/ui/Icons";
+import { SvgIcon } from "@/components/ui/svg-icons";
 import { ANIME_PROVIDER, ANIME_PROVIDER_LIST } from "@/lib/constants";
 import { AnimeProviders, Episode, EpisodeList, Status } from "@/lib/types";
 import { cn, createURL } from "@/lib/utils";
@@ -174,7 +174,11 @@ export default function EpisodeListSection({
           variant="bordered"
           isDisabled={status === "loading"}
           startContent={
-            sort === "asc" ? <Icons.sortAscending /> : <Icons.sortDescending />
+            sort === "asc" ? (
+              <SvgIcon.sortAscending />
+            ) : (
+              <SvgIcon.sortDescending />
+            )
           }
         />
         <Button
@@ -182,14 +186,14 @@ export default function EpisodeListSection({
           isIconOnly
           variant="bordered"
           isDisabled={status === "loading"}
-          startContent={isListView ? <Icons.listOrdered /> : <Icons.grid />}
+          startContent={isListView ? <SvgIcon.listOrdered /> : <SvgIcon.grid />}
         />
 
         <Input
           isDisabled={status === "loading"}
           type="number"
           aria-label="search episode number"
-          startContent={<Icons.search />}
+          startContent={<SvgIcon.search />}
           className="max-w-32"
           placeholder="Episode #"
           // onValueChange={handleEpisodeSearchChange}
@@ -198,7 +202,7 @@ export default function EpisodeListSection({
           <DropdownTrigger>
             <Button
               isDisabled={status === "loading"}
-              endContent={<Icons.chevronDown />}
+              endContent={<SvgIcon.chevronDown />}
               variant="shadow"
               color="primary"
             >
@@ -244,7 +248,7 @@ export default function EpisodeListSection({
                   : ""
               }
               isDisabled={!Boolean(prevEpisode)}
-              startContent={<Icons.chevronDoubleLeft />}
+              startContent={<SvgIcon.chevronDoubleLeft />}
             >
               {prevEpisode ? prevEpisode.number : saluteCharacter}
             </Button>
@@ -258,7 +262,7 @@ export default function EpisodeListSection({
                   : ""
               }
               isDisabled={!Boolean(nextEpisode)}
-              endContent={<Icons.chevronDoubleRight />}
+              endContent={<SvgIcon.chevronDoubleRight />}
             >
               {nextEpisode ? nextEpisode.number : meltCharacter}
             </Button>
@@ -367,7 +371,7 @@ const EpisodeListView = ({
         )}
         endContent={
           episode.number === activeEpisodeNumber ? (
-            <Icons.playFill className="size-3" />
+            <SvgIcon.playFill className="size-3" />
           ) : (
             ""
           )
@@ -424,7 +428,7 @@ const EpisodeGridView = ({
           }}
         >
           {episode.number === activeEpisodeNumber ? (
-            <Icons.playFill />
+            <SvgIcon.playFill />
           ) : (
             episode.number
           )}

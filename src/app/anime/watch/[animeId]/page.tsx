@@ -1,7 +1,7 @@
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
-import { Icons } from "@/components/ui/Icons";
+import { SvgIcon } from "@/components/ui/svg-icons";
 import Text from "@/components/ui/text";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import {
@@ -9,7 +9,7 @@ import {
   consumetInfoAnimeObjectMapper,
 } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
-import { decodeEpisodeId, encodeEpisodeId, pickTitle } from "@/lib/utils";
+import { encodeEpisodeId, pickTitle } from "@/lib/utils";
 import { Skeleton } from "@nextui-org/react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -63,7 +63,7 @@ export default async function EpisodePage({
     {
       name: "rating",
       color: "primary",
-      startContent: <Icons.star className="size-3" />,
+      startContent: <SvgIcon.star className="size-3" />,
     },
   ];
 

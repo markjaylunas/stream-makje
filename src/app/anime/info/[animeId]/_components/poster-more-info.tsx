@@ -1,4 +1,4 @@
-import { Icons } from "@/components/ui/Icons";
+import { SvgIcon } from "@/components/ui/svg-icons";
 import { AnimeInfo } from "@/lib/types";
 import { cn, toTitleCase } from "@/lib/utils";
 import { Chip } from "@nextui-org/chip";
@@ -45,7 +45,7 @@ export default function PosterMoreInfo({ anime, classname }: Props) {
                   "text-xs mx-auto space-x-1",
                   anime?.dub && "rounded-r-none"
                 )}
-                startContent={<Icons.closedCaption className="size-3" />}
+                startContent={<SvgIcon.closedCaption className="size-3" />}
               >
                 {anime?.sub}
               </Chip>
@@ -58,7 +58,7 @@ export default function PosterMoreInfo({ anime, classname }: Props) {
                 color="secondary"
                 variant="shadow"
                 className={cn("text-xs", anime?.sub && "rounded-l-none")}
-                startContent={<Icons.microphone className="size-3" />}
+                startContent={<SvgIcon.microphone className="size-3" />}
               >
                 {anime?.dub}
               </Chip>
