@@ -41,7 +41,7 @@ export default function CardSpotlightList({ infoList }: Props) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className="absolute z-10 -bottom-4 right-16 transform -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute z-10 bottom-8 right-16 transform -translate-x-1/2 -translate-y-1/2">
         <CarouselPrevious className="ml-6" />
         <CarouselNext />
       </div>

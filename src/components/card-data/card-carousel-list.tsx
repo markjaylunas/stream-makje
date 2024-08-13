@@ -19,13 +19,13 @@ type Props = {
 };
 
 export default function CardCarouselList({ infoList, title }: Props) {
-  const [embla, setApi] = useState<CarouselApi>();
+  const [_, setApi] = useState<CarouselApi>();
   return (
     <section className="space-y-2">
       {title && (
         <Heading
           order="xl"
-          className="text-gray-700 dark:text-gray-300 px-4 md:px-10"
+          className="text-gray-700 dark:text-gray-300 px-6 md:px-10"
         >
           {title}
         </Heading>
@@ -38,12 +38,12 @@ export default function CardCarouselList({ infoList, title }: Props) {
         setApi={setApi}
         className="w-full"
       >
-        <CarouselContent className="-ml-1 ">
+        <CarouselContent className="-ml-1">
           {infoList.map((info, index) => (
             <CarouselItem
               key={`${info.id}-${index}`}
               className={cn(
-                "ml-2  basis-[38%] xs:basis-[28%] md:basis-[23%] lg:basis-[19%] xl:basis-[15%] 2xl:basis-[13%]",
+                "p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-75 ease-soft-spring rounded-xl basis-[38%] xs:basis-[28%] md:basis-[23%] lg:basis-[19%] xl:basis-[15%] 2xl:basis-[13%]",
                 index === 0 && "ml-4 md:ml-10"
               )}
             >
