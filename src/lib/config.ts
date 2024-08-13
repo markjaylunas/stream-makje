@@ -2,7 +2,7 @@ import { MainNavItem } from "./types";
 
 export const siteConfig = {
   name: "Stream",
-  url: "https://myanime.makje.com",
+  url: "https://stream.makje.com",
   description:
     "A premier platform for streaming a diverse collection of anime content. We offer high-quality, uninterrupted viewing experiences to anime enthusiasts around the globe.",
   links: {
@@ -24,5 +24,3 @@ export const routesConfig: RoutesConfig = {
     },
   ],
 };
-
-export const API_BASE_URL = `${process.env.CONSUMET_API_BASE_URL}/meta/anilist`;
