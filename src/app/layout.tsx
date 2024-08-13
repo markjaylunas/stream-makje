@@ -26,7 +26,7 @@ export default async function RootLayout({
       className={cn(GeistSans.variable, GeistMono.variable)}
       suppressHydrationWarning
     >
-      <body className="min-h-screen text-foreground bg-background">
+      <body className="min-h-screen max-w-screen-2xl mx-auto text-foreground bg-background">
         <NextTopLoader showSpinner={false} height={5} />
         <Providers>
           {authModal}
