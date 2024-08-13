@@ -1,7 +1,7 @@
 import { TitleSchema } from "@/api/consumet-validations";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { DataObject, Tag } from "./types";
+import { DataObject, SearchParamValue, Tag } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -63,10 +63,13 @@ export function searchKeysInObject(
   return results;
 }
 
-export function createURL({ path, params }: { path: string; params: object }) {
-  const paramString = Object.entries(params)
-    .map(([key, value]) => `${key}=${value}`)
-    .join("&");
+export function createURL({ path, params }: { path: string; params?: object }) {
+  let paramString;
+  if (params) {
+    paramString = Object.entries(params)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&");
+  }
   return `${path}?${paramString}`;
 }
 
@@ -121,3 +124,12 @@ export const jaroWinklerDistance = (s1: string, s2: string) => {
 
   return jaroWinklerDistance;
 };
+
+export const parseSearchParamInt = ({
+  value,
+  defaultValue,
+}: {
+  value: SearchParamValue;
+  defaultValue: number;
+}) =>
+  typeof value === "string" ? parseInt(value) || defaultValue : defaultValue;

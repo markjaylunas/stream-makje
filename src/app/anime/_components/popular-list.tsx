@@ -2,18 +2,23 @@ import { fetchPopularAnimeData } from "@/actions/consumet";
 import { default as CardList } from "@/components/card-data/card-list";
 import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
+import { parseSearchParamInt } from "@/lib/utils";
 
 export default async function PopularList({
   searchParams,
 }: {
   searchParams?: SearchParams;
 }) {
-  const page =
-    typeof searchParams?.page === "string"
-      ? parseInt(searchParams?.page) || 1
-      : 1;
+  const page = parseSearchParamInt({
+    value: searchParams?.page,
+    defaultValue: 1,
+  });
+  const perPage = parseSearchParamInt({
+    value: searchParams?.perPage,
+    defaultValue: 24,
+  });
 
-  const data = await fetchPopularAnimeData({ page: Number(page) || 1 });
+  const data = await fetchPopularAnimeData({ page: page, perPage });
 
   if (!data) throw new Error("Failed to fetch (Anime List) data");
 

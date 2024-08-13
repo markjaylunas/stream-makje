@@ -35,9 +35,12 @@ export type Tag = {
   variant?: ChipProps["variant"];
   color?: ChipProps["color"];
   startContent?: React.ReactNode;
+  endContent?: React.ReactNode;
 };
 
 export type Status = "idle" | "loading" | "error";
+
+export type SearchParamValue = string | string[] | undefined;
 
 // Start: Consumet API types
 

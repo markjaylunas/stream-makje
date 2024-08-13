@@ -10,6 +10,7 @@ import NextLink from "next/link";
 export type CardDataProps = {
   id: string;
   name: string;
+  description?: string;
   image: string;
   cover?: string;
   rank?: number;

@@ -37,6 +37,34 @@ export async function fetchPopularAnimeData({
   }
 }
 
+export async function fetchTrendingAnimeData({
+  page = 1,
+  perPage = 20,
+}: {
+  page?: number;
+  perPage?: number;
+}) {
+  try {
+    const response = await fetch(
+      animeAPIQuery.meta.anilist.trending({ page, perPage }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+    const parsed = animeSortedDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
 export async function fetchAnimeData({ animeId }: { animeId: string }) {
   try {
     const response = await fetch(
