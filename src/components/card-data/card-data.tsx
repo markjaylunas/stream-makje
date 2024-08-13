@@ -1,5 +1,3 @@
-"use client";
-
 import { Tag } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Card, CardFooter, CardHeader } from "@nextui-org/card";
@@ -38,6 +36,12 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
             {tag.value}
           </Chip>
         ))}
+
+        <div className="flex w-full justify-end">
+          {Boolean(props.rank) && (
+            <p className="text-7xl font-black text-white/75">{props.rank}</p>
+          )}
+        </div>
       </CardHeader>
       <div
         className={cn(
@@ -55,12 +59,6 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
           img: "object-cover min-w-full min-h-full",
         }}
       />
-
-      {Boolean(props.rank) && (
-        <p className="absolute z-20 top-1/3 right-2 text-8xl font-black text-white/75">
-          {props.rank}
-        </p>
-      )}
 
       <CardFooter className="absolute z-20 bottom-0 p-2 flex items-start flex-col gap-2">
         <h6 className="w-full text-white font-normal text-sm line-clamp-2 text-left text-pretty">

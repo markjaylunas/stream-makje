@@ -16,11 +16,9 @@ export default async function Page() {
         <SpotlightList />
       </Suspense>
 
-      <section className="container max-w-5xl mx-auto min-h-screen px-2 py-4 md:px-4 space-y-8">
-        <Suspense fallback={<>loading...</>}>
-          <PopularList />
-        </Suspense>
-      </section>
+      <Suspense fallback={<>loading...</>}>
+        <PopularList />
+      </Suspense>
     </main>
   );
 }

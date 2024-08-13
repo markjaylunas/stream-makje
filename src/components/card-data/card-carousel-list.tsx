@@ -1,0 +1,59 @@
+"use client";
+
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import Heading from "../ui/heading";
+import CardData, { CardDataProps } from "./card-data";
+
+type Props = {
+  title?: string;
+  infoList: CardDataProps[];
+};
+
+export default function CardCarouselList({ infoList, title }: Props) {
+  const [embla, setApi] = useState<CarouselApi>();
+  return (
+    <section className="space-y-2">
+      {title && (
+        <Heading
+          order="xl"
+          className="text-gray-700 dark:text-gray-300 px-4 md:px-10"
+        >
+          {title}
+        </Heading>
+      )}
+      <Carousel
+        opts={{
+          dragFree: true,
+          slidesToScroll: "auto",
+        }}
+        setApi={setApi}
+        className="w-full"
+      >
+        <CarouselContent className="-ml-1 ">
+          {infoList.map((info, index) => (
+            <CarouselItem
+              key={`${info.id}-${index}`}
+              className={cn(
+                "ml-2  basis-[38%] xs:basis-[28%] md:basis-[23%] lg:basis-[19%] xl:basis-[15%] 2xl:basis-[13%]",
+                index === 0 && "ml-4 md:ml-10"
+              )}
+            >
+              <CardData {...info} key={info.id} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="absolute z-10 top-1/2 left-8 transform -translate-x-1/2 -translate-y-1/2" />
+        <CarouselNext className="absolute z-10 top-1/2 right-0 transform -translate-x-1/2 -translate-y-1/2" />
+      </Carousel>
+    </section>
+  );
+}

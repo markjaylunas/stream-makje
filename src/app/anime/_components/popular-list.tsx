@@ -1,5 +1,5 @@
 import { fetchPopularAnimeData } from "@/actions/consumet";
-import { default as CardList } from "@/components/card-data/card-list";
+import CardCarouselList from "@/components/card-data/card-carousel-list";
 import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
@@ -32,5 +32,9 @@ export default async function PopularList({
     isRanked: true,
   });
 
-  return <CardList title="Popular" infoList={animeList} />;
+  return (
+    <section>
+      <CardCarouselList title="Popular" infoList={animeList} />
+    </section>
+  );
 }

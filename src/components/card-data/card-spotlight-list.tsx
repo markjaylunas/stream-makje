@@ -5,7 +5,8 @@ import {
   CarouselApi,
   CarouselContent,
   CarouselItem,
-  CarouselNextPrev,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useState } from "react";
@@ -40,10 +41,10 @@ export default function CardSpotlightList({ infoList }: Props) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselNextPrev
-        className="right-4 sm:right-2  bottom-2"
-        variant="secondary"
-      />
+      <div className="absolute z-10 -bottom-4 right-16 transform -translate-x-1/2 -translate-y-1/2">
+        <CarouselPrevious className="ml-6" />
+        <CarouselNext />
+      </div>
     </Carousel>
   );
 }

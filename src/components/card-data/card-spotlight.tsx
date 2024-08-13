@@ -16,7 +16,7 @@ export default function CardSpotlight(anime: CardDataProps) {
   });
 
   const infoLink = createURL({
-    path: `/anime/watch/${anime.id}`,
+    path: `/anime/info/${anime.id}`,
   });
 
   return (
@@ -48,7 +48,7 @@ export default function CardSpotlight(anime: CardDataProps) {
         }}
       />
 
-      <CardFooter className="absolute flex items-start flex-col pl-4 md:pl-12  z-20 bottom-0 ">
+      <CardFooter className="absolute flex items-start flex-col pl-4 md:pl-28  z-20 bottom-0">
         {Boolean(anime.rank) && (
           <p className="text-2xl font-black text-foreground-500/70 ">
             {moment.localeData().ordinal(anime.rank || 0)}&nbsp;
