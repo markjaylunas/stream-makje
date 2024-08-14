@@ -204,7 +204,7 @@ export default function EpisodeListSection({
               isDisabled={status === "loading"}
               endContent={<SvgIcon.chevronDown />}
               variant="shadow"
-              color="primary"
+              color="secondary"
             >
               {labelsMap[provider] || ANIME_PROVIDER.P1}
             </Button>

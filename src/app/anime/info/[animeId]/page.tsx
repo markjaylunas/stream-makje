@@ -105,12 +105,11 @@ export default async function InfoPage({
     <main className="relative mb-12">
       <InfoSection anime={animeInfo}>
         {Boolean(watchLink) && Boolean(latestLink) && (
-          <ButtonGroup className="sm:w-fit w-full">
+          <ButtonGroup color="primary" size="lg" className="sm:w-fit w-full">
             <Button
               as={NextLink}
               href={watchLink || ""}
-              size="lg"
-              color="primary"
+              variant="shadow"
               className="text-xl font-semibold w-full"
               isDisabled={watchLink === null}
             >
@@ -119,8 +118,6 @@ export default async function InfoPage({
             <Button
               as={NextLink}
               href={latestLink || ""}
-              size="lg"
-              color="primary"
               variant="bordered"
               className="text-xl font-semibold w-full"
               isDisabled={latestLink === null}
