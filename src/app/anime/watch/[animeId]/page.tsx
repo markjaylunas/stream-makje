@@ -135,7 +135,9 @@ export default async function EpisodePage({
             animeEpisodeList={episodeList}
             animeTitle={animeInfo.name}
             episodeTitle={episode?.title || ""}
-            currentEpisodeNumber={episodeNumber}
+            currentEpisodeNumber={
+              episodeNumber ? parseInt(episodeNumber) : undefined
+            }
           />
         </div>
       </section>

@@ -37,7 +37,7 @@ type Props = {
   animeEpisodeList: EpisodeList;
   animeTitle: string;
   episodeTitle?: string;
-  currentEpisodeNumber?: string;
+  currentEpisodeNumber?: number;
   className?: string;
 };
 
@@ -100,7 +100,6 @@ export default function EpisodeListSection({
       episodeListData.totalEpisodes
     } ${Boolean(episodeTitle) && " - " + episodeTitle}`;
 
-  let activeEpisodeNumber = -1;
   // let prevEpisode: Episode | null = null;
   // let nextEpisode: Episode | null = null;
   // let title = "";
@@ -164,7 +163,7 @@ export default function EpisodeListSection({
 
   return (
     <section className={cn("space-y-2 min-w-[300px]", className)}>
-      {activeEpisodeNumber && (
+      {currentEpisodeNumber && (
         <p className="text-gray-500 line-clamp-2 text-tiny">{description}</p>
       )}
       <div className="flex justify-start gap-2">
@@ -282,7 +281,7 @@ export default function EpisodeListSection({
           />
         ) : isListView ? (
           <EpisodeListView
-            activeEpisodeNumber={activeEpisodeNumber}
+            currentEpisodeNumber={currentEpisodeNumber}
             spotlightEpisodeNumber={spotlightEpisodeNumber}
             episodeRef={ref}
             list={sortedList}
@@ -291,7 +290,7 @@ export default function EpisodeListSection({
           />
         ) : (
           <EpisodeGridView
-            activeEpisodeNumber={activeEpisodeNumber}
+            currentEpisodeNumber={currentEpisodeNumber}
             spotlightEpisodeNumber={spotlightEpisodeNumber}
             episodeRef={ref}
             list={sortedList}
@@ -333,7 +332,7 @@ const NoEpisodesFound = ({ provider }: { provider: AnimeProviders }) => {
 const EpisodeListView = ({
   list,
   provider,
-  activeEpisodeNumber,
+  currentEpisodeNumber,
   spotlightEpisodeNumber,
   episodeRef,
   animeId,
@@ -341,7 +340,7 @@ const EpisodeListView = ({
   provider: AnimeProviders;
   list: Episode[];
   spotlightEpisodeNumber: number;
-  activeEpisodeNumber: number;
+  currentEpisodeNumber?: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
   animeId: string;
 }) => (
@@ -357,20 +356,25 @@ const EpisodeListView = ({
         startContent={episode.number}
         color={episode.isFiller ? "warning" : "primary"}
         textValue={episode.title || `${episode.number}`}
-        href={createURL({
-          path: `/anime/watch/${animeId}`,
-          params: {
-            episodeId: episode.episodeId,
-            episodeNumber: `${episode.number}`,
-            provider: `${provider}`,
-          },
-        })}
+        isReadOnly={currentEpisodeNumber === episode.number}
+        href={
+          currentEpisodeNumber !== episode.number
+            ? createURL({
+                path: `/anime/watch/${animeId}`,
+                params: {
+                  episodeId: episode.episodeId,
+                  episodeNumber: `${episode.number}`,
+                  provider: `${provider}`,
+                },
+              })
+            : undefined
+        }
         className={cn(
           "pl-2",
           spotlightEpisodeNumber === episode.number && "text-secondary-500"
         )}
         endContent={
-          episode.number === activeEpisodeNumber ? (
+          episode.number === currentEpisodeNumber ? (
             <SvgIcon.playFill className="size-3" />
           ) : (
             ""
@@ -393,7 +397,7 @@ const EpisodeListView = ({
 const EpisodeGridView = ({
   provider,
   list,
-  activeEpisodeNumber,
+  currentEpisodeNumber,
   spotlightEpisodeNumber,
   episodeRef,
   animeId,
@@ -401,7 +405,7 @@ const EpisodeGridView = ({
   provider: AnimeProviders;
   list: Episode[];
   spotlightEpisodeNumber: number;
-  activeEpisodeNumber: number;
+  currentEpisodeNumber?: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
   animeId: string;
 }) => (
@@ -419,6 +423,12 @@ const EpisodeGridView = ({
         })}
         variant={episode.number === spotlightEpisodeNumber ? "shadow" : "flat"}
         color="primary"
+        isDisabled={currentEpisodeNumber === episode.number}
+        startContent={
+          currentEpisodeNumber === episode.number && (
+            <SvgIcon.playFill className="size-3" />
+          )
+        }
         isIconOnly
         key={episode.episodeId}
       >
@@ -427,7 +437,7 @@ const EpisodeGridView = ({
             episodeRef.current[episodeIdx] = el;
           }}
         >
-          {episode.number === activeEpisodeNumber ? (
+          {episode.number === currentEpisodeNumber ? (
             <SvgIcon.playFill />
           ) : (
             episode.number
