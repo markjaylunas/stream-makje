@@ -22,19 +22,6 @@ export default function Control({ animeId, episodeId }: Props) {
         <Suspense fallback={<Skeleton className=" w-full rounded-xl" />}>
           <ServerList episodeId={episodeId} />
         </Suspense>
-        <div className="flex justify-start md:justify-end gap-2 flex-wrap">
-          <Button
-            as={NextLink}
-            href={`/anime/info/${animeId}`}
-            startContent={<SvgIcon.information />}
-            size="sm"
-          >
-            Info
-          </Button>
-
-          {/* <span>score</span>
-          <span>status</span> */}
-        </div>
       </section>
     </div>
   );

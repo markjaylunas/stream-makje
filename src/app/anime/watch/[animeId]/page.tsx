@@ -1,6 +1,7 @@
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
+import Heading from "@/components/ui/heading";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import Text from "@/components/ui/text";
 import { ANIME_PROVIDER } from "@/lib/constants";
@@ -10,7 +11,8 @@ import {
 } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
 import { encodeEpisodeId, pickTitle } from "@/lib/utils";
-import { Skeleton } from "@nextui-org/react";
+import { Button, Skeleton, Spacer } from "@nextui-org/react";
+import NextLink from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import EpisodeListSection from "../../info/[animeId]/_components/episode-list-section";
@@ -106,12 +108,29 @@ export default async function EpisodePage({
             />
           </Suspense>
 
+          <div className="flex justify-start md:justify-between gap-2 flex-wrap">
+            <Heading className="text-primary-500 px-4 sm:px-0">
+              {animeInfo.name}
+            </Heading>
+            <Button
+              as={NextLink}
+              href={`/anime/info/${animeId}`}
+              startContent={<SvgIcon.information />}
+              size="sm"
+            >
+              Info
+            </Button>
+
+            {/* <span>score</span>
+          <span>status</span> */}
+          </div>
+
+          <Spacer className="h-2" />
+
           <Control animeId={animeId} episodeId={episodeId} />
         </div>
 
         <div className="col-span-full md:col-span-3 px-4 md:px-0">
-          <Text className="text-primary-500 font-medium">{animeInfo.name}</Text>
-
           <EpisodeListSection
             animeEpisodeList={episodeList}
             animeTitle={animeInfo.name}
@@ -126,6 +145,7 @@ export default async function EpisodePage({
           title={category.name}
           infoList={category.list}
           key={category.name}
+          className="px-2"
         />
       ))}
     </>
