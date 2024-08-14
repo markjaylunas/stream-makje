@@ -69,7 +69,7 @@ export default function CardSpotlight(anime: CardDataProps) {
                 variant={tag.variant}
                 startContent={tag.startContent}
                 endContent={tag.endContent}
-                key={Array.isArray(tag.value) ? tag.value[0] : tag.value}
+                key={`${tag.name}-${tag.value}`}
               >
                 {tag.value}
               </Chip>
