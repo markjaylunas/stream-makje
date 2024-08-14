@@ -1,10 +1,11 @@
-import { fetchPopularAnimeData } from "@/actions/consumet";
+import { fetchAiringScheduleAnimeData } from "@/actions/consumet";
 import CardCarouselList from "@/components/card-data/card-carousel-list";
+import { formatTimestamp } from "@/lib/client-utils";
 import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
 
-export default async function PopularList({
+export default async function AiringScheduleList({
   searchParams,
 }: {
   searchParams?: SearchParams;
@@ -18,19 +19,27 @@ export default async function PopularList({
     defaultValue: 24,
   });
 
-  const data = await fetchPopularAnimeData({ page: page, perPage });
+  const data = await fetchAiringScheduleAnimeData({ page: page, perPage });
 
   if (!data) throw new Error("Failed to fetch (Anime List) data");
 
   const tagList: Tag[] = [
     { name: "type", color: "secondary" },
-    { name: "releaseDate", color: "success" },
+    {
+      name: "episode",
+      color: "default",
+      startContent: <span>Episode </span>,
+    },
+    { name: "airingAt", color: "primary", isCentered: true },
   ];
   const animeList = consumetAnimeObjectMapper({
     animeList: data.results,
     tagList,
-    isRanked: true,
   });
 
-  return <CardCarouselList title="Popular" infoList={animeList} className="" />;
+  return (
+    <section>
+      <CardCarouselList title="Airing Schedules" infoList={animeList} />
+    </section>
+  );
 }

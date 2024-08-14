@@ -36,6 +36,7 @@ export type Tag = {
   color?: ChipProps["color"];
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
+  isCentered?: boolean;
 };
 
 export type Status = "idle" | "loading" | "error";

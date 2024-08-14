@@ -1,5 +1,6 @@
 import { TitleSchema } from "@/api/consumet-validations";
 import { type ClassValue, clsx } from "clsx";
+import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { DataObject, SearchParamValue, Tag } from "./types";
 
@@ -57,7 +58,9 @@ export function searchKeysInObject(
   // Map the search tags to include the `value` key
   const results: Tag[] = search.map((tag) => ({
     ...tag,
-    value: valuesMap[tag.name] || "", // Add `value` key from valuesMap or empty if not found
+    value: tag.formatter
+      ? tag.formatter(valuesMap[tag.name] || "")
+      : valuesMap[tag.name] || "", // Add `value` key from valuesMap or empty if not found
   }));
 
   return results;
@@ -133,3 +136,8 @@ export const parseSearchParamInt = ({
   defaultValue: number;
 }) =>
   typeof value === "string" ? parseInt(value) || defaultValue : defaultValue;
+
+export function formatTimestamp(timestamp: number): string {
+  const date = moment.unix(timestamp);
+  return date.format("MM-DD HH:mm").toString();
+}

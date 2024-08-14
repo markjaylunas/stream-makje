@@ -1,5 +1,5 @@
 import { Tag } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, formatTimestamp } from "@/lib/utils";
 import { Card, CardFooter, CardHeader } from "@nextui-org/card";
 import { Image } from "@nextui-org/image";
 import { Chip } from "@nextui-org/react";
@@ -16,6 +16,8 @@ export type CardDataProps = {
 };
 
 export default function CardData({ tagList = [], ...props }: CardDataProps) {
+  const filteredTagList = tagList.filter((tag) => !tag.isCentered);
+  const centerTagList = tagList.filter((tag) => tag.isCentered);
   return (
     <Card
       as={NextLink}
@@ -23,7 +25,7 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
       className="relative group h-full w-full mx-auto aspect-2/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
     >
       <CardHeader className="absolute z-20 top-0 p-2 flex flex-wrap gap-2 justify-between items-end">
-        {tagList.map((tag) => (
+        {filteredTagList.map((tag) => (
           <Chip
             radius="sm"
             size="sm"
@@ -60,7 +62,23 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
       />
 
       <CardFooter className="absolute z-20 bottom-0 p-2 flex items-start flex-col gap-2">
-        <h6 className="text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1 w-full font-normal text-sm line-clamp-2 text-left text-pretty">
+        <div className="flex justify-center items-center w-full">
+          {centerTagList.map((tag) => (
+            <Chip
+              radius="sm"
+              size="sm"
+              color={tag.color}
+              variant={tag.variant}
+              startContent={tag.startContent}
+              key={Array.isArray(tag.value) ? tag.value[0] : tag.value}
+            >
+              {tag.name === "airingAt"
+                ? formatTimestamp(Number(tag.value))
+                : tag.value}
+            </Chip>
+          ))}
+        </div>
+        <h6 className="text-white text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1 w-full font-normal text-sm line-clamp-2 text-left text-pretty">
           {props.name}
         </h6>
       </CardFooter>

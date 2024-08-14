@@ -132,3 +132,63 @@ export async function fetchEpisodeData({
     return null;
   }
 }
+
+export async function fetchRecentEpisodesAnimeData({
+  page,
+  perPage,
+  provider,
+}: {
+  page?: number;
+  perPage?: number;
+  provider?: AnimeProviders;
+}) {
+  try {
+    const response = await fetch(
+      animeAPIQuery.meta.anilist.recentEpisodes({ page, perPage, provider }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = animeSortedDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchAiringScheduleAnimeData({
+  page = 1,
+  perPage = 20,
+}: {
+  page?: number;
+  perPage?: number;
+}) {
+  try {
+    const response = await fetch(
+      animeAPIQuery.meta.anilist.airingSchedule({ page, perPage }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = animeSortedDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
