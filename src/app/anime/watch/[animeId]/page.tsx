@@ -10,10 +10,10 @@ import {
   consumetInfoAnimeObjectMapper,
 } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
-import { encodeEpisodeId, pickTitle } from "@/lib/utils";
+import { createURL, encodeEpisodeId, pickTitle } from "@/lib/utils";
 import { Button, Skeleton, Spacer } from "@nextui-org/react";
 import NextLink from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import EpisodeListSection from "../../info/[animeId]/_components/episode-list-section";
 import Control from "./_components/control";
@@ -30,8 +30,9 @@ export default async function EpisodePage({
 
   const episodeId =
     typeof searchParams?.episodeId === "string"
-      ? searchParams?.episodeId || ""
-      : "";
+      ? searchParams?.episodeId || undefined
+      : undefined;
+
   const episodeNumber =
     typeof searchParams?.episodeNumber === "string"
       ? searchParams?.episodeNumber || ""
@@ -60,6 +61,29 @@ export default async function EpisodePage({
     }),
   ]);
 
+  if (episodeId === "undefined" || !episodeId) {
+    let episode = null;
+
+    if (episodeNumber) {
+      episode = episodeList.list.find(
+        (episode) => episode.number === Number(episodeNumber)
+      );
+    } else {
+      episode = episodeList.list[0];
+    }
+    if (!episode) return redirect(`/anime/info/${animeInfo.id}`);
+
+    return redirect(
+      createURL({
+        path: `/anime/watch/${animeInfo.id}`,
+        params: {
+          episodeId: episode.episodeId,
+          episodeNumber: episode.number,
+          provider: provider,
+        },
+      })
+    );
+  }
   const tagList: Tag[] = [
     { name: "type", color: "warning" },
     {
@@ -108,7 +132,7 @@ export default async function EpisodePage({
             />
           </Suspense>
 
-          <div className="flex justify-start md:justify-between gap-2 flex-wrap">
+          <div className="flex justify-start md:justify-between gap-2 flex-wrap mt-2">
             <Heading className="text-primary-500 px-4 sm:px-0">
               {animeInfo.name}
             </Heading>

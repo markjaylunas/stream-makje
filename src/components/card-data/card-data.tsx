@@ -1,5 +1,6 @@
+import { ANIME_PROVIDER } from "@/lib/constants";
 import { Tag } from "@/lib/types";
-import { cn, formatTimestamp } from "@/lib/utils";
+import { cn, createURL, formatTimestamp } from "@/lib/utils";
 import { Card, CardFooter, CardHeader } from "@nextui-org/card";
 import { Image } from "@nextui-org/image";
 import { Chip } from "@nextui-org/react";
@@ -16,12 +17,24 @@ export type CardDataProps = {
 };
 
 export default function CardData({ tagList = [], ...props }: CardDataProps) {
+  let link = `/anime/info/${props.id}`;
   const filteredTagList = tagList.filter((tag) => !tag.isCentered);
   const centerTagList = tagList.filter((tag) => tag.isCentered);
+  const episodeTag = tagList.filter((tag) => tag.name === "episodeNumber")[0];
+  if (episodeTag)
+    link = createURL({
+      path: `/anime/watch/${props.id}`,
+      params: {
+        episodeId: undefined,
+        episodeNumber: `${episodeTag.value}`,
+        provider: ANIME_PROVIDER.P1,
+      },
+    });
+
   return (
     <Card
       as={NextLink}
-      href={`/anime/info/${props.id}`}
+      href={link}
       className="relative group h-full w-full mx-auto aspect-2/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
     >
       <CardHeader className="absolute z-20 top-0 p-2 flex flex-wrap gap-2 justify-between items-end">
