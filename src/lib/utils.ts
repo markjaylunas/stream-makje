@@ -64,14 +64,17 @@ export function searchKeysInObject(
   return results;
 }
 
-export function createURL({ path, params }: { path: string; params?: object }) {
-  let paramString;
-  if (params) {
-    paramString = Object.entries(params)
-      .map(([key, value]) => `${key}=${value}`)
-      .join("&");
-  }
-  return `${path}?${paramString}`;
+export function createURL({
+  path,
+  params,
+}: {
+  path: string;
+  params?: Record<string, any>;
+}) {
+  const paramString = params
+    ? "?" + new URLSearchParams(params as Record<string, string>).toString()
+    : "";
+  return `${path}${paramString}`;
 }
 
 // Helper function to calculate Jaro-Winkler distance

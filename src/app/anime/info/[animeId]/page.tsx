@@ -110,7 +110,7 @@ export default async function InfoPage({
               as={NextLink}
               href={watchLink || ""}
               variant="shadow"
-              className="text-xl font-semibold w-full"
+              className="font-semibold w-full"
               isDisabled={watchLink === null}
             >
               Watch Now
@@ -119,7 +119,7 @@ export default async function InfoPage({
               as={NextLink}
               href={latestLink || ""}
               variant="bordered"
-              className="text-xl font-semibold w-full"
+              className="font-semibold w-full"
               isDisabled={latestLink === null}
             >
               Latest

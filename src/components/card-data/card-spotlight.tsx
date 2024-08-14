@@ -10,9 +10,6 @@ import { CardDataProps } from "./card-data";
 export default function CardSpotlight(anime: CardDataProps) {
   const watchLink = createURL({
     path: `/anime/watch/${anime.id}`,
-    params: {
-      watchNow: true,
-    },
   });
 
   const infoLink = createURL({
@@ -91,7 +88,7 @@ export default function CardSpotlight(anime: CardDataProps) {
             variant="bordered"
             className="font-medium"
           >
-            Detail
+            More Info
           </Button>
         </ButtonGroup>
       </CardFooter>

@@ -142,7 +142,7 @@ export default async function EpisodePage({
               startContent={<SvgIcon.information />}
               size="sm"
             >
-              Info
+              More Info
             </Button>
 
             {/* <span>score</span>
