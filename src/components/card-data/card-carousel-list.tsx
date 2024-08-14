@@ -43,7 +43,7 @@ export default function CardCarouselList({ infoList, title }: Props) {
             <CarouselItem
               key={`${info.id}-${index}`}
               className={cn(
-                "p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-75 ease-soft-spring rounded-xl basis-[38%] xs:basis-[28%] md:basis-[23%] lg:basis-[19%] xl:basis-[15%] 2xl:basis-[13%]",
+                "p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-200 ease-soft-spring rounded-xl basis-[38%] xs:basis-[28%] md:basis-[23%] lg:basis-[19%] xl:basis-[15%] 2xl:basis-[13%]",
                 index === 0 && "ml-4 md:ml-10"
               )}
             >
