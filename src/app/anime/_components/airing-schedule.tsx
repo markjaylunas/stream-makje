@@ -1,6 +1,5 @@
 import { fetchAiringScheduleAnimeData } from "@/actions/consumet";
 import CardCarouselList from "@/components/card-data/card-carousel-list";
-import { formatTimestamp } from "@/lib/client-utils";
 import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";

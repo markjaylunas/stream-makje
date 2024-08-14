@@ -58,9 +58,7 @@ export function searchKeysInObject(
   // Map the search tags to include the `value` key
   const results: Tag[] = search.map((tag) => ({
     ...tag,
-    value: tag.formatter
-      ? tag.formatter(valuesMap[tag.name] || "")
-      : valuesMap[tag.name] || "", // Add `value` key from valuesMap or empty if not found
+    value: valuesMap[tag.name],
   }));
 
   return results;
