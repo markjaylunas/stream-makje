@@ -164,7 +164,7 @@ export default function EpisodeListSection({
   return (
     <section className={cn("space-y-2 min-w-[300px]", className)}>
       {currentEpisodeNumber && (
-        <p className="text-gray-500 line-clamp-2 text-tiny">{description}</p>
+        <p className="text-gray-500 line-clamp-3">{description}</p>
       )}
       <div className="flex justify-start gap-2">
         <Button
