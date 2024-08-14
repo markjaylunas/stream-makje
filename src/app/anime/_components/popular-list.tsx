@@ -32,5 +32,7 @@ export default async function PopularList({
     isRanked: true,
   });
 
-  return <CardCarouselList title="Popular" infoList={animeList} className="" />;
+  return (
+    <CardCarouselList title="Popular" infoList={animeList} className="-ml-1" />
+  );
 }

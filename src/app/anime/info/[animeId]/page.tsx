@@ -10,7 +10,7 @@ import {
 } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
 import { createURL, pickTitle } from "@/lib/utils";
-import { Button, ButtonGroup } from "@nextui-org/react";
+import { Button, ButtonGroup, Spacer } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
 import EpisodeListSection from "./_components/episode-list-section";
@@ -133,21 +133,25 @@ export default async function InfoPage({
         />
       </InfoSection>
 
+      <Spacer className="h-12" />
+
       {animeRelations.list.length > 0 && (
         <CardList
           title={animeRelations.name}
           infoList={animeRelations.list}
           key={animeRelations.name}
-          className="max-w-screen-xl mx-auto mt-12 px-2"
+          className="max-w-screen-2xl mx-auto mt-12 px-2 md:px-12"
         />
       )}
+
+      <Spacer className="h-12" />
 
       {animeRecommendations.list.length > 0 && (
         <CardList
           title={animeRecommendations.name}
           infoList={animeRecommendations.list}
           key={animeRecommendations.name}
-          className="max-w-screen-xl mx-auto mt-12 px-2"
+          className="max-w-screen-2xl mx-auto px-2 md:px-12"
         />
       )}
     </main>

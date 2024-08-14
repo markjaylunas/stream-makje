@@ -1,5 +1,6 @@
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
+import CardCarouselList from "@/components/card-data/card-carousel-list";
 import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
 import { SvgIcon } from "@/components/ui/svg-icons";
@@ -85,7 +86,7 @@ export default async function EpisodePage({
     );
   }
   const tagList: Tag[] = [
-    { name: "type", color: "warning" },
+    { name: "type", color: "secondary" },
     {
       name: "rating",
       color: "primary",
@@ -93,19 +94,18 @@ export default async function EpisodePage({
     },
   ];
 
-  const animeCategoryList = [
-    {
-      name: "Relations",
-      list: consumetInfoAnimeObjectMapper({ animeList: relations, tagList }),
-    },
-    {
-      name: "Recommendations",
-      list: consumetInfoAnimeObjectMapper({
-        animeList: recommendations || [],
-        tagList,
-      }),
-    },
-  ].filter((category) => category.list.length > 0);
+  const relationList = {
+    name: "Relations",
+    list: consumetInfoAnimeObjectMapper({ animeList: relations, tagList }),
+  };
+
+  const recommendationList = {
+    name: "Recommendations",
+    list: consumetInfoAnimeObjectMapper({
+      animeList: recommendations || [],
+      tagList,
+    }),
+  };
 
   const hasEpisode = episodeList.list.length > 0;
   const episodeIndex = hasEpisode
@@ -118,7 +118,7 @@ export default async function EpisodePage({
 
   return (
     <>
-      <section className="grid grid-cols-10 gap-4 w-full md:px-4 ">
+      <section className="grid grid-cols-10 gap-4 w-full md:px-14">
         <div className="col-span-full md:col-span-7 ">
           <Suspense
             fallback={<Skeleton className=" w-full aspect-video rounded-xl" />}
@@ -132,18 +132,18 @@ export default async function EpisodePage({
             />
           </Suspense>
 
-          <div className="flex justify-start md:justify-between gap-2 flex-wrap mt-2">
-            <Heading className="text-primary-500 px-4 sm:px-0">
-              {animeInfo.name}
-            </Heading>
-            <Button
-              as={NextLink}
-              href={`/anime/info/${animeId}`}
-              startContent={<SvgIcon.information />}
-              size="sm"
-            >
-              More Info
-            </Button>
+          <div className="flex justify-between gap-2 mt-2 px-4 sm:px-0">
+            <Heading className="text-primary-500 ">{animeInfo.name}</Heading>
+            <div>
+              <Button
+                as={NextLink}
+                href={`/anime/info/${animeId}`}
+                startContent={<SvgIcon.information />}
+                size="sm"
+              >
+                More Info
+              </Button>
+            </div>
 
             {/* <span>score</span>
           <span>status</span> */}
@@ -166,14 +166,27 @@ export default async function EpisodePage({
         </div>
       </section>
 
-      {animeCategoryList.map((category) => (
-        <CardList
-          title={category.name}
-          infoList={category.list}
-          key={category.name}
-          className="px-2"
+      <Spacer className="h-6" />
+
+      {relationList.list.length > 0 && (
+        <CardCarouselList
+          title={relationList.name}
+          infoList={relationList.list}
+          key={relationList.name}
+          className="-ml-1 md:ml-4"
         />
-      ))}
+      )}
+
+      <Spacer className="h-6" />
+
+      {recommendationList.list.length > 0 && (
+        <CardList
+          title={recommendationList.name}
+          infoList={recommendationList.list}
+          key={recommendationList.name}
+          className="px-2 md:px-12"
+        />
+      )}
     </>
   );
 }

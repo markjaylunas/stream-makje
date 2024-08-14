@@ -273,7 +273,7 @@ export default function EpisodeListSection({
         <NoEpisodesFound provider={provider} />
       )}
 
-      <ScrollShadow className="w-full max-h-[400px] pb-4 scrollbar-thin scrollbar-corner-transparent scrollbar-thumb-stone-600 scrollbar-track-stone-600/50 ">
+      <ScrollShadow className="w-full max-h-[580px] pb-4 scrollbar-thin scrollbar-corner-transparent scrollbar-thumb-stone-600 scrollbar-track-stone-600/50 ">
         {status === "loading" ? (
           <EpisodeViewSkeleton
             type={isListView ? "list" : "grid"}
