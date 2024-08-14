@@ -16,12 +16,17 @@ import CardData, { CardDataProps } from "./card-data";
 type Props = {
   title?: string;
   infoList: CardDataProps[];
+  className?: string;
 };
 
-export default function CardCarouselList({ infoList, title }: Props) {
+export default function CardCarouselList({
+  infoList,
+  title,
+  className,
+}: Props) {
   const [_, setApi] = useState<CarouselApi>();
   return (
-    <section className="space-y-2">
+    <section className={cn("space-y-2", className)}>
       {title && (
         <Heading
           order="xl"

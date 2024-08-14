@@ -26,7 +26,7 @@ export default function InfoSection({ anime, className, children }: Props) {
       <section className="max-w-7xl z-0 px-4 sm:mx-auto -mt-16 sm:-mt-40 flex justify-start items-center sm:items-start flex-col sm:flex-row gap-6 sm:gap-12 ">
         <div className="space-y-2 z-10">
           <Heading
-            className="block sm:hidden mx-8 text-center mt-5"
+            className="block sm:hidden mx-8 text-center mt-5 text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1"
             order={"2xl"}
           >
             {anime.name}

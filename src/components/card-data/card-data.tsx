@@ -20,7 +20,7 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
     <Card
       as={NextLink}
       href={`/anime/info/${props.id}`}
-      className="relative h-full w-full mx-auto aspect-2/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
+      className="relative group h-full w-full mx-auto aspect-2/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
     >
       <CardHeader className="absolute z-20 top-0 p-2 flex flex-wrap gap-2 justify-between items-end">
         {tagList.map((tag) => (
@@ -28,10 +28,9 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
             radius="sm"
             size="sm"
             color={tag.color}
-            variant={"flat"}
+            variant={tag.variant}
             startContent={tag.startContent}
             key={Array.isArray(tag.value) ? tag.value[0] : tag.value}
-            classNames={{ base: "bg-black/50" }}
           >
             {tag.value}
           </Chip>
@@ -45,7 +44,7 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
       </CardHeader>
       <div
         className={cn(
-          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-black/40 via-transparent to-transparent",
+          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-black/50 from-[13%] via-[30%] via-black/15 to-transparent transition-all delay-200 ease-soft-spring",
           Boolean(props.rank) ? "via-black/20" : "via-transparent"
         )}
       />
@@ -61,7 +60,7 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
       />
 
       <CardFooter className="absolute z-20 bottom-0 p-2 flex items-start flex-col gap-2">
-        <h6 className="w-full text-white font-normal text-sm line-clamp-2 text-left text-pretty">
+        <h6 className="text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1 w-full font-normal text-sm line-clamp-2 text-left text-pretty">
           {props.name}
         </h6>
       </CardFooter>

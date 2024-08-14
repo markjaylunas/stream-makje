@@ -1,5 +1,6 @@
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
+import CardCarouselList from "@/components/card-data/card-carousel-list";
 import CardList from "@/components/card-data/card-list";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { ANIME_PROVIDER } from "@/lib/constants";
@@ -57,7 +58,7 @@ export default async function InfoPage({
   const { relations, recommendations } = infoData;
 
   const tagList: Tag[] = [
-    { name: "type", color: "warning" },
+    { name: "type", color: "secondary" },
     {
       name: "rating",
       color: "primary",
@@ -65,19 +66,18 @@ export default async function InfoPage({
     },
   ];
 
-  const animeCategoryList = [
-    {
-      name: "Relations",
-      list: consumetInfoAnimeObjectMapper({ animeList: relations, tagList }),
-    },
-    {
-      name: "Recommendations",
-      list: consumetInfoAnimeObjectMapper({
-        animeList: recommendations || [],
-        tagList,
-      }),
-    },
-  ].filter((category) => category.list.length > 0);
+  const animeRelations = {
+    name: "Relations",
+    list: consumetInfoAnimeObjectMapper({ animeList: relations, tagList }),
+  };
+
+  const animeRecommendations = {
+    name: "Recommendations",
+    list: consumetInfoAnimeObjectMapper({
+      animeList: recommendations || [],
+      tagList,
+    }),
+  };
 
   const firstEpisode = episodeList.list[0];
   const latestEpisode = episodeList.list[episodeList.list.length - 1];
@@ -136,13 +136,23 @@ export default async function InfoPage({
         />
       </InfoSection>
 
-      {animeCategoryList.map((category) => (
+      {animeRelations.list.length > 0 && (
         <CardList
-          title={category.name}
-          infoList={category.list}
-          key={category.name}
+          title={animeRelations.name}
+          infoList={animeRelations.list}
+          key={animeRelations.name}
+          className="max-w-screen-xl mx-auto mt-12 px-2"
         />
-      ))}
+      )}
+
+      {animeRecommendations.list.length > 0 && (
+        <CardList
+          title={animeRecommendations.name}
+          infoList={animeRecommendations.list}
+          key={animeRecommendations.name}
+          className="max-w-screen-xl mx-auto mt-12 px-2"
+        />
+      )}
     </main>
   );
 }

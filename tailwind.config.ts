@@ -36,6 +36,12 @@ const config = {
   },
   plugins: [
     require("tailwind-scrollbar"),
+    require("@designbycode/tailwindcss-text-shadow")({
+      shadowColor: "rgba(0, 0, 0, 0.5)",
+      shadowBlur: "3px",
+      shadowOffsetX: "2px",
+      shadowOffsetY: "2px",
+    }),
     nextui({
       layout: {
         radius: {

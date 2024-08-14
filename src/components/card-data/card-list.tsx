@@ -1,22 +1,29 @@
+import { cn } from "@/lib/utils";
 import Heading from "../ui/heading";
 import CardData, { CardDataProps } from "./card-data";
 
 type Props = {
   title?: string;
   infoList: CardDataProps[];
+  className?: string;
 };
 
-export default function CardList({ title, infoList }: Props) {
+export default function CardList({ title, infoList, className }: Props) {
   return (
-    <section className="space-y-2">
+    <section className={cn("space-y-2", className)}>
       {title && (
-        <Heading order="xl" className="text-gray-700 dark:text-gray-300 ">
+        <Heading order="xl" className="text-gray-700 dark:text-gray-300 px-2">
           {title}
         </Heading>
       )}
-      <ul className="grid grid-cols-2 xs:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4">
+      <ul className="grid grid-cols-2 xs:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5">
         {infoList.map((info) => (
-          <CardData {...info} key={info.id} />
+          <div
+            className="p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-200 ease-soft-spring rounded-xl"
+            key={info.id}
+          >
+            <CardData {...info} />
+          </div>
         ))}
       </ul>
     </section>
