@@ -75,7 +75,6 @@ export async function fetchAnimeData({ animeId }: { animeId: string }) {
     const data = await response.json();
 
     const parsed = animeDataSchema.safeParse(data);
-    console.log(parsed);
 
     if (!parsed.success) {
       return fetchAnimeInfo({ animeId });
