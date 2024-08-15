@@ -156,7 +156,10 @@ export const consumetInfoAnimeObjectMapper = ({
         image: image || "",
         cover: cover ? cover : undefined,
         rank: isRanked ? animeIdx + 1 : undefined,
-        tagList: searchKeysInObject(tagList, others as unknown as DataObject),
+        tagList: searchKeysInObject(
+          tagList,
+          others as unknown as DataObject
+        ).filter((v) => v.value),
       };
     });
 
