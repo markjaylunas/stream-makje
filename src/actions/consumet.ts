@@ -75,6 +75,29 @@ export async function fetchAnimeData({ animeId }: { animeId: string }) {
     const data = await response.json();
 
     const parsed = animeDataSchema.safeParse(data);
+    console.log(parsed);
+
+    if (!parsed.success) {
+      return fetchAnimeInfo({ animeId });
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchAnimeInfo({ animeId }: { animeId: string }) {
+  try {
+    const response = await fetch(
+      animeAPIQuery.meta.anilist.info({ id: animeId }),
+      { next: { revalidate: ONE_WEEK } }
+    );
+
+    const data = await response.json();
+
+    const parsed = animeDataSchema.safeParse(data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());

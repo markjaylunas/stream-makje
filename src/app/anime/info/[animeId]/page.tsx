@@ -81,22 +81,29 @@ export default async function InfoPage({
 
   const firstEpisode = episodeList.list[0];
   const latestEpisode = episodeList.list[episodeList.list.length - 1];
-  const watchLink = createURL({
-    path: `/anime/watch/${animeId}`,
-    params: {
-      episodeId: firstEpisode.episodeId,
-      episodeNumber: `${firstEpisode.number}`,
-      provider: `${provider}`,
-    },
-  });
-  const latestLink = createURL({
-    path: `/anime/watch/${animeId}`,
-    params: {
-      episodeId: latestEpisode.episodeId,
-      episodeNumber: `${latestEpisode.number}`,
-      provider: `${provider}`,
-    },
-  });
+  let watchLink = "";
+  let latestLink = "";
+  if (firstEpisode) {
+    watchLink = createURL({
+      path: `/anime/watch/${animeId}`,
+      params: {
+        episodeId: firstEpisode.episodeId,
+        episodeNumber: `${firstEpisode.number}`,
+        provider: `${provider}`,
+      },
+    });
+  }
+
+  if (firstEpisode) {
+    latestLink = createURL({
+      path: `/anime/watch/${animeId}`,
+      params: {
+        episodeId: latestEpisode.episodeId,
+        episodeNumber: `${latestEpisode.number}`,
+        provider: `${provider}`,
+      },
+    });
+  }
 
   if (toWatch && watchLink) redirect(watchLink);
   if (toLatest && latestLink) redirect(latestLink);

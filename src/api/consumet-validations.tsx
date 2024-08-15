@@ -2,14 +2,14 @@ import z from "zod";
 
 // Define reusable schemas
 const titleSchema = z.object({
-  romaji: z.string(),
+  romaji: z.string().nullable().optional(),
   english: z.string().nullable().optional(),
   native: z.string().nullable().optional(),
   userPreferred: z.string().nullable().optional(),
 });
 
 const imageSchema = z.object({
-  image: z.string(),
+  image: z.string().nullable().optional(),
   imageHash: z.string(),
   cover: z.string().nullable().optional(),
   coverHash: z.string().nullable().optional(),
@@ -39,10 +39,10 @@ const animeSchema = z.object({
   malId: stringOrNumberSchema,
   title: titleSchema,
   status: z.string(),
-  episodes: z.number().nullable(),
+  episodes: z.number().nullable().optional(),
   ...imageSchema.shape,
   rating: z.number().nullable().optional(),
-  type: z.string().nullable(),
+  type: z.string().nullable().optional(),
 });
 
 const voiceActorSchema = z.object({
@@ -82,7 +82,7 @@ export const animeDataSchema = z.object({
     .nullable()
     .optional(),
   totalEpisodes: z.number().nullable(),
-  currentEpisode: z.number(),
+  currentEpisode: z.number().nullable().optional(),
   rating: z.number().nullable().optional(),
   duration: z.number().nullable().optional(),
   genres: z.array(z.string()),
