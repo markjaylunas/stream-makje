@@ -12,7 +12,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Listbox,
   ListboxItem,
   Skeleton,
@@ -63,8 +62,6 @@ export default function EpisodeListSection({
 
   const ref = useRef<(HTMLDivElement | null)[]>([]);
   const [isListView, setIsListView] = useState(true);
-  const [spotlightEpisodeNumber, setSpotlightEpisodeNumber] =
-    useState<number>(-1);
   const [episodeListData, setEpisodeListData] = useState(animeEpisodeList);
   const [status, setStatus] = useState<Status>("idle");
   const [selectedProvider, setSelectedProvider] = useState(new Set([provider]));
@@ -77,52 +74,12 @@ export default function EpisodeListSection({
     [sort, episodeListData]
   );
 
-  // const handleEpisodeSearchChange = useDebouncedCallback((value: string) => {
-  //   const episodeNumber = parseInt(value, 10);
-  //   const episodeIndex = list.findIndex(
-  //     (episode) => episode.number === episodeNumber
-  //   );
-  //   setspotlightEpisodeNumber(episodeNumber);
-
-  //   if (episodeIndex !== -1 && episodeRefs.current[episodeIndex]) {
-  //     episodeRefs.current[episodeIndex]?.scrollIntoView({
-  //       behavior: "smooth",
-  //       block: "center",
-  //     });
-  //   }
-  //   return value;
-  // }, 500);
-
   const { totalEpisodes } = episodeListData;
   const description =
     currentEpisodeNumber &&
     `You are watching episode ${currentEpisodeNumber} of ${
       episodeListData.totalEpisodes
     } ${Boolean(episodeTitle) && " - " + episodeTitle}`;
-
-  // let prevEpisode: Episode | null = null;
-  // let nextEpisode: Episode | null = null;
-  // let title = "";
-  // if (episodeSlug && episodeSlug.length > 0) {
-  //   activeEpisodeNumber = parseInt(episodeSlug[1]);
-  //   const episodeIndex = list.findIndex(
-  //     (episode) => episode.number === activeEpisodeNumber
-  //   );
-  //   title = `You are watching episode ${activeEpisodeNumber} of ${totalEpisodes}  ${
-  //     list[episodeIndex].title ? `- ${list[episodeIndex].title}` : ""
-  //   }`;
-
-  //   prevEpisode = list[episodeIndex - 1];
-  //   nextEpisode = list[episodeIndex + 1];
-  // }
-
-  // const meltCDString = "U+1FAE0";
-  // const meltCD = parseInt(meltCDString.replace("U+", ""), 16);
-  // const meltCharacter = String.fromCodePoint(meltCD);
-
-  // const saluteCDString = "U+1FAE1";
-  // const saluteCD = parseInt(saluteCDString.replace("U+", ""), 16);
-  // const saluteCharacter = String.fromCodePoint(saluteCD);
 
   const descriptionsMap = {
     provider_1: "Watch anime with subs, dubs, and various subtitles.",
@@ -188,15 +145,6 @@ export default function EpisodeListSection({
           startContent={isListView ? <SvgIcon.listOrdered /> : <SvgIcon.grid />}
         />
 
-        <Input
-          isDisabled={status === "loading"}
-          type="number"
-          aria-label="search episode number"
-          startContent={<SvgIcon.search />}
-          className="max-w-32"
-          placeholder="Episode #"
-          // onValueChange={handleEpisodeSearchChange}
-        />
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Button
@@ -282,7 +230,6 @@ export default function EpisodeListSection({
         ) : isListView ? (
           <EpisodeListView
             currentEpisodeNumber={currentEpisodeNumber}
-            spotlightEpisodeNumber={spotlightEpisodeNumber}
             episodeRef={ref}
             list={sortedList}
             provider={provider}
@@ -291,7 +238,6 @@ export default function EpisodeListSection({
         ) : (
           <EpisodeGridView
             currentEpisodeNumber={currentEpisodeNumber}
-            spotlightEpisodeNumber={spotlightEpisodeNumber}
             episodeRef={ref}
             list={sortedList}
             provider={provider}
@@ -333,13 +279,11 @@ const EpisodeListView = ({
   list,
   provider,
   currentEpisodeNumber,
-  spotlightEpisodeNumber,
   episodeRef,
   animeId,
 }: {
   provider: AnimeProviders;
   list: Episode[];
-  spotlightEpisodeNumber: number;
   currentEpisodeNumber?: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
   animeId: string;
@@ -356,23 +300,15 @@ const EpisodeListView = ({
         startContent={episode.number}
         color={episode.isFiller ? "warning" : "primary"}
         textValue={episode.title || `${episode.number}`}
-        isReadOnly={currentEpisodeNumber === episode.number}
-        href={
-          currentEpisodeNumber !== episode.number
-            ? createURL({
-                path: `/anime/watch/${animeId}`,
-                params: {
-                  episodeId: episode.episodeId,
-                  episodeNumber: `${episode.number}`,
-                  provider: `${provider}`,
-                },
-              })
-            : undefined
-        }
-        className={cn(
-          "pl-2",
-          spotlightEpisodeNumber === episode.number && "text-secondary-500"
-        )}
+        href={createURL({
+          path: `/anime/watch/${animeId}`,
+          params: {
+            episodeId: episode.episodeId,
+            episodeNumber: `${episode.number}`,
+            provider: `${provider}`,
+          },
+        })}
+        className={cn("pl-2")}
         endContent={
           episode.number === currentEpisodeNumber ? (
             <SvgIcon.playFill className="size-3" />
@@ -398,13 +334,11 @@ const EpisodeGridView = ({
   provider,
   list,
   currentEpisodeNumber,
-  spotlightEpisodeNumber,
   episodeRef,
   animeId,
 }: {
   provider: AnimeProviders;
   list: Episode[];
-  spotlightEpisodeNumber: number;
   currentEpisodeNumber?: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
   animeId: string;
@@ -421,9 +355,8 @@ const EpisodeGridView = ({
             provider: `${provider}`,
           },
         })}
-        variant={episode.number === spotlightEpisodeNumber ? "shadow" : "flat"}
+        variant="flat"
         color="primary"
-        isDisabled={currentEpisodeNumber === episode.number}
         startContent={
           currentEpisodeNumber === episode.number && (
             <SvgIcon.playFill className="size-3" />
