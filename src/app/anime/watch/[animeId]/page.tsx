@@ -141,7 +141,9 @@ export default async function EpisodePage({
           </Suspense>
 
           <div className="flex justify-between gap-2 mt-2 px-4 sm:px-0">
-            <Heading className="text-primary-500 ">{animeInfo.name}</Heading>
+            <Heading className="text-primary-500 text-lg sm:text-xl">
+              {animeInfo.name}
+            </Heading>
             <div>
               <Button
                 as={NextLink}
