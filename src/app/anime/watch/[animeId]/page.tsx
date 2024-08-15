@@ -46,6 +46,12 @@ export default async function EpisodePage({
         : ANIME_PROVIDER.P1
       : ANIME_PROVIDER.P1;
 
+  const server =
+    typeof searchParams?.server === "string" ? searchParams?.server : "hd-1";
+
+  const category =
+    typeof searchParams?.category === "string" ? searchParams?.category : "sub";
+
   const [infoData] = await Promise.all([fetchAnimeData({ animeId })]);
   if (!infoData) {
     notFound();
@@ -129,6 +135,8 @@ export default async function EpisodePage({
               episodeImage={episode?.image || ""}
               episodeTitle={episode?.title || ""}
               episodeId={episodeId}
+              category={category}
+              server={server}
             />
           </Suspense>
 
