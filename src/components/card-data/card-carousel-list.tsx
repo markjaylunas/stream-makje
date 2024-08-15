@@ -52,7 +52,7 @@ export default function CardCarouselList({
                 index === 0 && "ml-4 md:ml-10"
               )}
             >
-              <CardData {...info} key={info.id} />
+              <CardData {...info} />
             </CarouselItem>
           ))}
         </CarouselContent>

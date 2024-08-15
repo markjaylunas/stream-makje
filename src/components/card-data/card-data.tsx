@@ -38,14 +38,14 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
       className="relative group h-full w-full mx-auto aspect-2/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
     >
       <CardHeader className="absolute z-20 top-0 p-2 flex flex-wrap gap-2 justify-between items-end">
-        {filteredTagList.map((tag) => (
+        {filteredTagList.map((tag, tagIndex) => (
           <Chip
             radius="sm"
             size="sm"
             color={tag.color}
             variant={tag.variant}
             startContent={tag.startContent}
-            key={Array.isArray(tag.value) ? tag.value[0] : tag.value}
+            key={tag.value + `${tagIndex}` + "head"}
           >
             {tag.value}
           </Chip>
@@ -76,14 +76,14 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
 
       <CardFooter className="absolute z-20 bottom-0 p-2 flex items-start flex-col gap-2">
         <div className="flex justify-center items-center w-full">
-          {centerTagList.map((tag) => (
+          {centerTagList.map((tag, tagIndex) => (
             <Chip
               radius="sm"
               size="sm"
               color={tag.color}
               variant={tag.variant}
               startContent={tag.startContent}
-              key={Array.isArray(tag.value) ? tag.value[0] : tag.value}
+              key={tag.value + `${tagIndex}` + "foot"}
             >
               {tag.name === "airingAt"
                 ? formatTimestamp(Number(tag.value))
