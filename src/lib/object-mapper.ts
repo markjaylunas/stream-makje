@@ -8,7 +8,7 @@ import {
 } from "@/api/consumet-validations";
 import { CardDataProps } from "@/components/card-data/card-data";
 import moment from "moment";
-import { sourcePriority } from "./constants";
+import { ASFormatArray, sourcePriority } from "./constants";
 import {
   AnimeInfo,
   DataObject,
@@ -104,7 +104,7 @@ export const consumetAnimeInfoObjectMapper = (
     id: rawInfo.id ? `${rawInfo.id}` : "",
     malId: rawInfo.malId ? `${rawInfo.malId}` : "",
     name: pickTitle(rawInfo.title),
-    poster: rawInfo.image,
+    poster: rawInfo.image || "",
     cover: rawInfo.cover || null,
     type: rawInfo.type,
     genres: rawInfo.genres,
@@ -136,19 +136,30 @@ export const consumetInfoAnimeObjectMapper = ({
   isRanked?: boolean;
   tagList: Tag[];
 }): CardDataProps[] =>
-  animeList.map((anime, animeIdx) => {
-    const { id, title, image, cover, ...others } = anime;
-    return {
-      id: `${id}`,
-      name: pickTitle(title),
-      image,
-      cover: cover ? cover : undefined,
-      rank: isRanked ? animeIdx + 1 : undefined,
-      tagList: searchKeysInObject(tagList, others as unknown as DataObject),
-    };
-  });
+  animeList
+    .sort((a, b) => {
+      const formatA = ASFormatArray.indexOf(
+        a.type?.toUpperCase() as (typeof ASFormatArray)[number]
+      );
+      const formatB = ASFormatArray.indexOf(
+        b.type as (typeof ASFormatArray)[number]
+      );
 
-// Map anime list to get closest anime by name
+      return formatA - formatB;
+    })
+    .filter((anime) => pickTitle(anime.title).length > 0)
+    .map((anime, animeIdx) => {
+      const { id, title, image, cover, ...others } = anime;
+      return {
+        id: `${id}`,
+        name: pickTitle(title),
+        image: image || "",
+        cover: cover ? cover : undefined,
+        rank: isRanked ? animeIdx + 1 : undefined,
+        tagList: searchKeysInObject(tagList, others as unknown as DataObject),
+      };
+    });
+
 export const mapAnimeByName = async ({
   list,
   title,
@@ -161,10 +172,29 @@ export const mapAnimeByName = async ({
     let mappedResult = null;
     let maxScore = 0;
 
+    // Function to extract numeric components (e.g., "2", "2010")
+    const extractNumericComponent = (name: string) => {
+      const match = name.match(/\d+/g); // Finds numeric sequences in the string
+      return match ? match.join("") : null; // Join in case there are multiple numbers
+    };
+
+    const titleNumericComponent = extractNumericComponent(normalizedTitle);
+
     // Function to calculate Jaro-Winkler similarity
     const calculateSimilarity = (itemName: string) => {
       const itemNameNormalized = itemName.trim().toLowerCase();
-      const score = jaroWinklerDistance(normalizedTitle, itemNameNormalized);
+      let score = jaroWinklerDistance(normalizedTitle, itemNameNormalized);
+
+      // Boost the score if numeric components match
+      const itemNumericComponent = extractNumericComponent(itemNameNormalized);
+      if (
+        titleNumericComponent !== null &&
+        itemNumericComponent !== null &&
+        titleNumericComponent === itemNumericComponent
+      ) {
+        score += 0.2; // Adjust this weight as needed
+      }
+
       return score;
     };
 

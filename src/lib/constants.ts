@@ -43,6 +43,7 @@ export const ASFormatArray = [
   "SPECIAL",
   "OVA",
   "ONA",
+  "MANGA",
   "MUSIC",
 ] as const;
 

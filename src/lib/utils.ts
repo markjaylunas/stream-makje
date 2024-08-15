@@ -9,7 +9,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function pickTitle(title: TitleSchema): string {
-  return title.english || title.userPreferred || title.native || title.romaji;
+  return (
+    title.english || title.userPreferred || title.native || title.romaji || ""
+  );
 }
 
 export function encodeEpisodeId(id: string) {
