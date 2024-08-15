@@ -9,6 +9,7 @@ import React from "react";
 import MyLink from "../ui/my-link";
 import { SvgIcon } from "../ui/svg-icons";
 import { ThemeSwitcher } from "../ui/theme-switcher";
+import Search from "./search";
 
 export default function Navbar() {
   return (
@@ -31,6 +32,9 @@ export default function Navbar() {
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
           <ThemeSwitcher />
+        </NavbarItem>
+        <NavbarItem>
+          <Search />
         </NavbarItem>
       </NavbarContent>
     </NextNavbar>

@@ -3,11 +3,16 @@
 import { animeAPIQuery } from "@/api/consumet-api";
 import {
   animeDataSchema,
+  animeSearchDataSchema,
   animeSortedDataSchema,
   episodeDataSchema,
 } from "@/api/consumet-validations";
 import { ONE_WEEK } from "@/lib/constants";
-import { AnimeProviderAPI, AnimeProviders } from "@/lib/types";
+import {
+  AnimeAdvancedSearchParams,
+  AnimeProviderAPI,
+  AnimeProviders,
+} from "@/lib/types";
 
 export async function fetchPopularAnimeData({
   page = 1,
@@ -208,6 +213,25 @@ export async function fetchAiringScheduleAnimeData({
       return;
     }
 
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function searchAnime(params: AnimeAdvancedSearchParams) {
+  try {
+    const response = await fetch(animeAPIQuery.meta.anilist.search(params));
+
+    const data = await response.json();
+
+    const parsed = animeSearchDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
     return parsed.data;
   } catch (error) {
     console.log(error);

@@ -144,3 +144,13 @@ export function formatTimestamp(timestamp: number): string {
   const date = moment.unix(timestamp);
   return date.format("MM-DD HH:mm").toString();
 }
+
+export const debounce = (func: Function, delay: number) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: any[]) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(null, args);
+    }, delay);
+  };
+};

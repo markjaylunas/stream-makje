@@ -2,6 +2,7 @@ import { AWEpisodeSourceDataSchema } from "@/api/aniwatch-validations";
 import {
   AnimeDataSchema,
   AnimeSchema,
+  AnimeSearchDataSchema,
   AnimeSortedSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
@@ -40,6 +41,27 @@ export const consumetAnimeObjectMapper = ({
       tagList: searchKeysInObject(tagList, others as DataObject),
     };
   });
+
+export const consumetSearchAnimeObjectMapper = ({
+  searchData,
+  tagList,
+}: {
+  searchData: AnimeSearchDataSchema;
+  tagList: Tag[];
+}): CardDataProps[] => {
+  const { results } = searchData;
+  return results.map((anime, animeIdx) => {
+    const { id, title, description, image, cover, ...others } = anime;
+    return {
+      id,
+      name: pickTitle(title),
+      description: description ? description : undefined,
+      image: image ? image : "",
+      cover: cover ? cover : undefined,
+      tagList: searchKeysInObject(tagList, others as DataObject),
+    };
+  });
+};
 
 export const consumetAnimeInfoObjectMapper = (
   rawInfo: AnimeDataSchema

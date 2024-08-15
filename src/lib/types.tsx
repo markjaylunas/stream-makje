@@ -26,7 +26,7 @@ export type MainNavItem = NavItem & {};
 export type SearchParams = { [key: string]: string | string[] | undefined };
 
 export type DataObject =
-  | { [key: string]: string | string[] | DataObject }
+  | { [key: string]: string | string[] | number | DataObject }
   | string[];
 
 export type Tag = {
