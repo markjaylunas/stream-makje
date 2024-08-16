@@ -30,7 +30,7 @@ export const consumetAnimeObjectMapper = ({
   tagList: Tag[];
 }): CardDataProps[] =>
   animeList.map((anime, animeIdx) => {
-    const { id, title, description, image, cover, ...others } = anime;
+    const { id, title, description, image, cover, trailer, ...others } = anime;
     return {
       id,
       name: pickTitle(title),
@@ -38,6 +38,7 @@ export const consumetAnimeObjectMapper = ({
       image,
       cover: cover ? cover : undefined,
       rank: isRanked ? animeIdx + 1 : undefined,
+      trailer: trailer ? trailer : undefined,
       tagList: searchKeysInObject(tagList, others as DataObject),
     };
   });

@@ -1,3 +1,4 @@
+import { TrailerSchema } from "@/api/consumet-validations";
 import { CardDataProps } from "@/components/card-data/card-data";
 import { ChipProps } from "@nextui-org/react";
 import {
@@ -97,6 +98,7 @@ export type CardInfo = {
   image: string;
   cover?: string;
   rank?: number;
+  trailer?: TrailerSchema;
   otherInfo: DataObject | null | undefined;
 };
 

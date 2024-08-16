@@ -1,5 +1,5 @@
 import { fetchTrendingAnimeData } from "@/actions/consumet";
-import CardSpotlightList from "@/components/card-data/card-spotlight-list";
+import CardSpotlight from "@/components/card-data/card-spotlight";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
@@ -50,7 +50,7 @@ export default async function SpotlightList({
 
   return (
     <section className="">
-      <CardSpotlightList infoList={animeList} />
+      <CardSpotlight infoList={animeList} />
     </section>
   );
 }
