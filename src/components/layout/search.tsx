@@ -76,7 +76,7 @@ export default function Search() {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         hideCloseButton
-        size="xs"
+        size="lg"
       >
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
@@ -88,6 +88,7 @@ export default function Search() {
               classNames={{ base: "max-w-lg" }}
               variant="underlined"
               startContent={<SvgIcon.search />}
+              autoFocus
               placeholder="Search title..."
               aria-label="Search title"
             />
