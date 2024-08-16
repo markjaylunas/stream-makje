@@ -18,7 +18,6 @@ import {
   ModalFooter,
   ModalHeader,
   Skeleton,
-  useDisclosure,
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { useCallback, useState } from "react";
@@ -37,8 +36,7 @@ const tagList: Tag[] = [
   },
 ];
 
-export default function Search() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+export default function Search({isOpen,onOpenChange}:{isOpen:boolean;onOpenChange:()=>void}) {
   const [dataList, setDataList] = useState<CardDataProps[]>([]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -65,12 +63,6 @@ export default function Search() {
 
   return (
     <>
-      <Button
-        variant="light"
-        onPress={onOpen}
-        startContent={<SvgIcon.search />}
-        isIconOnly
-      />
       <Modal
         scrollBehavior="inside"
         isOpen={isOpen}
