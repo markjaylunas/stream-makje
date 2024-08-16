@@ -34,7 +34,7 @@ export default function Navbar() {
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>
-      <NavbarContent>
+      <NavbarContent justify="center">
         <NavbarItem>
           <Search />
         </NavbarItem>
