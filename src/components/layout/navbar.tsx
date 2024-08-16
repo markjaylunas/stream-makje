@@ -33,6 +33,8 @@ export default function Navbar() {
         <NavbarItem>
           <ThemeSwitcher />
         </NavbarItem>
+      </NavbarContent>
+      <NavbarContent>
         <NavbarItem>
           <Search />
         </NavbarItem>
