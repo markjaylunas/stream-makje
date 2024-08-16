@@ -45,12 +45,11 @@ export default function Navbar() {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent justify="center">
-          <NavbarItem onClick={onOpen}>
-            <Button
-              variant="light"
-              startContent={<SvgIcon.search />}
-              isIconOnly
-            />
+          <NavbarItem
+            onClick={onOpen}
+            className="rounded-lg hover:bg-black/5 cursor-pointer"
+          >
+            <SvgIcon.search />
           </NavbarItem>
         </NavbarContent>
       </NextNavbar>
