@@ -70,13 +70,14 @@ export default function Search() {
         onPress={onOpen}
         startContent={<SvgIcon.search />}
         isIconOnly
+        disableAnimation
       />
       <Modal
         scrollBehavior="inside"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         hideCloseButton
-        size="sm"
+        size="xs"
       >
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
