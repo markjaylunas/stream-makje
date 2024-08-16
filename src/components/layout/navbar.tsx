@@ -35,7 +35,7 @@ export default function Navbar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="center">
-        <NavbarItem>
+        <NavbarItem as="div">
           <Search />
         </NavbarItem>
       </NavbarContent>
