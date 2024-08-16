@@ -59,7 +59,7 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
       </CardHeader>
       <div
         className={cn(
-          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-black/50 from-[13%] via-[30%] via-black/15 to-transparent transition-all delay-200 ease-soft-spring",
+          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-black/50 from-[13%] via-[30%] via-black/15 to-transparent transition-all delay-100 ease-soft-spring",
           Boolean(props.rank) ? "via-black/20" : "via-transparent"
         )}
       />

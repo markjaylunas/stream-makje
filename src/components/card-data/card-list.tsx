@@ -19,7 +19,7 @@ export default function CardList({ title, infoList, className }: Props) {
       <ul className="grid grid-cols-2 xs:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
         {infoList.map((info) => (
           <div
-            className="p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-200 ease-soft-spring rounded-xl"
+            className="p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-100 ease-soft-spring rounded-xl"
             key={info.id}
           >
             <CardData {...info} />
