@@ -76,7 +76,7 @@ export default function Search() {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         hideCloseButton
-        size="lg"
+        size="sm"
       >
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
