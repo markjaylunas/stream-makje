@@ -46,7 +46,11 @@ export default function Navbar() {
         </NavbarContent>
         <NavbarContent justify="center">
           <NavbarItem onClick={onOpen}>
-            <SvgIcon.search />
+            <Button
+              variant="light"
+              startContent={<SvgIcon.search />}
+              isIconOnly
+            />
           </NavbarItem>
         </NavbarContent>
       </NextNavbar>
