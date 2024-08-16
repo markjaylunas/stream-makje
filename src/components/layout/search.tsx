@@ -70,7 +70,6 @@ export default function Search() {
         onPress={onOpen}
         startContent={<SvgIcon.search />}
         isIconOnly
-        disableAnimation
       />
       <Modal
         scrollBehavior="inside"
@@ -89,7 +88,6 @@ export default function Search() {
               classNames={{ base: "max-w-lg" }}
               variant="underlined"
               startContent={<SvgIcon.search />}
-              autoFocus
               placeholder="Search title..."
               aria-label="Search title"
             />
