@@ -48,6 +48,7 @@ export default function Navbar() {
           <NavbarItem
             onClick={onOpen}
             className="rounded-lg hover:bg-black/5 cursor-pointer"
+            aria-label="Search"
           >
             <SvgIcon.search />
           </NavbarItem>
