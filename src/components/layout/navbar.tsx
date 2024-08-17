@@ -39,11 +39,7 @@ export default function Navbar() {
             </NavbarItem>
           ))}
         </NavbarContent>
-        <NavbarContent className="hidden sm:flex gap-4" justify="center">
-          <NavbarItem>
-            <ThemeSwitcher />
-          </NavbarItem>
-        </NavbarContent>
+
         <NavbarContent justify="center">
           <NavbarItem
             onClick={onOpen}
