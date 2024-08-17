@@ -65,13 +65,13 @@ export default function CardSpotlight({ infoList }: Props) {
     >
       <div
         className={cn(
-          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/10 dark:via-black/10 to-transparent from-[5%] via-[40%]",
+          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/10 dark:via-black/10 to-transparent from-[5%] via-[30%]",
           isPlaying && "hidden md:inline-block"
         )}
       />
       <div
         className={cn(
-          " absolute z-10 w-[101%] h-[101%] bg-gradient-to-tr from-white dark:from-black  to-transparent from-[5%] via-[40%]",
+          " absolute z-10 w-[101%] h-[101%] bg-gradient-to-tr from-white dark:from-black  to-transparent from-[5%] via-[30%]",
           canPlay
             ? "via-white/5 dark:via-black/5"
             : "via-white/90 dark:via-black/90",
@@ -80,7 +80,7 @@ export default function CardSpotlight({ infoList }: Props) {
       />
       <div
         className={cn(
-          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-r from-white dark:from-black via-white/10 dark:via-black/10 to-transparent from-[0 %] via-[40%]",
+          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-r from-white dark:from-black via-white/10 dark:via-black/10 to-transparent from-[0 %] via-[30%]",
           isPlaying && "hidden md:inline-block"
         )}
       />
@@ -164,7 +164,7 @@ export default function CardSpotlight({ infoList }: Props) {
         </h6>
 
         <div className="space-y-3">
-          <div className="hidden sm:flex flex-wrap gap-2 w-2/3">
+          <div className="hidden sm:flex flex-wrap gap-2 w-2/3 mt-2">
             {spotlight.tagList?.map((tag) => (
               <Chip
                 radius="sm"
