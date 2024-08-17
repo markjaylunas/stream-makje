@@ -14,9 +14,6 @@ import "@vidstack/react/player/styles/default/theme.css";
 import { RefObject } from "react";
 
 type Props = {
-  onPlay: () => void;
-  onEnd: () => void;
-  isPlaying?: boolean;
   isMuted?: boolean;
   src: string;
   className?: string;
@@ -24,29 +21,36 @@ type Props = {
 };
 
 export default function SpotlightVideoPlayer({
-  onPlay,
-  onEnd,
-  isPlaying = false,
   isMuted = false,
   src,
   className,
   player,
 }: Props) {
   return (
-    <div className={cn(className)}>
+    <div className={cn("relative", className)}>
       <MediaPlayer
         autoPlay
         src={src}
         controls={false}
-        paused={!isPlaying}
         muted={isMuted}
+        playsInline
+        fullscreenOrientation="portrait"
         ref={player}
-        onPlay={onPlay}
-        onEnd={onEnd}
+        onEnd={() => {
+          player.current?.play();
+          setTimeout(() => player.current?.pause(), 12000);
+        }}
+        className="z-0"
       >
         <MediaProvider />
-        <DefaultAudioLayout icons={defaultLayoutIcons} />
-        <DefaultVideoLayout icons={defaultLayoutIcons} />
+        <DefaultAudioLayout
+          className="sr-only hidden"
+          icons={defaultLayoutIcons}
+        />
+        <DefaultVideoLayout
+          className="sr-only hidden"
+          icons={defaultLayoutIcons}
+        />
       </MediaPlayer>
     </div>
   );

@@ -5,7 +5,7 @@ import { Button, ButtonGroup } from "@nextui-org/button";
 import { Card, CardFooter } from "@nextui-org/card";
 import { Chip } from "@nextui-org/chip";
 import { Image } from "@nextui-org/image";
-import { MediaPlayerInstance } from "@vidstack/react";
+import { MediaPlayerInstance, useMediaState } from "@vidstack/react";
 import moment from "moment";
 import NextLink from "next/link";
 import { useRef, useState } from "react";
@@ -21,20 +21,15 @@ type Props = {
 
 export default function CardSpotlight({ infoList }: Props) {
   let player = useRef<MediaPlayerInstance>(null);
+  const isPlaying = useMediaState("playing", player);
+  const canPlay = useMediaState("canPlay", player);
 
   const [spotlight, setSpotlight] = useState<CardDataProps>(infoList[0]);
   const [isMuted, setIsMuted] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [canNavigate, setCanNavigate] = useState<Navigate>("canNext");
 
-  const handlePlay = () => {
-    setIsPlaying(true);
-  };
-  const handleEnd = () => {
-    setIsPlaying(false);
-  };
-
   const handlePlayerButton = () => {
+    if (!canPlay) return;
     if (isPlaying) {
       setIsMuted((v) => !v);
     } else {
@@ -58,7 +53,6 @@ export default function CardSpotlight({ infoList }: Props) {
     }
     setCanNavigate(nav);
     if (newSpotlight) {
-      setIsPlaying(false);
       setSpotlight(newSpotlight);
     }
   };
@@ -67,26 +61,72 @@ export default function CardSpotlight({ infoList }: Props) {
     <Card
       shadow="none"
       radius="none"
-      className="relative transition-all delay-75 ease-soft-spring
-       h-full w-full aspect-square md:aspect-3/1 lg:aspect-16/6 bg-gray-600 select-none overflow-hidden"
+      className="relative transition-all delay-75 ease-soft-spring h-full w-full bg-blue-500 aspect-square sm:aspect-16/8 select-none overflow-hidden"
     >
-      <div className="absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/20 dark:via-black/20  to-transparent" />
-      <div className="absolute z-10 w-[101%] h-[101%] bg-gradient-to-r dark:from-black dark:via-black/40 from-white via-white/40 to-transparent" />
+      <div
+        className={cn(
+          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/10 dark:via-black/10 to-transparent from-[5%] via-[40%]",
+          isPlaying && "hidden md:inline-block"
+        )}
+      />
+      <div
+        className={cn(
+          " absolute z-10 w-[101%] h-[101%] bg-gradient-to-tr from-white dark:from-black  to-transparent from-[5%] via-[40%]",
+          canPlay
+            ? "via-white/5 dark:via-black/5"
+            : "via-white/90 dark:via-black/90",
+          isPlaying && "hidden md:inline-block"
+        )}
+      />
+      <div
+        className={cn(
+          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-r from-white dark:from-black via-white/10 dark:via-black/10 to-transparent from-[0 %] via-[40%]",
+          isPlaying && "hidden md:inline-block"
+        )}
+      />
 
       {spotlight.trailer && (
-        <div className="absolute bg-black h-full w-full -top-2 -right-2">
-          <SpotlightVideoPlayer
-            isPlaying={true}
-            isMuted={isMuted}
-            src={`https://www.youtube.com/watch?v=${spotlight.trailer?.id}`}
-            onPlay={handlePlay}
-            onEnd={handleEnd}
-            player={player}
-          />
+        <div className="absolute bg-black h-full w-full ">
+          <div className="relative">
+            <SpotlightVideoPlayer
+              isMuted={isMuted}
+              src={`https://www.youtube.com/watch?v=${spotlight.trailer?.id}`}
+              player={player}
+              className="mt-16 sm:-mt-16"
+            />
+            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-r from-white dark:from-black via-white/10 dark:via-black/5 to-transparent from-[0%] via-[20%]" />
+            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-b from-white dark:from-black via-white/5 dark:via-black/10 to-transparent from-[5%] via-[20%]" />
+            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/5 dark:via-black/10 to-transparent from-[10%] via-[20%]" />
+            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-l from-white dark:from-black via-white/5 dark:via-black/10 to-transparent from-[0%] via-[20%]" />
+          </div>
         </div>
       )}
 
-      <div className="absolute z-30  bottom-2 right-6">
+      {/* desktop image */}
+      <Image
+        alt={spotlight.name}
+        src={spotlight.cover || spotlight.image}
+        className={cn(isPlaying && "hidden")}
+        classNames={{
+          wrapper:
+            "hidden blur-sm sm:flex z-0 w-full h-full mx-auto bg-blur-md items-start justify-end -mt-2",
+          img: "object-cover object-right-middle min-w-full min-h-full",
+        }}
+      />
+
+      {/* mobile image */}
+      <Image
+        alt={spotlight.name}
+        src={spotlight.image}
+        className={cn(isPlaying && "hidden")}
+        classNames={{
+          wrapper:
+            "flex sm:hidden z-0 w-full h-full mx-auto bg-blur-md items-start justify-end -mt-2",
+          img: "object-cover object-right-middle min-w-full min-h-full",
+        }}
+      />
+
+      <div className="absolute z-30 bottom-2 md:bottom-16 right-4">
         <ButtonGroup
           variant="bordered"
           radius="full"
@@ -112,40 +152,18 @@ export default function CardSpotlight({ infoList }: Props) {
         </ButtonGroup>
       </div>
 
-      <Image
-        alt={spotlight.name}
-        src={spotlight.cover || spotlight.image}
-        className={cn(isPlaying && "hidden")}
-        classNames={{
-          wrapper:
-            "hidden sm:flex z-0 w-full h-full mx-auto bg-blur-md items-start justify-end -mt-2",
-          img: "object-cover object-right-middle min-w-full min-h-full",
-        }}
-      />
-
-      <Image
-        alt={spotlight.name}
-        src={spotlight.image}
-        className={cn(isPlaying && "hidden")}
-        classNames={{
-          wrapper:
-            "flex sm:hidden z-0 w-full h-full mx-auto bg-blur-md items-start justify-end -mt-2",
-          img: "object-cover object-right-middle min-w-full min-h-full",
-        }}
-      />
-
-      <CardFooter className="absolute flex items-start flex-col pl-4 pb-16 md:pl-28 md:pb-12 z-20 bottom-0">
+      <CardFooter className="absolute flex items-start flex-col z-20 left-1 bottom-2 md:left-20 md:bottom-20">
         {Boolean(spotlight.rank) && (
-          <p className="text-2xl font-black text-foreground-500/70 ">
+          <p className=" text-tiny sm:text-2xl font-black text-foreground-500/70 ">
             {moment.localeData().ordinal(spotlight.rank || 0)}&nbsp;
-            <span className="text-base">on Trend</span>
+            <span className="text-tiny sm:text-base">on Trend</span>
           </p>
         )}
-        <h6 className="text-foreground-600 font-bold text-2xl md:text-4xl w-1/3 line-clamp-3 sm:line-clamp-2 text-left">
+        <h6 className="font-bold text-foreground-500 text-xl md:text-4xl w-2/3 sm:w-1/3 line-clamp-3 sm:line-clamp-4 text-left">
           {spotlight.name}
         </h6>
 
-        <div className="space-y-3 mt-4">
+        <div className="space-y-3">
           <div className="hidden sm:flex flex-wrap gap-2 w-2/3">
             {spotlight.tagList?.map((tag) => (
               <Chip
@@ -162,12 +180,12 @@ export default function CardSpotlight({ infoList }: Props) {
             ))}
           </div>
 
-          <p className="text-foreground-500 text-tiny sm:text-sm md:text-base w-1/2 line-clamp-3 sm:line-clamp-2 text-left">
+          <p className="text-foreground-500 text-tiny sm:text-sm md:text-base w-1/2 line-clamp-2 text-left">
             {spotlight.description?.replace(/<[^>]*>/g, " ")}
           </p>
         </div>
 
-        <div className="mt-4 flex gap-4">
+        <div className="mt-6 flex gap-4">
           <ButtonGroup color="primary">
             <Button
               as={NextLink}
@@ -194,15 +212,10 @@ export default function CardSpotlight({ infoList }: Props) {
             className={cn(spotlight.trailer?.id ? "" : "hidden")}
             startContent={
               <>
-                {isPlaying ? (
-                  isMuted ? (
-                    <SvgIcon.speakerOff />
-                  ) : (
-                    <SvgIcon.speaker />
-                  )
-                ) : (
-                  <SvgIcon.play className="size-4" />
-                )}
+                {isPlaying &&
+                  (isMuted ? <SvgIcon.speakerOff /> : <SvgIcon.speaker />)}
+
+                {!isPlaying && <SvgIcon.play className="size-4" />}
               </>
             }
             isIconOnly

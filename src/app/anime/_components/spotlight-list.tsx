@@ -16,7 +16,7 @@ export default async function SpotlightList({
   });
   const perPage = parseSearchParamInt({
     value: searchParams?.perPage,
-    defaultValue: 12,
+    defaultValue: 24,
   });
 
   const data = await fetchTrendingAnimeData({ page, perPage });
@@ -47,7 +47,7 @@ export default async function SpotlightList({
     tagList,
     isRanked: true,
   });
-
+  console.log(animeList[3].trailer);
   return (
     <section className="">
       <CardSpotlight infoList={animeList} />
