@@ -47,7 +47,6 @@ export default async function SpotlightList({
     tagList,
     isRanked: true,
   });
-  console.log(animeList[3].trailer);
   return (
     <section className="">
       <CardSpotlight infoList={animeList} />
