@@ -21,7 +21,7 @@ export default function Home() {
           <p className="indent-7 text-foreground-500 text-justify text-tiny sm:text-sm mt-8">
             Dive into a world of anime, manga, and movies—all in one place.
             Whether you&apos;re looking for the latest episodes, classic series,
-            or a new story to immerse yourself in, we&apos;ve got you covered.
+            or a new story to immerse yourself in, I&apos;ve got you covered.
           </p>
           <p className="indent-7 text-foreground-500 text-justify text-tiny sm:text-sm mt-2">
             I&apos;m Mark Jay Lunas &#40;
