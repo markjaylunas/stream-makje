@@ -47,6 +47,7 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
             color={tag.color}
             variant={tag.variant}
             startContent={tag.startContent}
+            endContent={tag.endContent}
             key={tag.value + `${tagIndex}` + "head"}
           >
             {tag.value}

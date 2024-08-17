@@ -59,7 +59,9 @@ export const consumetSearchAnimeObjectMapper = ({
       description: description ? description : undefined,
       image: image ? image : "",
       cover: cover ? cover : undefined,
-      tagList: searchKeysInObject(tagList, others as DataObject),
+      tagList: searchKeysInObject(tagList, others as DataObject).filter(
+        (v) => v.value
+      ),
     };
   });
 };
