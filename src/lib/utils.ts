@@ -154,3 +154,29 @@ export const debounce = (func: Function, delay: number) => {
     }, delay);
   };
 };
+
+type AnimeSeason = "WINTER" | "SPRING" | "SUMMER" | "FALL";
+type SeasonPosition = "current" | "last" | "next";
+
+const SEASONS: AnimeSeason[] = ["WINTER", "SPRING", "SUMMER", "FALL"];
+
+export function getSeasonAndYear(position: SeasonPosition): {
+  season: AnimeSeason;
+  year: number;
+} {
+  const now = new Date();
+  const month = now.getMonth();
+  const currentSeasonIndex = Math.floor(month / 3) % 4;
+  let year = now.getFullYear();
+
+  let seasonIndex = currentSeasonIndex;
+  if (position === "last") {
+    seasonIndex = (currentSeasonIndex + 3) % 4;
+    if (seasonIndex === 3) year -= 1;
+  } else if (position === "next") {
+    seasonIndex = (currentSeasonIndex + 1) % 4;
+    if (seasonIndex === 0) year += 1;
+  }
+
+  return { season: SEASONS[seasonIndex], year };
+}

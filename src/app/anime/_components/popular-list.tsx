@@ -33,6 +33,10 @@ export default async function PopularList({
   });
 
   return (
-    <CardCarouselList title="Popular" infoList={animeList} className="-ml-1" />
+    <CardCarouselList
+      title="Most Popular"
+      infoList={animeList}
+      className="-ml-1"
+    />
   );
 }
