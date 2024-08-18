@@ -1,4 +1,5 @@
-import { MainNavItem } from "./types";
+import { SvgIcon } from "@/components/ui/svg-icons";
+import { MainNavItem, NavItemWithChildren } from "./types";
 
 export const siteConfig = {
   name: "Stream",
@@ -15,14 +16,73 @@ export const siteConfig = {
 export type SiteConfig = typeof siteConfig;
 
 type RoutesConfig = {
-  mainNav: MainNavItem[];
+  mainNav: NavItemWithChildren[];
 };
 
 export const routesConfig: RoutesConfig = {
   mainNav: [
     {
       title: "Anime",
-      href: "/anime",
+      items: [
+        {
+          title: "Anime Homepage",
+          href: "/anime",
+          label:
+            "Explore all anime-related content, from trending series to new releases.",
+          icon: "home",
+          iconClass: "text-primary",
+          items: [],
+        },
+        {
+          title: "Popular This Season",
+          href: "/anime/popular-this-season",
+          label: "Explore the most popular anime of the current season.",
+          icon: "flame",
+          iconClass: "text-danger",
+          items: [],
+        },
+        {
+          title: "Recent Episodes",
+          href: "/anime/recent-episodes",
+          label: "Catch up on the latest episodes released for ongoing series.",
+          items: [],
+          icon: "clockDashed",
+          iconClass: "text-amber-700",
+        },
+        {
+          title: "Last Season",
+          href: "/anime/last-season",
+          label: "See what was trending last season in the anime world.",
+          items: [],
+          icon: "archive",
+          iconClass: "text-gray-500",
+        },
+        {
+          title: "Most Popular",
+          href: "/anime/most-popular",
+          label: "Discover the all-time favorite and top-rated anime series.",
+          items: [],
+          icon: "star",
+          iconClass: "text-yellow-500",
+        },
+        {
+          title: "Airing Schedules",
+          href: "/anime/airing-schedule",
+          label:
+            "Stay updated with the weekly airing schedule of your favorite anime.",
+          items: [],
+          icon: "calendar",
+          iconClass: "text-emerald-500",
+        },
+        {
+          title: "Next Season",
+          href: "/anime/next-season",
+          label: "Find out which new anime are coming up in the next season.",
+          items: [],
+          icon: "chevronDoubleRight",
+          iconClass: "text-purple-500",
+        },
+      ],
     },
   ],
 };

@@ -1,5 +1,6 @@
 import { TrailerSchema } from "@/api/consumet-validations";
 import { CardDataProps } from "@/components/card-data/card-data";
+import { SvgIcon } from "@/components/ui/svg-icons";
 import { ChipProps } from "@nextui-org/react";
 import {
   ASFormatArray,
@@ -10,11 +11,15 @@ import {
   ASTypeArray,
 } from "./constants";
 
+type IconName = keyof typeof SvgIcon;
+
 export type NavItem = {
   title: string;
   href?: string;
   disabled?: boolean;
   external?: boolean;
+  icon?: IconName;
+  iconClass?: string;
   label?: string;
 };
 
