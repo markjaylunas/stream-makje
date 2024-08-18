@@ -21,9 +21,14 @@ type Status = WatchStatus | "null";
 type Props = {
   animeWatchStatus: AnimeUserStatus | null;
   anime: AnimeInsert;
+  size?: "lg" | "sm" | "md" | undefined;
 };
 
-export default function WatchListDropdown({ animeWatchStatus, anime }: Props) {
+export default function WatchListDropdown({
+  animeWatchStatus,
+  anime,
+  size,
+}: Props) {
   const session = useSession();
   const userId = session?.data?.user?.id;
   const router = useRouter();
@@ -68,7 +73,7 @@ export default function WatchListDropdown({ animeWatchStatus, anime }: Props) {
   };
 
   return (
-    <ButtonGroup variant="shadow" size="sm">
+    <ButtonGroup variant="shadow" size={size}>
       <Button
         variant={isNull ? "flat" : "bordered"}
         color={isNull ? "primary" : "default"}

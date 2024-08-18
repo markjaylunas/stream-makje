@@ -125,8 +125,8 @@ export default async function InfoPage({
 
   return (
     <main className="relative mb-12">
-      <InfoSection anime={animeInfo}>
-        <div className="flex justify-between items-end gap-2">
+      <InfoSection anime={animeInfo} animeWatchStatus={animeWatchStatus}>
+        <div className="flex flex-col md:flex-row justify-between items-end gap-2">
           {Boolean(watchLink) && Boolean(latestLink) && (
             <ButtonGroup color="primary" size="lg" className="sm:w-fit w-full">
               <Button
@@ -149,31 +149,6 @@ export default async function InfoPage({
               </Button>
             </ButtonGroup>
           )}
-          <div className="flex gap-2">
-            <ScoreDropdown
-              animeWatchStatus={
-                animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
-              }
-              anime={{
-                id: animeId,
-                title: pickTitle(infoData.title),
-                image: infoData.image || "",
-                cover: infoData.cover || "",
-              }}
-            />
-
-            <WatchListDropdown
-              animeWatchStatus={
-                animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
-              }
-              anime={{
-                id: animeId,
-                title: pickTitle(infoData.title),
-                image: infoData.image || "",
-                cover: infoData.cover || "",
-              }}
-            />
-          </div>
         </div>
 
         <EpisodeListSection

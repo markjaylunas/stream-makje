@@ -20,9 +20,14 @@ import { SvgIcon } from "./svg-icons";
 type Props = {
   animeWatchStatus: AnimeUserStatus | null;
   anime: AnimeInsert;
+  size?: "lg" | "sm" | "md" | undefined;
 };
 
-export default function ScoreDropdown({ animeWatchStatus, anime }: Props) {
+export default function ScoreDropdown({
+  animeWatchStatus,
+  anime,
+  size,
+}: Props) {
   const session = useSession();
   const userId = session?.data?.user?.id;
   const router = useRouter();
@@ -73,7 +78,7 @@ export default function ScoreDropdown({ animeWatchStatus, anime }: Props) {
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
         <Button
-          size="sm"
+          size={size}
           radius="md"
           variant={selectedOptionValue >= 1 ? "bordered" : "flat"}
           color={selectedOptionValue >= 1 ? "default" : "secondary"}

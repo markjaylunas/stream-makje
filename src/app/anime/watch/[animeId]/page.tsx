@@ -151,7 +151,7 @@ export default async function EpisodePage({
             />
           </Suspense>
 
-          <div className="flex flex-col sm:flex-row justify-start sm:justify-between gap-2 mt-2 px-4 sm:px-0">
+          <div className="flex flex-col sm:flex-row justify-start sm:justify-between gap-2 mt-2 px-4 md:px-0">
             <Heading className="text-primary-500 text-lg sm:text-xl">
               {animeInfo.name}
             </Heading>
@@ -175,6 +175,7 @@ export default async function EpisodePage({
                   image: infoData.image || "",
                   cover: infoData.cover || "",
                 }}
+                size="sm"
               />
               <ScoreDropdown
                 animeWatchStatus={
@@ -186,11 +187,9 @@ export default async function EpisodePage({
                   image: infoData.image || "",
                   cover: infoData.cover || "",
                 }}
+                size="sm"
               />
             </div>
-
-            {/* <span>score</span>
-          <span>status</span> */}
           </div>
 
           <Spacer className="h-2" />

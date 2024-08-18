@@ -1,5 +1,8 @@
 import Heading from "@/components/ui/heading";
 import { ReadMore } from "@/components/ui/read-more";
+import ScoreDropdown from "@/components/ui/score-dropdown";
+import WatchListDropdown from "@/components/ui/watchlist-dropdown";
+import { AnimeUserStatus } from "@/db/schema";
 import { AnimeInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@nextui-org/button";
@@ -12,9 +15,15 @@ type Props = {
   anime: AnimeInfo;
   className?: string;
   children?: ReactNode;
+  animeWatchStatus: AnimeUserStatus[];
 };
 
-export default function InfoSection({ anime, className, children }: Props) {
+export default function InfoSection({
+  anime,
+  className,
+  children,
+  animeWatchStatus,
+}: Props) {
   return (
     <section className="relative">
       <InfoCover
@@ -47,6 +56,32 @@ export default function InfoSection({ anime, className, children }: Props) {
             <h2 className="hidden sm:block text-xs text-foreground-500">
               {Array.from(new Set([anime.synonyms])).join(" | ")}
             </h2>
+
+            <div className="flex justify-start gap-2">
+              <ScoreDropdown
+                animeWatchStatus={
+                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+                }
+                anime={{
+                  id: anime.id || "",
+                  title: anime.name,
+                  image: anime.poster || "",
+                  cover: anime.cover || "",
+                }}
+              />
+
+              <WatchListDropdown
+                animeWatchStatus={
+                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+                }
+                anime={{
+                  id: anime.id || "",
+                  title: anime.name,
+                  image: anime.poster || "",
+                  cover: anime.cover || "",
+                }}
+              />
+            </div>
 
             {anime.genres && (
               <div className="flex flex-wrap gap-2">
