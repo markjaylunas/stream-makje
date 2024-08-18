@@ -77,6 +77,7 @@ export default function SearchInput() {
         variant="flat"
         color="primary"
         size="lg"
+        radius="md"
         fullWidth
         defaultValue={q}
         placeholder="Search title..."
@@ -93,6 +94,7 @@ export default function SearchInput() {
         <Select
           label="Year"
           size="sm"
+          radius="md"
           defaultSelectedKeys={year ? [year] : undefined}
           onChange={(e) => {
             handleSearch("year", e.target.value);
@@ -112,6 +114,7 @@ export default function SearchInput() {
         <Select
           label="Season"
           size="sm"
+          radius="md"
           defaultSelectedKeys={season ? [season] : undefined}
           onChange={(e) => {
             handleSearch("season", e.target.value);
@@ -129,6 +132,7 @@ export default function SearchInput() {
         <Select
           label="Format"
           size="sm"
+          radius="md"
           defaultSelectedKeys={format ? [format] : undefined}
           onChange={(e) => {
             handleSearch("format", e.target.value);
@@ -146,6 +150,7 @@ export default function SearchInput() {
         <Select
           label="Status"
           size="sm"
+          radius="md"
           defaultSelectedKeys={status ? [status] : undefined}
           onChange={(e) => {
             handleSearch("status", e.target.value);
@@ -163,6 +168,7 @@ export default function SearchInput() {
         <Select
           label="Genres"
           size="sm"
+          radius="md"
           className="min-w-36 max-w-fit"
           defaultSelectedKeys={genres ? [genres] : undefined}
           onChange={(e) => {
@@ -180,6 +186,7 @@ export default function SearchInput() {
         <Select
           label="Sort"
           size="sm"
+          radius="md"
           className="min-w-44 max-w-fit"
           defaultSelectedKeys={sort ? [sort] : undefined}
           onChange={(e) => {
