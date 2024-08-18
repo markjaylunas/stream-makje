@@ -1,12 +1,12 @@
 "use server";
 
-import { animeAPIQuery } from "@/api/consumet-api";
+import { animeAPIQuery } from "@/app/api/consumet-api";
 import {
   animeDataSchema,
   animeSearchDataSchema,
   animeSortedDataSchema,
   episodeDataSchema,
-} from "@/api/consumet-validations";
+} from "@/app/api/consumet-validations";
 import { ONE_WEEK } from "@/lib/constants";
 import {
   AnimeAdvancedSearchParams,

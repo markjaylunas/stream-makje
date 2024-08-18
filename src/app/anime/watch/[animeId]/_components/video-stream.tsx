@@ -1,5 +1,5 @@
 import { fetchAWEpisodeSourceData } from "@/actions/aniwatch";
-import { fetchAnimeEpisodeSource } from "@/api/consumet-api";
+import { fetchAnimeEpisodeSource } from "@/app/api/consumet-api";
 import NoVideo from "@/components/video-player/NoVideo";
 import VideoPlayer from "@/components/video-player/VideoPlayer";
 import { ANIME_PROVIDER } from "@/lib/constants";

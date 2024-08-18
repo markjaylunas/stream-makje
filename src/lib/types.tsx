@@ -1,4 +1,4 @@
-import { TrailerSchema } from "@/api/consumet-validations";
+import { TrailerSchema } from "@/app/api/consumet-validations";
 import { CardDataProps } from "@/components/card-data/card-data";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { ChipProps } from "@nextui-org/react";
@@ -48,6 +48,8 @@ export type Tag = {
 export type Status = "idle" | "loading" | "error";
 
 export type SearchParamValue = string | string[] | undefined;
+
+export type OAuthProvider = "google" | "github";
 
 // Start: Consumet API types
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { AWEpisodeServersSchema } from "@/api/aniwatch-validations";
+import { AWEpisodeServersSchema } from "@/app/api/aniwatch-validations";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { createURL } from "@/lib/utils";
 import { Button } from "@nextui-org/button";

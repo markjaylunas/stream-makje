@@ -1,4 +1,4 @@
-import { TrailerSchema } from "@/api/consumet-validations";
+import { TrailerSchema } from "@/app/api/consumet-validations";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import { Tag } from "@/lib/types";
 import { cn, createURL, formatTimestamp } from "@/lib/utils";

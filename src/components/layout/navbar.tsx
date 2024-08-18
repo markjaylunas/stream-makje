@@ -19,14 +19,19 @@ import {
   Navbar as NextNavbar,
   useDisclosure,
 } from "@nextui-org/react";
+import { User } from "next-auth";
 import React from "react";
 import MyLink from "../ui/my-link";
 import { SvgIcon } from "../ui/svg-icons";
 import Search from "./search";
+import UserAvatar from "./user-avatar";
 
-export default function Navbar() {
+type Props = {
+  user: User | null;
+};
+
+export default function Navbar({ user }: Props) {
   const { onOpen, isOpen, onOpenChange } = useDisclosure();
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   return (
     <>
       <NextNavbar shouldHideOnScroll>
@@ -92,16 +97,16 @@ export default function Navbar() {
         <NavbarContent justify="center">
           <NavbarItem
             onClick={onOpen}
-            className="rounded-lg hover:bg-black/5 cursor-pointer"
+            className="px-4 rounded-lg hover:bg-black/5 cursor-pointer"
             aria-label="Search"
           >
             <SvgIcon.search />
           </NavbarItem>
+          <NavbarItem>
+            <UserAvatar user={user} />
+          </NavbarItem>
 
-          <NavbarMenuToggle
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="sm:hidden"
-          />
+          <NavbarMenuToggle aria-label="Menu Toggle" className="sm:hidden" />
         </NavbarContent>
 
         <NavbarMenu>

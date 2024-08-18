@@ -1,4 +1,4 @@
-import { AWEpisodeSourceDataSchema } from "@/api/aniwatch-validations";
+import { AWEpisodeSourceDataSchema } from "@/app/api/aniwatch-validations";
 import {
   AnimeDataSchema,
   AnimeSchema,
@@ -6,7 +6,7 @@ import {
   AnimeSortedSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
-} from "@/api/consumet-validations";
+} from "@/app/api/consumet-validations";
 import { CardDataProps } from "@/components/card-data/card-data";
 import moment from "moment";
 import { ASFormatArray, sourcePriority } from "./constants";
