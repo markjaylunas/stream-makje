@@ -95,12 +95,15 @@ export default function Navbar({ user }: Props) {
         </NavbarContent>
 
         <NavbarContent justify="center">
-          <NavbarItem
-            onClick={onOpen}
-            className="px-4 rounded-lg hover:bg-black/5 cursor-pointer"
-            aria-label="Search"
-          >
-            <SvgIcon.search />
+          <NavbarItem>
+            <Button
+              onClick={onOpen}
+              aria-label="Search"
+              variant="light"
+              radius="full"
+              startContent={<SvgIcon.search />}
+              isIconOnly
+            ></Button>
           </NavbarItem>
           <NavbarItem>
             <UserAvatar user={user} />
