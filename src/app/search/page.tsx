@@ -32,7 +32,7 @@ export default async function SearchAnimeResultsPage({
   const perPage =
     typeof searchParams?.perPage === "string"
       ? parseInt(searchParams?.perPage)
-      : 35;
+      : 28;
   const year =
     typeof searchParams?.year === "string"
       ? parseInt(searchParams?.year)
@@ -122,7 +122,16 @@ export default async function SearchAnimeResultsPage({
   return (
     <>
       {hasAnime && <CardList infoList={mappedList} />}
-      {hasAnime && <MyPagination hasNextPage={data?.hasNextPage || false} />}
+
+      {hasAnime && (
+        <div className="flex justify-end px-2">
+          <MyPagination
+            hasNextPage={
+              (data?.hasNextPage || false) && mappedList.length === perPage
+            }
+          />
+        </div>
+      )}
       {!hasAnime && (
         <Chip variant="bordered" color="warning">
           Nothing found!

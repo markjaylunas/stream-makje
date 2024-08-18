@@ -17,7 +17,7 @@ export default function MyPagination({ hasNextPage }: Props) {
 
   const page = typeof pageParam === "string" ? parseInt(pageParam) : 1;
   const perPage =
-    typeof perPageParam === "string" ? parseInt(perPageParam) : 35;
+    typeof perPageParam === "string" ? parseInt(perPageParam) : 28;
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
@@ -33,6 +33,7 @@ export default function MyPagination({ hasNextPage }: Props) {
       initialPage={1}
       page={page}
       onChange={handlePageChange}
+      isCompact
     />
   );
 }
