@@ -38,6 +38,7 @@ const config = {
     },
   },
   plugins: [
+    require("@vidstack/react/tailwind.cjs"),
     require("tailwind-scrollbar"),
     require("@designbycode/tailwindcss-text-shadow")({
       shadowColor: "rgba(0, 0, 0, 0.5)",

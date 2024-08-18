@@ -1,5 +1,9 @@
 "use client";
 
+import "@vidstack/react/player/styles/default/layouts/audio.css";
+import "@vidstack/react/player/styles/default/layouts/video.css";
+import "@vidstack/react/player/styles/default/theme.css";
+
 import {
   MediaLoadedDataEvent,
   MediaPlayer,
@@ -62,16 +66,21 @@ export default function VideoPlayer({
   return (
     <section className="overflow-hidden relative">
       <MediaPlayer
-        streamType="on-demand"
         aspectRatio="16/9"
         load="visible"
         posterLoad="visible"
         title={title}
         src={source.url}
         ref={player}
+        viewType="video"
+        streamType="on-demand"
+        logLevel="warn"
+        crossOrigin
+        playsInline
+        poster={poster}
       >
         <MediaProvider>
-          <Poster className="vds-poster" src={poster} alt={title} />
+          {/* <Poster className="vds-poster" src={poster} alt={title} /> */}
           {captionList.length > 0 &&
             captionList.map((caption, captionIdx) => (
               <VidTrack
