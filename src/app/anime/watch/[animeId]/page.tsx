@@ -1,10 +1,14 @@
+import { fetchWatchStatus } from "@/actions/action";
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
+import { auth } from "@/auth";
 import CardCarouselList from "@/components/card-data/card-carousel-list";
 import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
+import ScoreDropdown from "@/components/ui/score-dropdown";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import Text from "@/components/ui/text";
+import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import {
   consumetAnimeInfoObjectMapper,
@@ -29,6 +33,9 @@ export default async function EpisodePage({
 }) {
   const { animeId } = params;
 
+  const session = await auth();
+  const userId = session?.user?.id;
+
   const episodeId =
     typeof searchParams?.episodeId === "string"
       ? searchParams?.episodeId || undefined
@@ -52,7 +59,11 @@ export default async function EpisodePage({
   const category =
     typeof searchParams?.category === "string" ? searchParams?.category : "sub";
 
-  const [infoData] = await Promise.all([fetchAnimeData({ animeId })]);
+  const [infoData, animeWatchStatus] = await Promise.all([
+    fetchAnimeData({ animeId }),
+    userId ? fetchWatchStatus({ userId, animeId }) : [],
+  ]);
+
   if (!infoData) {
     notFound();
   }
@@ -140,19 +151,42 @@ export default async function EpisodePage({
             />
           </Suspense>
 
-          <div className="flex justify-between gap-2 mt-2 px-4 sm:px-0">
+          <div className="flex flex-col sm:flex-row justify-start sm:justify-between gap-2 mt-2 px-4 sm:px-0">
             <Heading className="text-primary-500 text-lg sm:text-xl">
               {animeInfo.name}
             </Heading>
-            <div>
+            <div className="flex justify-start items-center gap-2">
               <Button
                 as={NextLink}
                 href={`/anime/info/${animeId}`}
                 startContent={<SvgIcon.information />}
                 size="sm"
+                radius="md"
               >
                 More Info
               </Button>
+              <WatchListDropdown
+                animeWatchStatus={
+                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+                }
+                anime={{
+                  id: animeId,
+                  title: pickTitle(infoData.title),
+                  image: infoData.image || "",
+                  cover: infoData.cover || "",
+                }}
+              />
+              <ScoreDropdown
+                animeWatchStatus={
+                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+                }
+                anime={{
+                  id: animeId,
+                  title: pickTitle(infoData.title),
+                  image: infoData.image || "",
+                  cover: infoData.cover || "",
+                }}
+              />
             </div>
 
             {/* <span>score</span>

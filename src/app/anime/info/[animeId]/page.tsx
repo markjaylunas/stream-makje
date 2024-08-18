@@ -1,8 +1,11 @@
+import { fetchWatchStatus } from "@/actions/action";
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
-import CardCarouselList from "@/components/card-data/card-carousel-list";
+import { auth } from "@/auth";
 import CardList from "@/components/card-data/card-list";
+import ScoreDropdown from "@/components/ui/score-dropdown";
 import { SvgIcon } from "@/components/ui/svg-icons";
+import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import {
   consumetAnimeInfoObjectMapper,
@@ -25,6 +28,9 @@ export default async function InfoPage({
 }) {
   const { animeId } = params;
 
+  const session = await auth();
+  const userId = session?.user?.id;
+
   const provider =
     typeof searchParams?.provider === "string"
       ? searchParams?.provider === ANIME_PROVIDER.P2
@@ -42,7 +48,10 @@ export default async function InfoPage({
       ? Boolean(searchParams?.latest) || false
       : false;
 
-  const infoData = await fetchAnimeData({ animeId });
+  const [infoData, animeWatchStatus] = await Promise.all([
+    fetchAnimeData({ animeId }),
+    userId ? fetchWatchStatus({ userId, animeId }) : [],
+  ]);
 
   if (!infoData) {
     notFound();
@@ -117,28 +126,55 @@ export default async function InfoPage({
   return (
     <main className="relative mb-12">
       <InfoSection anime={animeInfo}>
-        {Boolean(watchLink) && Boolean(latestLink) && (
-          <ButtonGroup color="primary" size="lg" className="sm:w-fit w-full">
-            <Button
-              as={NextLink}
-              href={watchLink || ""}
-              variant="shadow"
-              className="font-semibold w-full"
-              isDisabled={watchLink === null}
-            >
-              Watch Now
-            </Button>
-            <Button
-              as={NextLink}
-              href={latestLink || ""}
-              variant="bordered"
-              className="font-semibold w-full"
-              isDisabled={latestLink === null}
-            >
-              Latest
-            </Button>
-          </ButtonGroup>
-        )}
+        <div className="flex justify-between items-end gap-2">
+          {Boolean(watchLink) && Boolean(latestLink) && (
+            <ButtonGroup color="primary" size="lg" className="sm:w-fit w-full">
+              <Button
+                as={NextLink}
+                href={watchLink || ""}
+                variant="shadow"
+                className="font-semibold w-full"
+                isDisabled={watchLink === null}
+              >
+                Watch Now
+              </Button>
+              <Button
+                as={NextLink}
+                href={latestLink || ""}
+                variant="bordered"
+                className="font-semibold w-full"
+                isDisabled={latestLink === null}
+              >
+                Latest
+              </Button>
+            </ButtonGroup>
+          )}
+          <div className="flex gap-2">
+            <ScoreDropdown
+              animeWatchStatus={
+                animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+              }
+              anime={{
+                id: animeId,
+                title: pickTitle(infoData.title),
+                image: infoData.image || "",
+                cover: infoData.cover || "",
+              }}
+            />
+
+            <WatchListDropdown
+              animeWatchStatus={
+                animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+              }
+              anime={{
+                id: animeId,
+                title: pickTitle(infoData.title),
+                image: infoData.image || "",
+                cover: infoData.cover || "",
+              }}
+            />
+          </div>
+        </div>
 
         <EpisodeListSection
           animeTitle={animeInfo.name}
