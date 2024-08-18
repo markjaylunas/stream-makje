@@ -52,6 +52,7 @@ export default async function PopularThisSeasonList({
   return (
     <CardCarouselList
       title={customTitle || "Popular This Season"}
+      viewMoreHref="/anime/popular-this-season"
       infoList={mappedList}
       className="-ml-1"
     />

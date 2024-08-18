@@ -1,6 +1,6 @@
 import { Skeleton, Spacer } from "@nextui-org/react";
 import { Suspense } from "react";
-import AiringScheduleList from "./_components/airing-schedule";
+import AiringScheduleList from "./_components/airing-schedules";
 import LastSeasonList from "./_components/last-season";
 import MostPopularList from "./_components/most-popular-list";
 import NextSeasonList from "./_components/next-season";

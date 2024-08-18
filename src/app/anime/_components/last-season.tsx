@@ -52,6 +52,7 @@ export default async function LastSeasonList({
       title="Last Season"
       infoList={mappedList}
       className="-ml-1"
+      viewMoreHref="/anime/last-season"
     />
   );
 }

@@ -37,6 +37,7 @@ export default async function MostPopularList({
       title="Most Popular"
       infoList={animeList}
       className="-ml-1"
+      viewMoreHref="/anime/most-popular"
     />
   );
 }

@@ -42,6 +42,7 @@ export default async function AiringScheduleList({
         title="Airing Schedules"
         infoList={animeList}
         className="-ml-1"
+        viewMoreHref="/anime/airing-schedules"
       />
     </section>
   );

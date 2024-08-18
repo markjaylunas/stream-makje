@@ -52,6 +52,7 @@ export default async function NextSeasonList({
       title="Next Season"
       infoList={mappedList}
       className="-ml-1"
+      viewMoreHref="/anime/next-season"
     />
   );
 }
