@@ -36,7 +36,7 @@ export default function PageNavigation({ prevDisabled, nextDisabled }: Props) {
         onClick={() => handlePageChange("prev")}
         startContent={<SvgIcon.chevronLeft />}
       >
-        Prev
+        <span className="sr-only sm:not-sr-only">Prev</span>
       </Button>
       <Button
         isDisabled={nextDisabled}
@@ -44,7 +44,7 @@ export default function PageNavigation({ prevDisabled, nextDisabled }: Props) {
         endContent={<SvgIcon.chevronRight />}
         className="w-full sm:w-fit"
       >
-        Next
+        <span className="sr-only sm:not-sr-only">Next</span>
       </Button>
     </ButtonGroup>
   );
