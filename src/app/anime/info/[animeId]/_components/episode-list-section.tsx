@@ -18,12 +18,7 @@ import {
 } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import NextLink from "next/link";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React, {
   HTMLProps,
   MutableRefObject,
