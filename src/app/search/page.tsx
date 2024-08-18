@@ -1,7 +1,7 @@
 import { searchAnime } from "@/actions/consumet";
 import { CardDataProps } from "@/components/card-data/card-data";
 import CardList from "@/components/card-data/card-list";
-import MyPagination from "@/components/ui/my-pagination";
+import PageNavigation from "@/components/ui/page-navigation";
 import {
   ASFormatArray,
   ASGenresArray,
@@ -122,16 +122,15 @@ export default async function SearchAnimeResultsPage({
   return (
     <>
       {hasAnime && <CardList infoList={mappedList} />}
+      <div className="flex justify-end px-2 mt-2">
+        <PageNavigation
+          nextDisabled={
+            (!data?.hasNextPage || true) && mappedList.length !== perPage
+          }
+          prevDisabled={page <= 1}
+        />
+      </div>
 
-      {hasAnime && (
-        <div className="flex justify-end px-2">
-          <MyPagination
-            hasNextPage={
-              (data?.hasNextPage || false) && mappedList.length === perPage
-            }
-          />
-        </div>
-      )}
       {!hasAnime && (
         <Chip variant="bordered" color="warning">
           Nothing found!

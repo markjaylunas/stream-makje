@@ -67,16 +67,15 @@ export default async function LastSeasonPage({
           )
         }
       />
-      {animeList.length > 0 && (
-        <div className="flex justify-end px-2 mt-2">
-          <PageNavigation
-            nextDisabled={
-              (!data?.hasNextPage || true) && animeList.length !== perPage
-            }
-            prevDisabled={page <= 1}
-          />
-        </div>
-      )}
+
+      <div className="flex justify-end px-2 mt-2">
+        <PageNavigation
+          nextDisabled={
+            (!data?.hasNextPage || true) && animeList.length !== perPage
+          }
+          prevDisabled={page <= 1}
+        />
+      </div>
     </main>
   );
 }

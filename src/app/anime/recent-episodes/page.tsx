@@ -50,11 +50,10 @@ export default async function RecentEpisodePage({
           )
         }
       />
-      {animeList.length > 0 && (
-        <div className="flex justify-end px-2 mt-2">
-          <PageNavigation nextDisabled={false} prevDisabled={page <= 1} />
-        </div>
-      )}
+
+      <div className="flex justify-end px-2 mt-2">
+        <PageNavigation nextDisabled={false} prevDisabled={page <= 1} />
+      </div>
     </main>
   );
 }
