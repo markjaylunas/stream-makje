@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 import Heading from "../ui/heading";
 import CardData, { CardDataProps } from "./card-data";
 
@@ -6,16 +7,25 @@ type Props = {
   title?: string;
   infoList: CardDataProps[];
   className?: string;
+  endContent?: ReactNode;
 };
 
-export default function CardList({ title, infoList, className }: Props) {
+export default function CardList({
+  title,
+  infoList,
+  endContent,
+  className,
+}: Props) {
   return (
     <section className={cn("space-y-2", className)}>
-      {title && (
-        <Heading order="xl" className="text-gray-700 dark:text-gray-300 px-2">
-          {title}
-        </Heading>
-      )}
+      <div className="flex justify-between px-2">
+        {title && (
+          <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+            {title}
+          </Heading>
+        )}
+        {endContent}
+      </div>
       <ul className="grid grid-cols-2 xs:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
         {infoList.map((info) => (
           <div

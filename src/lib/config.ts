@@ -67,7 +67,7 @@ export const routesConfig: RoutesConfig = {
         },
         {
           title: "Airing Schedules",
-          href: "/anime/airing-schedule",
+          href: "/anime/airing-schedules",
           label:
             "Stay updated with the weekly airing schedule of your favorite anime.",
           items: [],

@@ -2,8 +2,8 @@ import { Skeleton, Spacer } from "@nextui-org/react";
 import { Suspense } from "react";
 import AiringScheduleList from "./_components/airing-schedule";
 import LastSeasonList from "./_components/last-season";
+import MostPopularList from "./_components/most-popular-list";
 import NextSeasonList from "./_components/next-season";
-import PopularList from "./_components/popular-list";
 import PopularThisSeasonList from "./_components/popular-this-season";
 import RecentEpisodeList from "./_components/recent-episodes";
 import SpotlightList from "./_components/spotlight-list";
@@ -40,7 +40,7 @@ export default async function Page() {
       <Spacer className="h-2" />
 
       <Suspense fallback={<>loading...</>}>
-        <PopularList />
+        <MostPopularList />
       </Suspense>
 
       <Spacer className="h-2" />

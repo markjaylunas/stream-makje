@@ -4,7 +4,7 @@ import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
 
-export default async function PopularList({
+export default async function MostPopularList({
   searchParams,
 }: {
   searchParams?: SearchParams;
