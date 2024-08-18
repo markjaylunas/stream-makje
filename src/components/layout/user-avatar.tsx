@@ -44,6 +44,11 @@ export default function UserAvatar({ user }: Props) {
           </DropdownItem>
         </DropdownSection>
         <DropdownSection>
+          <DropdownItem key="my-list" href="/my-list" showDivider>
+            My List
+          </DropdownItem>
+        </DropdownSection>
+        <DropdownSection>
           <DropdownItem
             key="theme toggle"
             onPress={() => setTheme(theme === "dark" ? "light" : "dark")}
