@@ -27,7 +27,7 @@ export default function PosterMoreInfo({ anime, classname }: Props) {
             <Chip
               radius="sm"
               size="sm"
-              color="warning"
+              color="secondary"
               variant="shadow"
               className="text-xs"
             >
