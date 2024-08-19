@@ -191,16 +191,18 @@ export default function CardSpotlight({ infoList }: Props) {
               as={NextLink}
               href={`/anime/watch/${spotlight.id}`}
               className=" font-medium"
+              startContent={<SvgIcon.playFill />}
             >
-              Watch Now
+              Play
             </Button>
             <Button
               as={NextLink}
               href={`/anime/info/${spotlight.id}`}
               variant="bordered"
               className="font-medium"
+              startContent={<SvgIcon.information />}
             >
-              More Info
+              Info
             </Button>
           </ButtonGroup>
 
