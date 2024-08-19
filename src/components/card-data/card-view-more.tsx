@@ -11,7 +11,7 @@ export default function CardViewMore({ href }: Props) {
     <Card
       as={NextLink}
       href={href}
-      className="relative h-full w-full mx-auto aspect-2/3 bg-slate-900 select-none hover:cursor-pointer overflow-hidden "
+      className="relative h-full w-full mx-auto aspect-2/3 bg-foreground-300 dark:bg-foreground-100 select-none hover:cursor-pointer overflow-hidden "
     >
       <CardBody className="flex justify-center items-center">
         <p className="text-large flex items-center  ">
