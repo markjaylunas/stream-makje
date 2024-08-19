@@ -90,7 +90,6 @@ export default function InfoSection({
                     as={NextLink}
                     href={`/anime/genre/${genre}`}
                     key={genre}
-                    color="secondary"
                     variant="bordered"
                     radius="full"
                     size="sm"
