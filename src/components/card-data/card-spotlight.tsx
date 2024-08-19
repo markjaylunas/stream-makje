@@ -61,27 +61,12 @@ export default function CardSpotlight({ infoList }: Props) {
     <Card
       shadow="none"
       radius="none"
-      className="relative transition-all delay-75 ease-soft-spring h-full w-full bg-blue-500 aspect-square sm:aspect-16/8 select-none overflow-hidden"
+      className="relative transition-all delay-75 ease-soft-spring h-full w-full aspect-square sm:aspect-16/8 select-none overflow-hidden"
     >
       <div
         className={cn(
-          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/10 dark:via-black/10 to-transparent from-[5%] via-[30%]",
-          isPlaying && "hidden md:inline-block"
-        )}
-      />
-      <div
-        className={cn(
-          " absolute z-10 w-[101%] h-[101%] bg-gradient-to-tr from-white dark:from-black  to-transparent from-[5%] via-[30%]",
-          canPlay
-            ? "via-white/5 dark:via-black/5"
-            : "via-white/90 dark:via-black/90",
-          isPlaying && "hidden md:inline-block"
-        )}
-      />
-      <div
-        className={cn(
-          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-r from-white dark:from-black via-white/10 dark:via-black/10 to-transparent from-[0 %] via-[30%]",
-          isPlaying && "hidden md:inline-block"
+          "absolute z-10 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/10 dark:via-black/60 dark:to-black/10",
+          isPlaying && "hidden"
         )}
       />
 
@@ -94,10 +79,8 @@ export default function CardSpotlight({ infoList }: Props) {
               player={player}
               className="mt-16 sm:-mt-16"
             />
-            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-r from-white dark:from-black via-white/10 dark:via-black/5 to-transparent from-[0%] via-[20%]" />
-            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-b from-white dark:from-black via-white/5 dark:via-black/10 to-transparent from-[5%] via-[20%]" />
-            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/5 dark:via-black/10 to-transparent from-[10%] via-[20%]" />
-            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-l from-white dark:from-black via-white/5 dark:via-black/10 to-transparent from-[0%] via-[20%]" />
+            <div className="inline md:hidden absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-b from-white dark:from-black via-white/5 dark:via-black/10 to-black/5 via-[10%]" />
+            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/5 dark:via-black/10 to-black/5 from-[10%] via-[20%]" />
           </div>
         </div>
       )}
@@ -154,7 +137,7 @@ export default function CardSpotlight({ infoList }: Props) {
 
       <CardFooter className="absolute flex items-start flex-col z-20 left-1 bottom-2 md:left-20 md:bottom-20">
         {Boolean(spotlight.rank) && (
-          <p className=" text-tiny sm:text-2xl font-black text-foreground-700 dark:text-foreground-700/70 text-shadow text-shadow-white dark:text-shadow-black text-shadow-x-1 text-shadow-y-1">
+          <p className=" text-tiny sm:text-2xl font-black text-foreground-700 dark:text-foreground-700 text-shadow text-shadow-white dark:text-shadow-black text-shadow-x-1 text-shadow-y-1">
             {moment.localeData().ordinal(spotlight.rank || 0)}&nbsp;
             <span className="text-tiny sm:text-base">on Trend</span>
           </p>
