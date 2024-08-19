@@ -24,7 +24,7 @@ export default async function SpotlightList({
   if (!data) throw new Error("Failed to fetch (Anime List) data");
 
   const tagList: Tag[] = [
-    { name: "type", color: "warning" },
+    { name: "type", color: "secondary" },
     { name: "releaseDate", color: "success" },
     {
       name: "rating",
@@ -33,12 +33,11 @@ export default async function SpotlightList({
     },
     {
       name: "totalEpisodes",
-      color: "secondary",
+      color: "warning",
       startContent: <SvgIcon.closedCaption className="size-3" />,
     },
     {
       name: "duration",
-      color: "default",
       endContent: <span>m</span>,
     },
   ];
