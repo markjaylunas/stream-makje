@@ -61,7 +61,7 @@ export default function CardSpotlight({ infoList }: Props) {
     <Card
       shadow="none"
       radius="none"
-      className="relative transition-all delay-75 ease-soft-spring h-full w-full aspect-square sm:aspect-16/8 select-none overflow-hidden"
+      className="relative bg-transparent transition-all delay-75 ease-soft-spring h-full w-full aspect-square sm:aspect-16/8 select-none overflow-hidden"
     >
       <div
         className={cn(
@@ -71,7 +71,7 @@ export default function CardSpotlight({ infoList }: Props) {
       />
 
       {spotlight.trailer && (
-        <div className="absolute bg-black h-full w-full ">
+        <div className="absolute  h-full w-full ">
           <div className="relative">
             <SpotlightVideoPlayer
               isMuted={isMuted}
@@ -80,7 +80,7 @@ export default function CardSpotlight({ infoList }: Props) {
               className="mt-16 sm:-mt-16"
             />
             <div className="inline md:hidden absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-b from-white dark:from-black via-white/5 dark:via-black/10 to-black/5 via-[10%]" />
-            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/5 dark:via-black/10 to-black/5 from-[10%] via-[20%]" />
+            <div className="absolute z-0 top-0 w-[101%] h-[101%] bg-gradient-to-t from-white dark:from-black via-white/5 dark:via-black/10 to-black/5 from-[10%] via-[20%] md:via-[40%]" />
           </div>
         </div>
       )}
