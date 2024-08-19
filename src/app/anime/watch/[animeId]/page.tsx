@@ -7,7 +7,6 @@ import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
 import ScoreDropdown from "@/components/ui/score-dropdown";
 import { SvgIcon } from "@/components/ui/svg-icons";
-import Text from "@/components/ui/text";
 import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import {

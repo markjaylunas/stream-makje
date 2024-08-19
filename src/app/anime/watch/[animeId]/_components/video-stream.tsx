@@ -1,7 +1,7 @@
 import { fetchAWEpisodeSourceData } from "@/actions/aniwatch";
 import { fetchAnimeEpisodeSource } from "@/app/api/consumet-api";
 import NoVideo from "@/components/video-player/no-video";
-import VideoPlayer from "@/components/video-player/video-player";
+import VideoPlayer from "@/components/video-player/video-player-test";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import {
   aniwatchEpisodeStreamObjectMapper,
