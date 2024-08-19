@@ -33,7 +33,12 @@ export default function ServerDropdown({ server }: Props) {
     <>
       <Dropdown placement="bottom-start" key={server.type}>
         <DropdownTrigger>
-          <Button size="sm" variant="flat" endContent={<SvgIcon.chevronDown />}>
+          <Button
+            radius="md"
+            size="sm"
+            variant="flat"
+            endContent={<SvgIcon.chevronDown />}
+          >
             {server.type.toUpperCase()}
           </Button>
         </DropdownTrigger>
