@@ -154,12 +154,12 @@ export default function CardSpotlight({ infoList }: Props) {
 
       <CardFooter className="absolute flex items-start flex-col z-20 left-1 bottom-2 md:left-20 md:bottom-20">
         {Boolean(spotlight.rank) && (
-          <p className=" text-tiny sm:text-2xl font-black text-foreground-500/70 text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1">
+          <p className=" text-tiny sm:text-2xl font-black text-foreground-700 dark:text-foreground-700/70 text-shadow text-shadow-white dark:text-shadow-black text-shadow-x-1 text-shadow-y-1">
             {moment.localeData().ordinal(spotlight.rank || 0)}&nbsp;
             <span className="text-tiny sm:text-base">on Trend</span>
           </p>
         )}
-        <h6 className="font-bold text-foreground-500 text-xl md:text-4xl w-2/3 sm:w-1/3 line-clamp-3 sm:line-clamp-4 text-left text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1">
+        <h6 className="font-bold text-foreground-800 dark:text-foreground-700 text-xl md:text-4xl w-2/3 sm:w-1/3 line-clamp-3 sm:line-clamp-4 text-left text-shadow text-shadow-white dark:text-shadow-black text-shadow-x-1 text-shadow-y-1">
           {spotlight.name}
         </h6>
 
@@ -180,7 +180,7 @@ export default function CardSpotlight({ infoList }: Props) {
             ))}
           </div>
 
-          <p className="text-foreground-500 text-tiny sm:text-sm md:text-base w-1/2 line-clamp-2 text-left text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1">
+          <p className="text-foreground-800 dark:text-foreground-600 text-tiny sm:text-sm md:text-base w-1/2 line-clamp-2 text-left text-shadow text-shadow-white dark:text-shadow-black text-shadow-x-1 text-shadow-y-1">
             {spotlight.description?.replace(/<[^>]*>/g, " ")}
           </p>
         </div>
@@ -210,6 +210,7 @@ export default function CardSpotlight({ infoList }: Props) {
               aria-label="player button"
               onPress={handlePlayerButton}
               variant="bordered"
+              color="secondary"
               radius="full"
               className={cn(spotlight.trailer?.id ? "" : "hidden")}
               startContent={
