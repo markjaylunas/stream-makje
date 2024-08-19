@@ -10,14 +10,20 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { Button } from "@nextui-org/react";
+import NextLink from "next/link";
 import { useState } from "react";
 
 type Props = {
+  pathName: string;
   genreList: string[];
   className?: string;
 };
 
-export default function GenreCarouselList({ genreList, className }: Props) {
+export default function GenreCarouselList({
+  genreList,
+  className,
+  pathName,
+}: Props) {
   const [_, setApi] = useState<CarouselApi>();
   return (
     <section className={cn("space-y-2", className)}>
@@ -39,6 +45,8 @@ export default function GenreCarouselList({ genreList, className }: Props) {
               )}
             >
               <Button
+                as={NextLink}
+                href={`${pathName}/${genre}`}
                 radius="full"
                 size="sm"
                 variant="bordered"

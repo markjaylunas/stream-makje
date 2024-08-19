@@ -27,7 +27,7 @@ export default async function Page() {
         <PopularThisSeasonList />
       </Suspense>
 
-      <GenreCarouselList genreList={genreList} />
+      <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
 
       <Suspense fallback={<>loading...</>}>
         <RecentEpisodeList />
@@ -59,7 +59,7 @@ export default async function Page() {
 
       <Spacer className="h-1.5" />
 
-      <GenreCarouselList genreList={genreList} />
+      <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
     </main>
   );
 }

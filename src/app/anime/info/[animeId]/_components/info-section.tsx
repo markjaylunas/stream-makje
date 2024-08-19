@@ -88,7 +88,7 @@ export default function InfoSection({
                 {anime.genres.map((genre) => (
                   <Button
                     as={NextLink}
-                    href={`/s1/genre?genres=[${genre}]`}
+                    href={`/anime/genre/${genre}`}
                     key={genre}
                     color="secondary"
                     variant="bordered"
