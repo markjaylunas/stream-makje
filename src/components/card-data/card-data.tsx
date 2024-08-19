@@ -42,6 +42,7 @@ export default function CardData({ tagList = [], ...props }: CardDataProps) {
       <CardHeader className="absolute z-20 top-0 p-2 flex flex-wrap gap-2 justify-between items-end">
         {filteredTagList.map((tag, tagIndex) => (
           <Chip
+            className="bg-opacity-80"
             radius="sm"
             size="sm"
             color={tag.color}
