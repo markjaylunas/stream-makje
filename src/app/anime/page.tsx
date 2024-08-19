@@ -1,3 +1,5 @@
+import GenreCarouselList from "@/components/card-data/genre-carousel-list";
+import { genreList } from "@/lib/constants";
 import { Skeleton, Spacer } from "@nextui-org/react";
 import { Suspense } from "react";
 import AiringScheduleList from "./_components/airing-schedules";
@@ -25,7 +27,7 @@ export default async function Page() {
         <PopularThisSeasonList />
       </Suspense>
 
-      <Spacer className="h-2" />
+      <GenreCarouselList genreList={genreList} />
 
       <Suspense fallback={<>loading...</>}>
         <RecentEpisodeList />
@@ -54,6 +56,10 @@ export default async function Page() {
       <Suspense fallback={<>loading...</>}>
         <NextSeasonList />
       </Suspense>
+
+      <Spacer className="h-1.5" />
+
+      <GenreCarouselList genreList={genreList} />
     </main>
   );
 }
