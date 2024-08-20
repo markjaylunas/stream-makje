@@ -25,6 +25,7 @@ import {
   MediaPlayingEvent,
   MediaProvider,
   Menu,
+  Poster,
   TimeSlider,
   ToggleButton,
   useMediaRemote,
@@ -72,7 +73,6 @@ export default function VideoPlayer({
   const { currentTime } = useMediaStore(player);
   const progressTime = episodeProgress?.currentTime || 0;
   const [source, setSource] = useState<Source>(sourceList[0]);
-  const [canNext, setCanNext] = useState(false);
   const [timeBefore, setTimeBefore] = useState<number>(progressTime || 0);
 
   function onPlay(nativeEvent: MediaPlayEvent) {
@@ -141,12 +141,15 @@ export default function VideoPlayer({
         streamType="on-demand"
         crossOrigin
         playsInline
-        poster={episode.image || anime.cover || anime.image}
         onPlay={onPlay}
         className="relative"
       >
         <MediaProvider>
-          {/* <Poster className="vds-poster" src={poster} alt={title} /> */}
+          <Poster
+            className="vds-poster"
+            src={episode.image || anime.cover || anime.image}
+            alt={anime.title}
+          />
           {captionList.length > 0 &&
             captionList.map((caption, captionIdx) => (
               <VidTrack
