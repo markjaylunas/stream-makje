@@ -54,7 +54,7 @@ export default function CardWatchedCarouselList({
             <CarouselItem
               key={`${info.id}-${index}`}
               className={cn(
-                "p-2 hover:p-2 h-fit hover:bg-gray-500/50 transition-all delay-100 ease-soft-spring rounded-xl basis-[65%] md:basis-[35%] lg:basis-[18%]",
+                "p-2 hover:p-2 h-fit hover:bg-gray-500/50 transition-all delay-100 ease-soft-spring rounded-xl basis-[60%] md:basis-[32%] lg:basis-[24%] xl:basis-[18%]",
                 index === 0 && "ml-4 md:ml-10"
               )}
             >
