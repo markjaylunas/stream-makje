@@ -1,54 +1,82 @@
+import { fetchEpisodeProgress } from "@/actions/action";
 import { fetchAWEpisodeSourceData } from "@/actions/aniwatch";
 import { fetchAnimeEpisodeSource } from "@/app/api/consumet-api";
+import { auth } from "@/auth";
 import NoVideo from "@/components/video-player/no-video";
 import VideoPlayer from "@/components/video-player/video-player";
+import { EpisodeProgress } from "@/db/schema";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import {
   aniwatchEpisodeStreamObjectMapper,
   metaEpisodeStreamObjectMapper,
 } from "@/lib/object-mapper";
-import { AnimeProviders, EpisodeStream } from "@/lib/types";
+import { EpisodeStream, VSAnime, VSEpisode, VSProvider } from "@/lib/types";
 import { decodeEpisodeId } from "@/lib/utils";
 
 type VideoStreamProps = {
-  provider: AnimeProviders;
-  episodeTitle: string;
-  animeImage: string;
-  episodeImage: string;
-  episodeId: string;
+  provider: VSProvider;
+  anime: VSAnime;
+  episode: VSEpisode;
   category?: string;
   server?: string;
 };
+
+export type UpdateProgressInput = {
+  currentTime: number;
+  durationTime: number;
+  pathname: string;
+};
+
 export default async function VideoStream({
   provider,
-  animeImage,
-  episodeTitle,
-  episodeImage,
-  episodeId,
+  anime,
+  episode,
   category,
   server,
 }: VideoStreamProps) {
-  const decodedEpisodeId = decodeEpisodeId(episodeId);
+  const session = await auth();
+  const userId = session?.user?.id;
+  const decodedEpisodeId = decodeEpisodeId(episode.id);
+  const animeEpisodeId = `${anime.id}-${episode.number}`;
   let source: EpisodeStream | null = null;
+  let episodeProgress: EpisodeProgress | null = null;
 
-  if (provider === ANIME_PROVIDER.P1) {
-    const [episodeSourceData] = await Promise.all([
+  if (provider.name === ANIME_PROVIDER.P1) {
+    const [episodeSourceData, episodeProgressData] = await Promise.all([
       fetchAWEpisodeSourceData({
         episodeId: decodedEpisodeId,
         category,
         server,
       }),
+      userId
+        ? await fetchEpisodeProgress({
+            userId,
+            animeId: anime.id,
+            episodeId: animeEpisodeId,
+          })
+        : null,
     ]);
+
+    episodeProgress = episodeProgressData ? episodeProgressData[0] : null;
 
     source = episodeSourceData
       ? aniwatchEpisodeStreamObjectMapper(episodeSourceData)
       : null;
   }
 
-  if (provider === ANIME_PROVIDER.P2) {
-    const [episodeSourceData] = await Promise.all([
-      fetchAnimeEpisodeSource({ episodeId }),
+  if (provider.name === ANIME_PROVIDER.P2) {
+    const [episodeSourceData, episodeProgressData] = await Promise.all([
+      fetchAnimeEpisodeSource({ episodeId: episode.id }),
+      userId
+        ? await fetchEpisodeProgress({
+            userId,
+            animeId: anime.id,
+            episodeId: animeEpisodeId,
+          })
+        : null,
     ]);
+
+    episodeProgress = episodeProgressData ? episodeProgressData[0] : null;
 
     source = episodeSourceData
       ? metaEpisodeStreamObjectMapper(episodeSourceData)
@@ -58,7 +86,7 @@ export default async function VideoStream({
   if (!source)
     return (
       <NoVideo
-        bgSrc={animeImage}
+        bgSrc={anime.image}
         title={`No source found`}
         description="Please try other stream servers below ⬇️"
       />
@@ -70,17 +98,20 @@ export default async function VideoStream({
   );
   const thumbnail =
     thumbnailList.length > 0 ? thumbnailList[0].file : undefined;
-  const poster = episodeImage || animeImage;
 
   return (
     <VideoPlayer
-      title={episodeTitle}
-      poster={poster}
+      userId={userId}
+      anime={anime}
+      episode={episode}
+      episodeProgress={episodeProgress}
+      provider={provider}
       thumbnail={thumbnail}
       sourceList={sources}
       captionList={captions}
       intro={intro}
       outro={outro}
+      animeEpisodeId={animeEpisodeId}
     />
   );
 }

@@ -140,11 +140,22 @@ export default async function EpisodePage({
             fallback={<Skeleton className=" w-full aspect-video rounded-xl" />}
           >
             <VideoStream
-              provider={provider}
-              animeImage={animeInfo.poster}
-              episodeImage={episode?.image || ""}
-              episodeTitle={episode?.title || ""}
-              episodeId={episodeId}
+              provider={{
+                name: provider,
+                episodeId: episodeId,
+              }}
+              anime={{
+                id: animeId,
+                image: animeInfo.poster,
+                title: animeInfo.name,
+                cover: animeInfo.cover || "",
+              }}
+              episode={{
+                id: episodeId,
+                title: episode?.title || "",
+                image: episode?.image || null,
+                number: Number(episodeNumber),
+              }}
               category={category}
               server={server}
             />

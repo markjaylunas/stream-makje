@@ -170,3 +170,26 @@ export type Source = {
 };
 
 // End: UI prop types
+
+// Start: Video Stream types
+
+export type VSAnime = {
+  id: string;
+  title: string;
+  image: string;
+  cover?: string;
+};
+
+export type VSEpisode = {
+  id: string;
+  number: number;
+  title: string;
+  image: string | null;
+};
+
+export type VSProvider = {
+  name: AnimeProviders;
+  episodeId: string;
+};
+
+// End: Video Stream types

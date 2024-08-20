@@ -104,9 +104,8 @@ export const episodeProgress = pgTable("episode_progress", {
   episodeId: text("episode_id")
     .references(() => episode.id)
     .notNull(),
-  server: text("server").default("s1").notNull(),
-  serverAnimeId: text("server_anime_id"),
-  serverEpisodeId: text("server_episode_id"),
+  provider: text("provider"),
+  providerEpisodeId: text("provider_episode_id"),
   currentTime: real("current_time").notNull(),
   isFinished: boolean("is_finished").notNull(),
   updatedAt,

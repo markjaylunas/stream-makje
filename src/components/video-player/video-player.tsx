@@ -5,79 +5,134 @@ import "@vidstack/react/player/styles/default/layouts/video.css";
 import "@vidstack/react/player/styles/default/theme.css";
 
 import {
+  upsertEpisodeProgress,
+  UpsertEpisodeProgressData,
+} from "@/actions/action";
+import { EpisodeProgress } from "@/db/schema";
+import {
+  Source,
+  TimeLine,
+  Track,
+  VSAnime,
+  VSEpisode,
+  VSProvider,
+} from "@/lib/types";
+import {
   MediaLoadedDataEvent,
   MediaPlayer,
   MediaPlayerInstance,
+  MediaPlayEvent,
   MediaProvider,
   Menu,
-  Poster,
   TimeSlider,
-  Tooltip,
+  ToggleButton,
   useMediaRemote,
   Track as VidTrack,
 } from "@vidstack/react";
-import "@vidstack/react/player/styles/default/layouts/video.css";
-import "@vidstack/react/player/styles/default/theme.css";
-import { useRef, useState } from "react";
-
-import { Source, TimeLine, Track } from "@/lib/types";
 import {
   DefaultAudioLayout,
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { SvgIcon } from "../ui/svg-icons";
 
 type Props = {
-  title?: string;
-  poster: string;
+  anime: VSAnime;
+  episode: VSEpisode;
   thumbnail?: string;
   captionList: Track[];
   sourceList: Source[];
   intro?: TimeLine;
   outro?: TimeLine;
+  userId?: string;
+  episodeProgress: EpisodeProgress | null;
+  provider: VSProvider;
+  animeEpisodeId: string;
 };
 
 export default function VideoPlayer({
-  title,
-  poster,
+  userId,
   sourceList,
   captionList,
   thumbnail,
   intro,
   outro,
+  episodeProgress,
+  anime,
+  episode,
+  provider,
+  animeEpisodeId,
 }: Props) {
   const player = useRef<MediaPlayerInstance>(null);
   const remote = useMediaRemote(player);
-  const initialTime = 0;
-
+  const pathname = usePathname();
+  const progressTime = episodeProgress?.currentTime || 0;
   const [source, setSource] = useState<Source>(sourceList[0]);
-  const [timeBefore, setTimeBefore] = useState<number>(initialTime);
+  const [canNext, setCanNext] = useState(false);
+  const [timeBefore, setTimeBefore] = useState<number>(progressTime || 0);
 
-  function onLoadedData(nativeEvent: MediaLoadedDataEvent) {
+  function onPlay(nativeEvent: MediaPlayEvent) {
     setTimeout(() => {
       // if(initialTime) toast("Resuming from where you left off");
       remote.seek(timeBefore - 5, nativeEvent);
       setTimeBefore(0);
       remote.play(nativeEvent);
-    }, 2000);
+    }, 1000);
   }
 
+  useEffect(() => {
+    return () => {
+      const currentTime = player.current?.currentTime || 0;
+      const durationTime = player.current?.duration || 0;
+      if (userId && currentTime && currentTime > 10) {
+        let data: UpsertEpisodeProgressData = {
+          anime: {
+            id: anime.id,
+            title: anime.title,
+            image: anime.image,
+            cover: anime.cover || "",
+          },
+          episode: {
+            id: animeEpisodeId,
+            animeId: anime.id,
+            number: episode.number,
+            title: episode.title,
+            image: episode.image,
+            durationTime,
+          },
+          episodeProgress: {
+            id: episodeProgress?.id,
+            userId,
+            animeId: anime.id,
+            episodeId: animeEpisodeId,
+            currentTime,
+            isFinished: currentTime / durationTime > 0.9,
+            provider: provider.name,
+            providerEpisodeId: provider.episodeId,
+          },
+        };
+        upsertEpisodeProgress({ data });
+      }
+    };
+  }, []);
   return (
     <section className="overflow-hidden relative">
       <MediaPlayer
         aspectRatio="16/9"
         load="visible"
         posterLoad="visible"
-        title={title}
+        title={episode.title || anime.title}
         src={source.url}
         ref={player}
         viewType="video"
         streamType="on-demand"
-        logLevel="warn"
         crossOrigin
         playsInline
-        poster={poster}
+        poster={episode.image || anime.cover || anime.image}
+        onPlay={onPlay}
+        className="relative"
       >
         <MediaProvider>
           {/* <Poster className="vds-poster" src={poster} alt={title} /> */}
@@ -109,51 +164,47 @@ export default function VideoPlayer({
                 <TimeSlider.Thumb className="vds-slider-thumb" />
               </TimeSlider.Root>
             ),
-
-            beforeSettingsMenu:
-              sourceList.length > 1 ? (
-                <Menu.Root>
-                  <Tooltip.Root>
-                    <Tooltip.Trigger asChild>
-                      <Menu.Button className="vds-button w-24 flex items-center  gap-1 mx-1">
-                        {source.quality}
-                        <SvgIcon.chevronDown className="size-5" />
-                      </Menu.Button>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content
-                      className="vds-tooltip-content"
-                      placement="top start"
-                    >
-                      Quality
-                    </Tooltip.Content>
-                  </Tooltip.Root>
-                  <Menu.Content className="vds-menu-items ">
-                    <Menu.RadioGroup
-                      className="vds-radio-group"
-                      value={source.quality || source.type}
-                    >
-                      {sourceList.map((quality) => (
-                        <Menu.Radio
-                          className="vds-radio"
-                          value={quality.quality || quality.type}
-                          onSelect={() => {
-                            setTimeBefore(player.current?.currentTime || 0);
-                            setSource(quality);
-                          }}
-                          key={quality.quality}
-                        >
-                          <span className="vds-radio-label">
-                            {quality.quality}
-                          </span>
-                          <SvgIcon.check className="vds-icon" />
-                        </Menu.Radio>
-                      ))}
-                    </Menu.RadioGroup>
-                  </Menu.Content>
-                </Menu.Root>
-              ) : (
-                <></>
-              ),
+            beforeSettingsMenuEndItems: (
+              <Menu.Root>
+                <Menu.Button
+                  className="vds-menu-item"
+                  disabled={sourceList.length <= 1}
+                >
+                  <SvgIcon.image className="vds-menu-icon" />
+                  <span className="vds-menu-item-label ml-2">Quality</span>
+                  <span className="vds-menu-item-hint">{source.quality}</span>
+                  <SvgIcon.chevronRight className="vds-menu-open-icon size-4" />
+                </Menu.Button>
+                <Menu.Content className="vds-menu-items">
+                  <Menu.RadioGroup
+                    className="vds-radio-group"
+                    value={source.quality || ""}
+                  >
+                    {sourceList.map((currSource) => (
+                      <Menu.Radio
+                        className="vds-radio"
+                        value={currSource.quality || ""}
+                        onSelect={() => {
+                          setTimeBefore(player.current?.currentTime || 0);
+                          setSource(currSource);
+                        }}
+                        key={currSource.quality || ""}
+                      >
+                        <SvgIcon.check className="vds-icon" />
+                        <span className="vds-radio-label">
+                          {currSource.quality}
+                        </span>
+                      </Menu.Radio>
+                    ))}
+                  </Menu.RadioGroup>
+                </Menu.Content>
+              </Menu.Root>
+            ),
+            beforeSettingsMenu: (
+              <ToggleButton className="vds-button w-20">
+                Skip Intro
+              </ToggleButton>
+            ),
           }}
         />
       </MediaPlayer>

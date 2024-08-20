@@ -14,7 +14,6 @@ import {
 } from "@/db/schema";
 import { DEFAULT_PAGE_LIMIT } from "@/lib/constants";
 import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 export async function fetchEpisodeProgress({
   userId,
@@ -41,17 +40,21 @@ export type UpsertEpisodeProgressData = {
 };
 export async function upsertEpisodeProgress({
   data,
-  pathname,
 }: {
   data: UpsertEpisodeProgressData;
-  pathname: string;
 }) {
   const animeInsert = db.insert(anime).values(data.anime).onConflictDoNothing();
-
   const episodeInsert = db
     .insert(episode)
     .values(data.episode)
-    .onConflictDoNothing();
+    .onConflictDoUpdate({
+      target: episode.id,
+      set: {
+        title: data.episode.title,
+        image: data.episode.image,
+        updatedAt: new Date(),
+      },
+    });
 
   const episodeProgressInsert = db
     .insert(episodeProgress)
@@ -59,19 +62,15 @@ export async function upsertEpisodeProgress({
     .onConflictDoUpdate({
       target: episodeProgress.id,
       set: {
+        provider: data.episodeProgress.provider,
+        providerEpisodeId: data.episodeProgress.providerEpisodeId,
         currentTime: data.episodeProgress.currentTime,
         isFinished: data.episodeProgress.isFinished,
         updatedAt: new Date(),
       },
     });
 
-  const [_, __, episodeProgressData] = await Promise.all([
-    animeInsert,
-    episodeInsert,
-    episodeProgressInsert,
-  ]);
-
-  if (episodeProgressData) revalidatePath(pathname);
+  await Promise.all([animeInsert, episodeInsert, episodeProgressInsert]);
 }
 
 export async function fetchAllEpisodeProgress({
@@ -105,9 +104,8 @@ export async function fetchAllEpisodeProgress({
         episodeProgressUpdatedAt: episodeProgress.updatedAt,
         currentTime: episodeProgress.currentTime,
         durationTime: episode.durationTime,
-        server: episodeProgress.server,
-        serverAnimeId: episodeProgress.serverAnimeId,
-        serverEpisodeId: episodeProgress.serverEpisodeId,
+        provider: episodeProgress.provider,
+        providerEpisodeId: episodeProgress.providerEpisodeId,
       })
       .from(episodeProgress)
       .leftJoin(anime, eq(anime.id, episodeProgress.animeId))
