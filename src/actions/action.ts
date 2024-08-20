@@ -72,6 +72,9 @@ export async function upsertEpisodeProgress({
 
   await Promise.all([animeInsert, episodeInsert, episodeProgressInsert]);
 }
+export type FetchAllEpisodeProgress = Awaited<
+  ReturnType<typeof fetchAllEpisodeProgress>
+>;
 
 export async function fetchAllEpisodeProgress({
   userId,

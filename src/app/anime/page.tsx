@@ -8,6 +8,7 @@ import MostPopularList from "./_components/most-popular-list";
 import NextSeasonList from "./_components/next-season";
 import PopularThisSeasonList from "./_components/popular-this-season";
 import RecentEpisodeList from "./_components/recent-episodes";
+import { default as RecentlyWatchedList } from "./_components/recently-watched-list";
 import SpotlightList from "./_components/spotlight-list";
 
 export default async function Page() {
@@ -21,6 +22,10 @@ export default async function Page() {
         }
       >
         <SpotlightList />
+      </Suspense>
+
+      <Suspense fallback={<>loading...</>}>
+        <RecentlyWatchedList />
       </Suspense>
 
       <Suspense fallback={<>loading...</>}>

@@ -1,3 +1,4 @@
+import { FetchAllEpisodeProgress } from "@/actions/action";
 import { AWEpisodeSourceDataSchema } from "@/app/api/aniwatch-validations";
 import {
   AnimeDataSchema,
@@ -8,6 +9,7 @@ import {
   EpisodeSourceDataSchema,
 } from "@/app/api/consumet-validations";
 import { CardDataProps } from "@/components/card-data/card-data";
+import { CardWatchedDataProps } from "@/components/card-data/card-watched-data";
 import moment from "moment";
 import { ASFormatArray, sourcePriority } from "./constants";
 import {
@@ -18,7 +20,12 @@ import {
   OtherInfo,
   Tag,
 } from "./types";
-import { jaroWinklerDistance, pickTitle, searchKeysInObject } from "./utils";
+import {
+  createURL,
+  jaroWinklerDistance,
+  pickTitle,
+  searchKeysInObject,
+} from "./utils";
 
 export const consumetAnimeObjectMapper = ({
   animeList,
@@ -282,3 +289,51 @@ export const aniwatchEpisodeStreamObjectMapper = (
   intro: source.intro,
   outro: source.outro,
 });
+
+export const consumetAnimeWatchedObjectMapper = ({
+  animeList,
+  tagList,
+}: {
+  animeList: FetchAllEpisodeProgress["episodes"];
+  tagList: Tag[];
+}): CardWatchedDataProps[] =>
+  animeList.map((anime) => {
+    const {
+      animeTitle,
+      episodeTitle,
+      episodeImage,
+      episodeId,
+      animeImage,
+      animeId,
+      currentTime,
+      durationTime,
+      provider,
+      providerEpisodeId,
+      episodeProgressUpdatedAt: _,
+      ...others
+    } = anime;
+
+    const name = animeTitle || "";
+    const episodeName = episodeTitle || "";
+    const episodeNumber = anime.episodeNumber || 1;
+    const image = episodeImage || animeImage || "";
+    const href = createURL({
+      path: `/anime/watch/${animeId}`,
+      params: {
+        episodeId: providerEpisodeId,
+        episodeNumber,
+        provider,
+      },
+    });
+    return {
+      id: animeId || "",
+      name,
+      episodeName,
+      episodeNumber,
+      image,
+      currentTime,
+      durationTime: durationTime || 0,
+      href,
+      tagList: searchKeysInObject(tagList, others as DataObject),
+    };
+  });
