@@ -17,16 +17,18 @@ import {
   VSEpisode,
   VSProvider,
 } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import {
-  MediaLoadedDataEvent,
   MediaPlayer,
   MediaPlayerInstance,
   MediaPlayEvent,
+  MediaPlayingEvent,
   MediaProvider,
   Menu,
   TimeSlider,
   ToggleButton,
   useMediaRemote,
+  useMediaStore,
   Track as VidTrack,
 } from "@vidstack/react";
 import {
@@ -34,7 +36,6 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SvgIcon } from "../ui/svg-icons";
 
@@ -67,7 +68,8 @@ export default function VideoPlayer({
 }: Props) {
   const player = useRef<MediaPlayerInstance>(null);
   const remote = useMediaRemote(player);
-  const pathname = usePathname();
+
+  const { currentTime } = useMediaStore(player);
   const progressTime = episodeProgress?.currentTime || 0;
   const [source, setSource] = useState<Source>(sourceList[0]);
   const [canNext, setCanNext] = useState(false);
@@ -81,6 +83,15 @@ export default function VideoPlayer({
       remote.play(nativeEvent);
     }, 1000);
   }
+
+  const handleSkipIntro = () => {
+    if (!intro) return;
+    remote.seek(intro.end - 3);
+  };
+  const handleSkipOutro = () => {
+    if (!outro) return;
+    remote.seek(outro.end - 3);
+  };
 
   useEffect(() => {
     return () => {
@@ -200,10 +211,35 @@ export default function VideoPlayer({
                 </Menu.Content>
               </Menu.Root>
             ),
-            beforeSettingsMenu: (
-              <ToggleButton className="vds-button w-20">
-                Skip Intro
-              </ToggleButton>
+            beforeCurrentTime: (
+              <>
+                {intro && (
+                  <ToggleButton
+                    className={cn(
+                      "vds-button w-20",
+                      currentTime >= intro.start && currentTime <= intro.end
+                        ? ""
+                        : "hidden"
+                    )}
+                    onClick={handleSkipIntro}
+                  >
+                    Skip Intro
+                  </ToggleButton>
+                )}
+                {outro && (
+                  <ToggleButton
+                    className={cn(
+                      "vds-button w-20",
+                      currentTime >= outro.start && currentTime <= outro.end
+                        ? ""
+                        : "hidden"
+                    )}
+                    onClick={handleSkipOutro}
+                  >
+                    Skip Outro
+                  </ToggleButton>
+                )}
+              </>
             ),
           }}
         />
