@@ -19,6 +19,7 @@ import {
 } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
+  MediaLoadedDataEvent,
   MediaPlayer,
   MediaPlayerInstance,
   MediaPlayEvent,
@@ -75,12 +76,10 @@ export default function VideoPlayer({
   const [source, setSource] = useState<Source>(sourceList[0]);
   const [timeBefore, setTimeBefore] = useState<number>(progressTime || 0);
 
-  function onPlay(nativeEvent: MediaPlayEvent) {
+  function onLoadedData(nativeEvent: MediaLoadedDataEvent) {
     setTimeout(() => {
-      // if(initialTime) toast("Resuming from where you left off");
       remote.seek(timeBefore - 5, nativeEvent);
       setTimeBefore(0);
-      remote.play(nativeEvent);
     }, 1000);
   }
 
@@ -141,7 +140,7 @@ export default function VideoPlayer({
         streamType="on-demand"
         crossOrigin
         playsInline
-        onPlay={onPlay}
+        onLoadedData={onLoadedData}
         className="relative"
       >
         <MediaProvider>

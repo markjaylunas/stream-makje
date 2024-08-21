@@ -67,11 +67,14 @@ export async function fetchEpisodeByProviderData({
 
       if (!parsed.data.animes) return empty;
 
+      console.log(parsed.data);
+
       const animeIDAndTitleList = parsed.data.animes.map((anime) => ({
         id: anime.id,
         name: anime.name,
       }));
 
+      console.log({ animeIDAndTitleList });
       const animeMatched = await mapAnimeByName({
         list: animeIDAndTitleList,
         title,
