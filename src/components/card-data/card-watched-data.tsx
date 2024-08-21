@@ -30,7 +30,7 @@ export default function CardWatchedData({
     <Card
       as={NextLink}
       href={props.href}
-      className="relative group h-full w-full mx-auto aspect-3/2 bg-transparent select-none hover:cursor-pointer overflow-hidden "
+      className="relative group h-full w-full mx-auto aspect-5/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
     >
       <CardHeader className="absolute z-20 top-0 p-2 flex flex-wrap gap-2 justify-between items-end">
         {filteredTagList.map((tag, tagIndex) => (
