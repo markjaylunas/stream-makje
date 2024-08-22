@@ -1,4 +1,5 @@
 import GenreCarouselList from "@/components/card-data/genre-carousel-list";
+import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
 import { genreList } from "@/lib/constants";
 import { Skeleton, Spacer } from "@nextui-org/react";
 import { Suspense } from "react";
@@ -15,11 +16,7 @@ export default async function Page() {
   return (
     <main className="space-y-8 mb-12">
       <Suspense
-        fallback={
-          <section className="max-w-5xl mx-auto px-0 sm:px-4 h-full w-full aspect-square sm:aspect-3/1">
-            <Skeleton className="h-full w-full" />
-          </section>
-        }
+        fallback={<Skeleton className="aspect-square sm:aspect-16/8 " />}
       >
         <SpotlightList />
       </Suspense>
