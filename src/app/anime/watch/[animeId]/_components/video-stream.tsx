@@ -1,6 +1,6 @@
 import { fetchEpisodeProgress } from "@/actions/action";
 import { fetchAWEpisodeSourceData } from "@/actions/aniwatch";
-import { fetchAnimeEpisodeSource } from "@/app/api/consumet-api";
+import { fetchAnimeEpisodeSource } from "@/actions/consumet";
 import { auth } from "@/auth";
 import NoVideo from "@/components/video-player/no-video";
 import VideoPlayer from "@/components/video-player/video-player";

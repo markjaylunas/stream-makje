@@ -1,12 +1,12 @@
 "use server";
 
-import { aniwatchAPIQuery } from "@/app/api/aniwatch-api";
+import { aniwatchAPIQuery } from "@/lib/aniwatch-api";
 import {
   aWEpisodesDataSchema,
   aWEpisodeServersDataSchema,
   aWEpisodeSourceDataSchema,
   aWSearchDataSchema,
-} from "@/app/api/aniwatch-validations";
+} from "@/lib/aniwatch-validations";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import {
   consumetAnimeInfoEpisodesObjectMapper,

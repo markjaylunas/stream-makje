@@ -1,5 +1,7 @@
 import { FetchAllEpisodeProgress } from "@/actions/action";
-import { AWEpisodeSourceDataSchema } from "@/app/api/aniwatch-validations";
+import { CardDataProps } from "@/components/card-data/card-data";
+import { CardWatchedDataProps } from "@/components/card-data/card-watched-data";
+import { AWEpisodeSourceDataSchema } from "@/lib/aniwatch-validations";
 import {
   AnimeDataSchema,
   AnimeSchema,
@@ -7,9 +9,7 @@ import {
   AnimeSortedSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
-} from "@/app/api/consumet-validations";
-import { CardDataProps } from "@/components/card-data/card-data";
-import { CardWatchedDataProps } from "@/components/card-data/card-watched-data";
+} from "@/lib/consumet-validations";
 import moment from "moment";
 import { ASFormatArray, sourcePriority } from "./constants";
 import {

@@ -3,7 +3,6 @@ import {
   AnimeProviderAPI,
   AnimeProviders,
 } from "@/lib/types";
-import { episodeSourceDataSchema } from "./consumet-validations";
 
 const anilistBase = `${process.env.CONSUMET_API_BASE_URL}/meta/anilist`;
 

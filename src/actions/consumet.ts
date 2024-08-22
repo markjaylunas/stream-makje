@@ -1,13 +1,14 @@
 "use server";
 
-import { animeAPIQuery } from "@/app/api/consumet-api";
+import { ONE_WEEK } from "@/lib/constants";
+import { animeAPIQuery } from "@/lib/consumet-api";
 import {
   animeDataSchema,
   animeSearchDataSchema,
   animeSortedDataSchema,
   episodeDataSchema,
-} from "@/app/api/consumet-validations";
-import { ONE_WEEK } from "@/lib/constants";
+  episodeSourceDataSchema,
+} from "@/lib/consumet-validations";
 import {
   AnimeAdvancedSearchParams,
   AnimeProviderAPI,
@@ -232,6 +233,33 @@ export async function searchAnime(params: AnimeAdvancedSearchParams) {
       console.error(parsed.error.toString());
       return;
     }
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchAnimeEpisodeSource({
+  episodeId,
+}: {
+  episodeId: string;
+}) {
+  try {
+    const response = await fetch(
+      animeAPIQuery.meta.anilist.watch({ episodeId, provider: "gogoanime" }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = episodeSourceDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
     return parsed.data;
   } catch (error) {
     console.log(error);
