@@ -84,5 +84,19 @@ export const routesConfig: RoutesConfig = {
         },
       ],
     },
+    {
+      title: "K-drama",
+      items: [
+        {
+          title: "K-drama Homepage",
+          href: "/kdrama",
+          label:
+            "Explore all k-drama-related content, from trending series to new releases.",
+          icon: "home",
+          iconClass: "text-primary",
+          items: [],
+        },
+      ],
+    },
   ],
 };
