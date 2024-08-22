@@ -1,6 +1,4 @@
 import GenreCarouselList from "@/components/card-data/genre-carousel-list";
-import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
-import Heading from "@/components/ui/heading";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import { genreList } from "@/lib/constants";
 import { Skeleton, Spacer } from "@nextui-org/react";

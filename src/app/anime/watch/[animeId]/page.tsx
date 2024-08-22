@@ -2,7 +2,6 @@ import { fetchWatchStatus } from "@/actions/action";
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
 import { auth } from "@/auth";
-import CardCarouselList from "@/components/card-data/card-carousel-list";
 import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
 import ScoreDropdown from "@/components/ui/score-dropdown";
