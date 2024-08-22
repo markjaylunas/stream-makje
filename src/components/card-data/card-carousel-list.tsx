@@ -1,16 +1,11 @@
-"use client";
-
 import {
   Carousel,
-  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import Heading from "../ui/heading";
 import CardData, { CardDataProps } from "./card-data";
 import CardViewMore from "./card-view-more";
 
@@ -27,14 +22,12 @@ export default function CardCarouselList({
   title,
   className,
 }: Props) {
-  const [_, setApi] = useState<CarouselApi>();
   return (
     <Carousel
       opts={{
         dragFree: true,
         slidesToScroll: "auto",
       }}
-      setApi={setApi}
       className={className}
     >
       <CarouselContent className="-ml-1">
