@@ -14,29 +14,20 @@ export type CardDataProps = {
   image: string;
   cover?: string;
   rank?: number;
+  href: string;
   trailer?: TrailerSchema;
   tagList?: Tag[];
 };
 
 export default function CardData({ tagList = [], ...props }: CardDataProps) {
-  let link = `/anime/info/${props.id}`;
   const filteredTagList = tagList.filter((tag) => !tag.isCentered);
   const centerTagList = tagList.filter((tag) => tag.isCentered);
   const episodeTag = tagList.filter((tag) => tag.name === "episodeNumber")[0];
-  if (episodeTag)
-    link = createURL({
-      path: `/anime/watch/${props.id}`,
-      params: {
-        episodeId: undefined,
-        episodeNumber: `${episodeTag.value}`,
-        provider: ANIME_PROVIDER.P1,
-      },
-    });
 
   return (
     <Card
       as={NextLink}
-      href={link}
+      href={props.href}
       className="relative group h-full w-full mx-auto aspect-2/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
     >
       <CardHeader className="absolute z-20 top-0 p-2 flex flex-wrap gap-2 justify-between items-end">

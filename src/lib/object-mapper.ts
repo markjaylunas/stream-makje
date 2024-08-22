@@ -7,11 +7,12 @@ import {
   AnimeSchema,
   AnimeSearchDataSchema,
   AnimeSortedSchema,
+  DCDramaDataSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
-import { ASFormatArray, sourcePriority } from "./constants";
+import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
 import {
   AnimeInfo,
   DataObject,
@@ -38,6 +39,17 @@ export const consumetAnimeObjectMapper = ({
 }): CardDataProps[] =>
   animeList.map((anime, animeIdx) => {
     const { id, title, description, image, cover, trailer, ...others } = anime;
+    let href = `/anime/info/${id}`;
+    if (others.episodeNumber)
+      href = createURL({
+        path: `/anime/watch/${id}`,
+        params: {
+          episodeId: undefined,
+          episodeNumber: `${others.episodeNumber}`,
+          provider: ANIME_PROVIDER.P1,
+        },
+      });
+
     return {
       id,
       name: pickTitle(title),
@@ -45,6 +57,7 @@ export const consumetAnimeObjectMapper = ({
       image,
       cover: cover ? cover : undefined,
       rank: isRanked ? animeIdx + 1 : undefined,
+      href: href,
       trailer: trailer ? trailer : undefined,
       tagList: searchKeysInObject(tagList, others as DataObject),
     };
@@ -66,6 +79,7 @@ export const consumetSearchAnimeObjectMapper = ({
       description: description ? description : undefined,
       image: image ? image : "",
       cover: cover ? cover : undefined,
+      href: `/anime/info/${id}`,
       tagList: searchKeysInObject(tagList, others as DataObject).filter(
         (v) => v.value
       ),
@@ -188,6 +202,7 @@ export const consumetInfoAnimeObjectMapper = ({
         image: image || "",
         cover: cover ? cover : undefined,
         rank: isRanked ? animeIdx + 1 : undefined,
+        href: `/anime/info/${id}`,
         tagList: searchKeysInObject(
           tagList,
           others as unknown as DataObject
@@ -337,3 +352,15 @@ export const consumetAnimeWatchedObjectMapper = ({
       tagList: searchKeysInObject(tagList, others as DataObject),
     };
   });
+
+export const consumetDramacoolObjectMapper = ({
+  kdramaList,
+}: {
+  kdramaList: DCDramaDataSchema[];
+}): CardDataProps[] =>
+  kdramaList.map((drama) => ({
+    id: drama.id,
+    name: drama.title,
+    image: drama.image,
+    href: `/kdrama/info/${drama.id}`,
+  }));

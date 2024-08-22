@@ -33,7 +33,7 @@ function createURL(
   return url.toString();
 }
 
-export const animeAPIQuery = {
+export const consumetAPIQuery = {
   meta: {
     anilist: {
       search: (params: AnimeAdvancedSearchParams) =>
