@@ -87,30 +87,3 @@ export const animeAPIQuery = {
     },
   },
 };
-
-export async function fetchAnimeEpisodeSource({
-  episodeId,
-}: {
-  episodeId: string;
-}) {
-  try {
-    const response = await fetch(
-      animeAPIQuery.meta.anilist.watch({ episodeId, provider: "gogoanime" }),
-      { next: { revalidate: 3600 } }
-    );
-
-    const data = await response.json();
-
-    const parsed = episodeSourceDataSchema.safeParse(data);
-
-    if (!parsed.success) {
-      console.error(parsed.error.toString());
-      return;
-    }
-
-    return parsed.data;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-}
