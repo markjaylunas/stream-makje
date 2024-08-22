@@ -1,6 +1,4 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
-import Heading from "../ui/heading";
 import CardData, { CardDataProps } from "./card-data";
 
 type Props = {

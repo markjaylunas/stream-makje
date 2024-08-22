@@ -10,7 +10,6 @@ import CardData, { CardDataProps } from "./card-data";
 import CardViewMore from "./card-view-more";
 
 type Props = {
-  title?: string;
   viewMoreHref?: string;
   infoList: CardDataProps[];
   className?: string;
@@ -19,7 +18,6 @@ type Props = {
 export default function CardCarouselList({
   viewMoreHref,
   infoList,
-  title,
   className,
 }: Props) {
   return (
@@ -44,7 +42,7 @@ export default function CardCarouselList({
         ))}
         {viewMoreHref && (
           <CarouselItem
-            key={`${title}-view-more`}
+            key={viewMoreHref}
             className="p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-100 ease-soft-spring rounded-xl basis-[42%] xs:basis-[28%] md:basis-[23%] lg:basis-[19%] xl:basis-[15%] 2xl:basis-[13%]"
           >
             <CardViewMore href={viewMoreHref} />

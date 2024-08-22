@@ -1,15 +1,11 @@
-"use client";
-
 import {
   Carousel,
-  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import CardViewMore from "./card-view-more";
 import {
   default as CardWatchedData,
@@ -17,7 +13,6 @@ import {
 } from "./card-watched-data";
 
 type Props = {
-  title?: string;
   viewMoreHref?: string;
   infoList: CardWatchedDataProps[];
   className?: string;
@@ -26,17 +21,15 @@ type Props = {
 export default function CardWatchedCarouselList({
   viewMoreHref,
   infoList,
-  title,
+  className,
 }: Props) {
-  const [_, setApi] = useState<CarouselApi>();
   return (
     <Carousel
       opts={{
         dragFree: true,
         slidesToScroll: "auto",
       }}
-      setApi={setApi}
-      className="w-full overflow-hidden"
+      className={className}
     >
       <CarouselContent className="-ml-1">
         {infoList.map((info, index) => (
@@ -52,7 +45,7 @@ export default function CardWatchedCarouselList({
         ))}
         {viewMoreHref && (
           <CarouselItem
-            key={`${title}-view-more`}
+            key={viewMoreHref}
             className="p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-100 ease-soft-spring rounded-xl basis-[65%] md:basis-[35%] lg:basis-[18%]"
           >
             <CardViewMore orientation="horizontal" href={viewMoreHref} />

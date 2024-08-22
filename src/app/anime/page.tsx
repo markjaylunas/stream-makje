@@ -1,4 +1,6 @@
 import GenreCarouselList from "@/components/card-data/genre-carousel-list";
+import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
+import CardWatchedCarouselListSkeleton from "@/components/card-data/skeleton/card-watched-carousel-list-skeleton";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import { genreList } from "@/lib/constants";
 import { Skeleton, Spacer } from "@nextui-org/react";
@@ -22,13 +24,13 @@ export default async function Page() {
       </Suspense>
 
       <ListSectionWrapper title="History">
-        <Suspense fallback={<>loading...</>}>
+        <Suspense fallback={<CardWatchedCarouselListSkeleton count={8} />}>
           <RecentlyWatchedList />
         </Suspense>
       </ListSectionWrapper>
 
       <ListSectionWrapper title="Popular This Season">
-        <Suspense fallback={<>loading...</>}>
+        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
           <PopularThisSeasonList />
         </Suspense>
       </ListSectionWrapper>
@@ -36,7 +38,7 @@ export default async function Page() {
       <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
 
       <ListSectionWrapper title="Recent Episodes">
-        <Suspense fallback={<>loading...</>}>
+        <Suspense fallback={<CardCarouselListSkeleton count={14} />}>
           <RecentEpisodeList />
         </Suspense>
       </ListSectionWrapper>
@@ -44,7 +46,7 @@ export default async function Page() {
       <Spacer className="h-2" />
 
       <ListSectionWrapper title="Last Season">
-        <Suspense fallback={<>loading...</>}>
+        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
           <LastSeasonList />
         </Suspense>
       </ListSectionWrapper>
@@ -52,7 +54,7 @@ export default async function Page() {
       <Spacer className="h-2" />
 
       <ListSectionWrapper title="Most Popular">
-        <Suspense fallback={<>loading...</>}>
+        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
           <MostPopularList />
         </Suspense>
       </ListSectionWrapper>
@@ -60,7 +62,7 @@ export default async function Page() {
       <Spacer className="h-2" />
 
       <ListSectionWrapper title="Airing Schedules">
-        <Suspense fallback={<>loading...</>}>
+        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
           <AiringScheduleList />
         </Suspense>
       </ListSectionWrapper>
@@ -68,7 +70,7 @@ export default async function Page() {
       <Spacer className="h-2" />
 
       <ListSectionWrapper title="Next Season">
-        <Suspense fallback={<>loading...</>}>
+        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
           <NextSeasonList />
         </Suspense>
       </ListSectionWrapper>

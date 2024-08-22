@@ -4,6 +4,7 @@ import PNGGithub from "@/assets/github.png";
 import PNGKofi from "@/assets/kofi.png";
 import GIFManga from "@/assets/manga.gif";
 import GIFMovie from "@/assets/movie.gif";
+import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
 import Heading from "@/components/ui/heading";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import MyLink from "@/components/ui/my-link";
@@ -61,7 +62,7 @@ export default function Home() {
       </section>
 
       <ListSectionWrapper title="Anime This Season">
-        <Suspense fallback={<>loading...</>}>
+        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
           <PopularThisSeasonList />
         </Suspense>
       </ListSectionWrapper>
