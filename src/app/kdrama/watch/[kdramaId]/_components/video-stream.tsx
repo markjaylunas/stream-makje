@@ -60,6 +60,7 @@ export default async function VideoStream({
 
   return (
     <VideoPlayer
+      type="kdrama"
       userId={userId}
       info={kdrama}
       episode={episode}
