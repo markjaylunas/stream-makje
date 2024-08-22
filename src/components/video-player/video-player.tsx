@@ -42,6 +42,7 @@ import { useEffect, useRef, useState } from "react";
 import { SvgIcon } from "../ui/svg-icons";
 
 type Props = {
+  type: "anime" | "kdrama";
   info: VSInfo;
   episode: VSEpisode;
   thumbnail?: string;
@@ -56,6 +57,7 @@ type Props = {
 };
 
 export default function VideoPlayer({
+  type,
   userId,
   sourceList,
   captionList,
@@ -97,6 +99,7 @@ export default function VideoPlayer({
       const currentTime = player.current?.currentTime || 0;
       const durationTime = player.current?.duration || 0;
       if (userId && currentTime && currentTime > 10) {
+        if (type === "kdrama") return; //todo: temporary
         let data: UpsertEpisodeProgressData = {
           anime: {
             id: info.id,
