@@ -48,11 +48,6 @@ export default async function NextSeasonList({
   }
 
   return (
-    <CardCarouselList
-      title="Next Season"
-      infoList={mappedList}
-      className="-ml-1"
-      viewMoreHref="/anime/next-season"
-    />
+    <CardCarouselList infoList={mappedList} viewMoreHref="/anime/next-season" />
   );
 }

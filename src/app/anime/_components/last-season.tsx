@@ -48,11 +48,6 @@ export default async function LastSeasonList({
   }
 
   return (
-    <CardCarouselList
-      title="Last Season"
-      infoList={mappedList}
-      className="-ml-1"
-      viewMoreHref="/anime/last-season"
-    />
+    <CardCarouselList infoList={mappedList} viewMoreHref="/anime/last-season" />
   );
 }

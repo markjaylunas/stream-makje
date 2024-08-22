@@ -1,5 +1,7 @@
 import GenreCarouselList from "@/components/card-data/genre-carousel-list";
 import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
+import Heading from "@/components/ui/heading";
+import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import { genreList } from "@/lib/constants";
 import { Skeleton, Spacer } from "@nextui-org/react";
 import { Suspense } from "react";
@@ -21,43 +23,57 @@ export default async function Page() {
         <SpotlightList />
       </Suspense>
 
-      <Suspense fallback={<>loading...</>}>
-        <RecentlyWatchedList />
-      </Suspense>
+      <ListSectionWrapper title="History">
+        <Suspense fallback={<>loading...</>}>
+          <RecentlyWatchedList />
+        </Suspense>
+      </ListSectionWrapper>
 
-      <Suspense fallback={<>loading...</>}>
-        <PopularThisSeasonList />
-      </Suspense>
+      <ListSectionWrapper title="Popular This Season">
+        <Suspense fallback={<>loading...</>}>
+          <PopularThisSeasonList />
+        </Suspense>
+      </ListSectionWrapper>
 
       <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
 
-      <Suspense fallback={<>loading...</>}>
-        <RecentEpisodeList />
-      </Suspense>
+      <ListSectionWrapper title="Recent Episodes">
+        <Suspense fallback={<>loading...</>}>
+          <RecentEpisodeList />
+        </Suspense>
+      </ListSectionWrapper>
 
       <Spacer className="h-2" />
 
-      <Suspense fallback={<>loading...</>}>
-        <LastSeasonList />
-      </Suspense>
+      <ListSectionWrapper title="Last Season">
+        <Suspense fallback={<>loading...</>}>
+          <LastSeasonList />
+        </Suspense>
+      </ListSectionWrapper>
 
       <Spacer className="h-2" />
 
-      <Suspense fallback={<>loading...</>}>
-        <MostPopularList />
-      </Suspense>
+      <ListSectionWrapper title="Most Popular">
+        <Suspense fallback={<>loading...</>}>
+          <MostPopularList />
+        </Suspense>
+      </ListSectionWrapper>
 
       <Spacer className="h-2" />
 
-      <Suspense fallback={<>loading...</>}>
-        <AiringScheduleList />
-      </Suspense>
+      <ListSectionWrapper title="Airing Schedules">
+        <Suspense fallback={<>loading...</>}>
+          <AiringScheduleList />
+        </Suspense>
+      </ListSectionWrapper>
 
       <Spacer className="h-2" />
 
-      <Suspense fallback={<>loading...</>}>
-        <NextSeasonList />
-      </Suspense>
+      <ListSectionWrapper title="Next Season">
+        <Suspense fallback={<>loading...</>}>
+          <NextSeasonList />
+        </Suspense>
+      </ListSectionWrapper>
 
       <Spacer className="h-1.5" />
 

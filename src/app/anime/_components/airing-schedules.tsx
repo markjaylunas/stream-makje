@@ -37,13 +37,9 @@ export default async function AiringScheduleList({
   });
 
   return (
-    <section>
-      <CardCarouselList
-        title="Airing Schedules"
-        infoList={animeList}
-        className="-ml-1"
-        viewMoreHref="/anime/airing-schedules"
-      />
-    </section>
+    <CardCarouselList
+      infoList={animeList}
+      viewMoreHref="/anime/airing-schedules"
+    />
   );
 }

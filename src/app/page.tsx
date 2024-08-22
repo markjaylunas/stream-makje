@@ -5,6 +5,7 @@ import PNGKofi from "@/assets/kofi.png";
 import GIFManga from "@/assets/manga.gif";
 import GIFMovie from "@/assets/movie.gif";
 import Heading from "@/components/ui/heading";
+import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import MyLink from "@/components/ui/my-link";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
@@ -59,9 +60,11 @@ export default function Home() {
         />
       </section>
 
-      <Suspense fallback={<>loading...</>}>
-        <PopularThisSeasonList customTitle="Anime This Season" />
-      </Suspense>
+      <ListSectionWrapper title="Anime This Season">
+        <Suspense fallback={<>loading...</>}>
+          <PopularThisSeasonList />
+        </Suspense>
+      </ListSectionWrapper>
     </main>
   );
 }

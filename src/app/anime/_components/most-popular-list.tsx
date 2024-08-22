@@ -33,11 +33,6 @@ export default async function MostPopularList({
   });
 
   return (
-    <CardCarouselList
-      title="Most Popular"
-      infoList={animeList}
-      className="-ml-1"
-      viewMoreHref="/anime/most-popular"
-    />
+    <CardCarouselList infoList={animeList} viewMoreHref="/anime/most-popular" />
   );
 }

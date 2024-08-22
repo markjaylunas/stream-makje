@@ -6,10 +6,8 @@ import { SearchParams, Tag } from "@/lib/types";
 import { getSeasonAndYear, parseSearchParamInt } from "@/lib/utils";
 
 export default async function PopularThisSeasonList({
-  customTitle,
   searchParams,
 }: {
-  customTitle?: string;
   searchParams?: SearchParams;
 }) {
   const page = parseSearchParamInt({
@@ -51,10 +49,8 @@ export default async function PopularThisSeasonList({
 
   return (
     <CardCarouselList
-      title={customTitle || "Popular This Season"}
       viewMoreHref="/anime/popular-this-season"
       infoList={mappedList}
-      className="-ml-1"
     />
   );
 }

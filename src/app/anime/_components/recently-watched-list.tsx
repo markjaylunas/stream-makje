@@ -6,10 +6,8 @@ import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
 
 export default async function RecentlyWatchedList({
-  customTitle,
   searchParams,
 }: {
-  customTitle?: string;
   searchParams?: SearchParams;
 }) {
   const page = parseSearchParamInt({
@@ -45,10 +43,8 @@ export default async function RecentlyWatchedList({
 
   return (
     <CardWatchedCarouselList
-      title={customTitle || "History"}
       viewMoreHref="/anime/history"
       infoList={mappedList}
-      className="-ml-1"
     />
   );
 }
