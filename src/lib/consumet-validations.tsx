@@ -262,3 +262,63 @@ export type AnimeSortedSchema = z.infer<typeof animeSortedSchema>;
 export type AnimeSortedDataSchema = z.infer<typeof animeSortedDataSchema>;
 export type RelatedAnimeSchema = z.infer<typeof relatedAnimeSchema>;
 export type AnimeCharacterSchema = z.infer<typeof animeCharacterSchema>;
+
+// dramacool
+
+export const DCDramaDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  url: z.string(),
+  image: z.string(),
+});
+
+export const DCDramaListDataSchema = z.object({
+  currentPage: z.number(),
+  totalPages: z.number(),
+  hasNextPage: z.boolean(),
+  results: z.array(DCDramaDataSchema),
+});
+
+export const DCEpisodeDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  episode: z.number(),
+  subType: z.string(),
+  releaseDate: z.string(),
+  url: z.string(),
+});
+
+export const DCCharacterDataSchema = z.object({
+  url: z.string(),
+  image: z.string(),
+  name: z.string(),
+});
+
+export const DCInfoDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  duration: z.string(),
+  status: z.string(),
+  genres: z.array(z.string()),
+  otherNames: z.array(z.string()),
+  image: z.string(),
+  description: z.string(),
+  releaseDate: z.string(),
+  contentRating: z.string(),
+  airsOn: z.string(),
+  director: z.string(),
+  originalNetwork: z.string(),
+  trailer: z.object({ id: z.string(), url: z.string() }),
+  characters: z.array(DCCharacterDataSchema),
+  episodes: z.array(DCEpisodeDataSchema),
+});
+
+export const DCSourceDataSchema = z.object({
+  url: z.string(),
+  isM3U8: z.boolean(),
+});
+
+export const DCWatchDataSchema = z.object({
+  sources: z.array(DCSourceDataSchema),
+  download: z.string(),
+});
