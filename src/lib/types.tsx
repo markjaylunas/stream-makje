@@ -129,7 +129,7 @@ export type EpisodeList = {
 
 export type OtherInfo = { key: string; value: string | string[] }[];
 
-export type AnimeInfo = {
+export type Info = {
   id?: string | null;
   malId: string;
   name: string;
@@ -173,7 +173,7 @@ export type Source = {
 
 // Start: Video Stream types
 
-export type VSAnime = {
+export type VSInfo = {
   id: string;
   title: string;
   image: string;

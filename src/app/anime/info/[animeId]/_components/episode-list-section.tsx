@@ -19,13 +19,7 @@ import {
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import NextLink from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import {
-  HTMLProps,
-  MutableRefObject,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { HTMLProps, MutableRefObject, useMemo, useRef, useState } from "react";
 
 type Props = {
   animeEpisodeList: EpisodeList;
@@ -178,38 +172,6 @@ export default function EpisodeListSection({
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
-        {/* {activeEpisodeNumber > 0 && (
-          <ButtonGroup variant="bordered">
-            <Button
-              as={NextLink}
-              href={
-                prevEpisode
-                  ? `/${serverId}/info/${animeId}/watch/${encodeEpisodeId(
-                      prevEpisode.episodeId
-                    )}/${prevEpisode.number}`
-                  : ""
-              }
-              isDisabled={!Boolean(prevEpisode)}
-              startContent={<SvgIcon.chevronDoubleLeft />}
-            >
-              {prevEpisode ? prevEpisode.number : saluteCharacter}
-            </Button>
-            <Button
-              as={NextLink}
-              href={
-                nextEpisode
-                  ? `/${serverId}/info/${animeId}/watch/${encodeEpisodeId(
-                      nextEpisode.episodeId
-                    )}/${nextEpisode.number}`
-                  : ""
-              }
-              isDisabled={!Boolean(nextEpisode)}
-              endContent={<SvgIcon.chevronDoubleRight />}
-            >
-              {nextEpisode ? nextEpisode.number : meltCharacter}
-            </Button>
-          </ButtonGroup>
-        )} */}
       </div>
 
       {episodeListData.list.length <= 0 && (

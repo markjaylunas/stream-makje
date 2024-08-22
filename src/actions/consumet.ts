@@ -1,11 +1,14 @@
 "use server";
 
 import { ONE_WEEK } from "@/lib/constants";
-import { animeAPIQuery } from "@/lib/consumet-api";
+import { consumetAPIQuery } from "@/lib/consumet-api";
 import {
   animeDataSchema,
   animeSearchDataSchema,
   animeSortedDataSchema,
+  dCDramaListDataSchema,
+  dCInfoDataSchema,
+  dCWatchDataSchema,
   episodeDataSchema,
   episodeSourceDataSchema,
 } from "@/lib/consumet-validations";
@@ -14,6 +17,7 @@ import {
   AnimeProviderAPI,
   AnimeProviders,
 } from "@/lib/types";
+import { decodeKdramaId } from "@/lib/utils";
 
 export async function fetchPopularAnimeData({
   page = 1,
@@ -24,7 +28,7 @@ export async function fetchPopularAnimeData({
 }) {
   try {
     const response = await fetch(
-      animeAPIQuery.meta.anilist.popular({ page, perPage }),
+      consumetAPIQuery.meta.anilist.popular({ page, perPage }),
       { next: { revalidate: 3600 } }
     );
 
@@ -52,7 +56,7 @@ export async function fetchTrendingAnimeData({
 }) {
   try {
     const response = await fetch(
-      animeAPIQuery.meta.anilist.trending({ page, perPage }),
+      consumetAPIQuery.meta.anilist.trending({ page, perPage }),
       { next: { revalidate: 3600 } }
     );
 
@@ -74,7 +78,7 @@ export async function fetchTrendingAnimeData({
 export async function fetchAnimeData({ animeId }: { animeId: string }) {
   try {
     const response = await fetch(
-      animeAPIQuery.meta.anilist.data({ id: animeId }),
+      consumetAPIQuery.meta.anilist.data({ id: animeId }),
       { next: { revalidate: ONE_WEEK } }
     );
 
@@ -96,7 +100,7 @@ export async function fetchAnimeData({ animeId }: { animeId: string }) {
 export async function fetchAnimeInfo({ animeId }: { animeId: string }) {
   try {
     const response = await fetch(
-      animeAPIQuery.meta.anilist.info({ id: animeId }),
+      consumetAPIQuery.meta.anilist.info({ id: animeId }),
       { next: { revalidate: ONE_WEEK } }
     );
 
@@ -125,7 +129,7 @@ export async function fetchEpisodeData({
 }) {
   try {
     const response = await fetch(
-      animeAPIQuery.meta.anilist.episodes({
+      consumetAPIQuery.meta.anilist.episodes({
         id: animeId,
         provider,
       }),
@@ -137,7 +141,7 @@ export async function fetchEpisodeData({
     // fetch info to get episode list if empty
     if (data.length <= 0) {
       const response = await fetch(
-        animeAPIQuery.meta.anilist.info({
+        consumetAPIQuery.meta.anilist.info({
           id: animeId,
         }),
         { cache: "no-store" }
@@ -172,7 +176,7 @@ export async function fetchRecentEpisodesAnimeData({
 }) {
   try {
     const response = await fetch(
-      animeAPIQuery.meta.anilist.recentEpisodes({ page, perPage, provider }),
+      consumetAPIQuery.meta.anilist.recentEpisodes({ page, perPage, provider }),
       { next: { revalidate: 3600 } }
     );
 
@@ -201,7 +205,7 @@ export async function fetchAiringScheduleAnimeData({
 }) {
   try {
     const response = await fetch(
-      animeAPIQuery.meta.anilist.airingSchedule({ page, perPage }),
+      consumetAPIQuery.meta.anilist.airingSchedule({ page, perPage }),
       { next: { revalidate: 3600 } }
     );
 
@@ -223,7 +227,7 @@ export async function fetchAiringScheduleAnimeData({
 
 export async function searchAnime(params: AnimeAdvancedSearchParams) {
   try {
-    const response = await fetch(animeAPIQuery.meta.anilist.search(params));
+    const response = await fetch(consumetAPIQuery.meta.anilist.search(params));
 
     const data = await response.json();
 
@@ -247,13 +251,84 @@ export async function fetchAnimeEpisodeSource({
 }) {
   try {
     const response = await fetch(
-      animeAPIQuery.meta.anilist.watch({ episodeId, provider: "gogoanime" }),
+      consumetAPIQuery.meta.anilist.watch({ episodeId, provider: "gogoanime" }),
       { next: { revalidate: 3600 } }
     );
 
     const data = await response.json();
 
     const parsed = episodeSourceDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchPopularKdramaData() {
+  try {
+    const response = await fetch(consumetAPIQuery.movies.dramacool.popular(), {
+      next: { revalidate: 3600 },
+    });
+
+    const data = await response.json();
+    const parsed = dCDramaListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchKdramaInfo({ kdramaId }: { kdramaId: string }) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.dramacool.info({ id: decodeKdramaId(kdramaId) }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = dCInfoDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchDCEpisodeSourceData({
+  episodeId,
+}: {
+  episodeId: string;
+}) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.dramacool.watch({ episodeId }),
+      {
+        next: { revalidate: 3600 },
+      }
+    );
+    const data = await response.json();
+    const parsed = dCWatchDataSchema.safeParse(data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());

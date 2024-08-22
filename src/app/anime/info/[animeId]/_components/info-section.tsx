@@ -3,7 +3,7 @@ import { ReadMore } from "@/components/ui/read-more";
 import ScoreDropdown from "@/components/ui/score-dropdown";
 import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import { AnimeUserStatus } from "@/db/schema";
-import { AnimeInfo } from "@/lib/types";
+import { Info } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
@@ -12,10 +12,11 @@ import InfoCover from "./info-cover";
 import PosterMoreInfo from "./poster-more-info";
 
 type Props = {
-  anime: AnimeInfo;
+  anime: Info;
   className?: string;
   children?: ReactNode;
   animeWatchStatus: AnimeUserStatus[];
+  isGenreLinkDisabled?: boolean;
 };
 
 export default function InfoSection({
@@ -23,6 +24,7 @@ export default function InfoSection({
   className,
   children,
   animeWatchStatus,
+  isGenreLinkDisabled = false,
 }: Props) {
   return (
     <section className="relative">
@@ -87,8 +89,10 @@ export default function InfoSection({
               <div className="flex flex-wrap gap-2">
                 {anime.genres.map((genre) => (
                   <Button
-                    as={NextLink}
-                    href={`/anime/genre/${genre}`}
+                    as={!isGenreLinkDisabled ? NextLink : undefined}
+                    href={
+                      !isGenreLinkDisabled ? `/anime/genre/${genre}` : undefined
+                    }
                     key={genre}
                     variant="bordered"
                     radius="full"

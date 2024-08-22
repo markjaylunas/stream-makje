@@ -7,21 +7,26 @@ import {
   AnimeSchema,
   AnimeSearchDataSchema,
   AnimeSortedSchema,
+  DCDramaDataSchema,
+  DCEpisodeDataSchema,
+  DCInfoDataSchema,
+  DCWatchDataSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
-import { ASFormatArray, sourcePriority } from "./constants";
+import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
 import {
-  AnimeInfo,
   DataObject,
   Episode,
   EpisodeStream,
+  Info,
   OtherInfo,
   Tag,
 } from "./types";
 import {
   createURL,
+  encodeKdramaId,
   jaroWinklerDistance,
   pickTitle,
   searchKeysInObject,
@@ -38,6 +43,17 @@ export const consumetAnimeObjectMapper = ({
 }): CardDataProps[] =>
   animeList.map((anime, animeIdx) => {
     const { id, title, description, image, cover, trailer, ...others } = anime;
+    let href = `/anime/info/${id}`;
+    if (others.episodeNumber)
+      href = createURL({
+        path: `/anime/watch/${id}`,
+        params: {
+          episodeId: undefined,
+          episodeNumber: `${others.episodeNumber}`,
+          provider: ANIME_PROVIDER.P1,
+        },
+      });
+
     return {
       id,
       name: pickTitle(title),
@@ -45,6 +61,7 @@ export const consumetAnimeObjectMapper = ({
       image,
       cover: cover ? cover : undefined,
       rank: isRanked ? animeIdx + 1 : undefined,
+      href: href,
       trailer: trailer ? trailer : undefined,
       tagList: searchKeysInObject(tagList, others as DataObject),
     };
@@ -66,6 +83,7 @@ export const consumetSearchAnimeObjectMapper = ({
       description: description ? description : undefined,
       image: image ? image : "",
       cover: cover ? cover : undefined,
+      href: `/anime/info/${id}`,
       tagList: searchKeysInObject(tagList, others as DataObject).filter(
         (v) => v.value
       ),
@@ -75,7 +93,7 @@ export const consumetSearchAnimeObjectMapper = ({
 
 export const consumetAnimeInfoObjectMapper = (
   rawInfo: AnimeDataSchema
-): AnimeInfo => {
+): Info => {
   let aired = "";
 
   if (rawInfo.startDate) {
@@ -188,6 +206,7 @@ export const consumetInfoAnimeObjectMapper = ({
         image: image || "",
         cover: cover ? cover : undefined,
         rank: isRanked ? animeIdx + 1 : undefined,
+        href: `/anime/info/${id}`,
         tagList: searchKeysInObject(
           tagList,
           others as unknown as DataObject
@@ -337,3 +356,92 @@ export const consumetAnimeWatchedObjectMapper = ({
       tagList: searchKeysInObject(tagList, others as DataObject),
     };
   });
+
+export const consumetKDramacoolObjectMapper = ({
+  kdramaList,
+}: {
+  kdramaList: DCDramaDataSchema[];
+}): CardDataProps[] =>
+  kdramaList.map((drama) => ({
+    id: drama.id,
+    name: drama.title,
+    image: drama.image,
+    href: `/kdrama/info/${encodeKdramaId(drama.id)}`,
+  }));
+
+export const consumetKDramaInfoObjectMapper = (
+  rawInfo: DCInfoDataSchema
+): Info => {
+  const id = encodeKdramaId(rawInfo.id);
+  const otherInfo: OtherInfo = [
+    {
+      key: "status",
+      value: rawInfo.status,
+    },
+    {
+      key: "Episodes",
+      value: rawInfo.episodes.length.toString() || "0",
+    },
+    {
+      key: "duration",
+      value: rawInfo.duration || "",
+    },
+    {
+      key: "release date",
+      value: rawInfo.releaseDate,
+    },
+    {
+      key: "content rating",
+      value: rawInfo.contentRating,
+    },
+    {
+      key: "Airs On",
+      value: rawInfo.airsOn,
+    },
+    {
+      key: "director",
+      value: rawInfo.director,
+    },
+    {
+      key: "originalNetwork",
+      value: rawInfo.originalNetwork,
+    },
+  ].filter((c) => Boolean(c.value));
+
+  const synonyms =
+    rawInfo.otherNames.filter((v, i, a) => a.indexOf(v) == i).join(" | ") ||
+    null;
+  return {
+    id,
+    malId: id,
+    name: rawInfo.title,
+    poster: rawInfo.image,
+    cover: null,
+    type: null,
+    genres: rawInfo.genres,
+    synonyms,
+    sub: null,
+    dub: null,
+    description: rawInfo.description || null,
+    otherInfo,
+  };
+};
+
+export const consumetKdramaInfoEpisodesObjectMapper = (
+  episodes: DCEpisodeDataSchema[]
+): Episode[] =>
+  episodes.map((episode) => ({
+    episodeId: episode.id,
+    title: episode.title ? episode.title : null,
+    number: episode.episode,
+  }));
+
+export const consumetKdramaEpisodeStreamObjectMapper = (
+  source: DCWatchDataSchema
+): EpisodeStream => ({
+  sources: source.sources.map((source) => ({
+    type: source.isM3U8 ? "m3u8" : "",
+    url: source.url,
+  })),
+  tracks: [],
+});

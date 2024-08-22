@@ -13,8 +13,8 @@ import {
   Source,
   TimeLine,
   Track,
-  VSAnime,
   VSEpisode,
+  VSInfo,
   VSProvider,
 } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -42,7 +42,7 @@ import { useEffect, useRef, useState } from "react";
 import { SvgIcon } from "../ui/svg-icons";
 
 type Props = {
-  anime: VSAnime;
+  info: VSInfo;
   episode: VSEpisode;
   thumbnail?: string;
   captionList: Track[];
@@ -52,7 +52,7 @@ type Props = {
   userId?: string;
   episodeProgress: EpisodeProgress | null;
   provider: VSProvider;
-  animeEpisodeId: string;
+  infoEpisodeId: string;
 };
 
 export default function VideoPlayer({
@@ -63,10 +63,10 @@ export default function VideoPlayer({
   intro,
   outro,
   episodeProgress,
-  anime,
+  info,
   episode,
   provider,
-  animeEpisodeId,
+  infoEpisodeId,
 }: Props) {
   const player = useRef<MediaPlayerInstance>(null);
   const remote = useMediaRemote(player);
@@ -99,14 +99,14 @@ export default function VideoPlayer({
       if (userId && currentTime && currentTime > 10) {
         let data: UpsertEpisodeProgressData = {
           anime: {
-            id: anime.id,
-            title: anime.title,
-            image: anime.image,
-            cover: anime.cover || "",
+            id: info.id,
+            title: info.title,
+            image: info.image,
+            cover: info.cover || "",
           },
           episode: {
-            id: animeEpisodeId,
-            animeId: anime.id,
+            id: infoEpisodeId,
+            animeId: info.id,
             number: episode.number,
             title: episode.title,
             image: episode.image,
@@ -115,8 +115,8 @@ export default function VideoPlayer({
           episodeProgress: {
             id: episodeProgress?.id,
             userId,
-            animeId: anime.id,
-            episodeId: animeEpisodeId,
+            animeId: info.id,
+            episodeId: infoEpisodeId,
             currentTime,
             isFinished: currentTime / durationTime > 0.9,
             provider: provider.name,
@@ -133,7 +133,7 @@ export default function VideoPlayer({
         aspectRatio="16/9"
         load="visible"
         posterLoad="visible"
-        title={episode.title || anime.title}
+        title={episode.title || info.title}
         src={source.url}
         ref={player}
         viewType="video"
@@ -146,8 +146,8 @@ export default function VideoPlayer({
         <MediaProvider>
           <Poster
             className="vds-poster"
-            src={episode.image || anime.cover || anime.image}
-            alt={anime.title}
+            src={episode.image || info.cover || info.image}
+            alt={info.title}
           />
           {captionList.length > 0 &&
             captionList.map((caption, captionIdx) => (

@@ -1,5 +1,6 @@
 import GenreCarouselList from "@/components/card-data/genre-carousel-list";
 import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
+import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
 import CardWatchedCarouselListSkeleton from "@/components/card-data/skeleton/card-watched-carousel-list-skeleton";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import { genreList } from "@/lib/constants";
@@ -38,7 +39,14 @@ export default async function Page() {
       <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
 
       <ListSectionWrapper title="Recent Episodes">
-        <Suspense fallback={<CardCarouselListSkeleton count={14} />}>
+        <Suspense
+          fallback={
+            <CardListSkeleton
+              count={14}
+              className="max-w-screen-2xl mx-auto px-2 lg:px-8"
+            />
+          }
+        >
           <RecentEpisodeList />
         </Suspense>
       </ListSectionWrapper>

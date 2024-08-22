@@ -262,3 +262,71 @@ export type AnimeSortedSchema = z.infer<typeof animeSortedSchema>;
 export type AnimeSortedDataSchema = z.infer<typeof animeSortedDataSchema>;
 export type RelatedAnimeSchema = z.infer<typeof relatedAnimeSchema>;
 export type AnimeCharacterSchema = z.infer<typeof animeCharacterSchema>;
+
+// dramacool
+
+export const dCDramaDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  url: z.string(),
+  image: z.string(),
+});
+
+export const dCDramaListDataSchema = z.object({
+  currentPage: z.number(),
+  totalPages: z.number(),
+  hasNextPage: z.boolean(),
+  results: z.array(dCDramaDataSchema),
+});
+
+export const dCEpisodeDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  episode: z.number(),
+  subType: z.string(),
+  releaseDate: z.string(),
+  url: z.string(),
+});
+
+export const dCCharacterDataSchema = z.object({
+  url: z.string(),
+  image: z.string(),
+  name: z.string(),
+});
+
+export const dCInfoDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  duration: z.string().optional().nullable(),
+  status: z.string(),
+  genres: z.array(z.string()),
+  otherNames: z.array(z.string()),
+  image: z.string(),
+  description: z.string(),
+  releaseDate: z.string(),
+  contentRating: z.string(),
+  airsOn: z.string(),
+  director: z.string(),
+  originalNetwork: z.string(),
+  trailer: z.object({ id: z.string(), url: z.string() }),
+  characters: z.array(dCCharacterDataSchema),
+  episodes: z.array(dCEpisodeDataSchema),
+});
+
+export const dCSourceDataSchema = z.object({
+  url: z.string(),
+  isM3U8: z.boolean(),
+});
+
+export const dCWatchDataSchema = z.object({
+  sources: z.array(dCSourceDataSchema),
+  download: z.string(),
+});
+
+export type DCDramaDataSchema = z.infer<typeof dCDramaDataSchema>;
+export type DCDramaListDataSchema = z.infer<typeof dCDramaListDataSchema>;
+export type DCEpisodeDataSchema = z.infer<typeof dCEpisodeDataSchema>;
+export type DCCharacterDataSchema = z.infer<typeof dCCharacterDataSchema>;
+export type DCInfoDataSchema = z.infer<typeof dCInfoDataSchema>;
+export type DCSourceDataSchema = z.infer<typeof dCSourceDataSchema>;
+export type DCWatchDataSchema = z.infer<typeof dCWatchDataSchema>;

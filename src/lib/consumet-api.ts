@@ -5,6 +5,7 @@ import {
 } from "@/lib/types";
 
 const anilistBase = `${process.env.CONSUMET_API_BASE_URL}/meta/anilist`;
+const dramacoolBase = `${process.env.CONSUMET_API_BASE_URL}/movies/dramacool`;
 
 function createURL(
   base: string,
@@ -32,7 +33,7 @@ function createURL(
   return url.toString();
 }
 
-export const animeAPIQuery = {
+export const consumetAPIQuery = {
   meta: {
     anilist: {
       search: (params: AnimeAdvancedSearchParams) =>
@@ -83,6 +84,21 @@ export const animeAPIQuery = {
 
       genre: (params: { genres: string[]; page?: number; perPage?: number }) =>
         createURL(anilistBase, `genre`, params),
+    },
+  },
+
+  movies: {
+    dramacool: {
+      search: ({ query }: { query: string }) =>
+        createURL(dramacoolBase, `${query}`, {}),
+
+      info: (params: { id: string }) =>
+        createURL(dramacoolBase, `info`, params),
+
+      watch: (params: { episodeId: string }) =>
+        createURL(dramacoolBase, `watch`, params),
+
+      popular: () => createURL(dramacoolBase, `popular`, {}),
     },
   },
 };
