@@ -59,7 +59,8 @@ export default function InfoSection({
               {Array.from(new Set([anime.synonyms])).join(" | ")}
             </h2>
 
-            <div className="flex justify-start gap-2">
+            {/* <div className="flex justify-start gap-2"> */}
+            <div className="hidden">
               <ScoreDropdown
                 animeWatchStatus={
                   animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
