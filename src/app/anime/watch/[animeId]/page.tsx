@@ -222,23 +222,25 @@ export default async function EpisodePage({
       <Spacer className="h-6" />
 
       {relationList.list.length > 0 && (
-        <CardCarouselList
-          title={relationList.name}
-          infoList={relationList.list}
-          key={relationList.name}
-          className="-ml-1 md:ml-4"
-        />
+        <section className="max-w-screen-2xl mx-auto mt-12 px-2 md:px-12">
+          <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+            {relationList.name}
+          </Heading>
+
+          <CardList infoList={relationList.list} />
+        </section>
       )}
 
       <Spacer className="h-6" />
 
       {recommendationList.list.length > 0 && (
-        <CardList
-          title={recommendationList.name}
-          infoList={recommendationList.list}
-          key={recommendationList.name}
-          className="px-2 md:px-12"
-        />
+        <section className="max-w-screen-2xl mx-auto mt-12 px-2 md:px-12">
+          <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+            {recommendationList.name}
+          </Heading>
+
+          <CardList infoList={recommendationList.list} />
+        </section>
       )}
     </>
   );

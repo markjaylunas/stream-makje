@@ -3,9 +3,8 @@ import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
 import { auth } from "@/auth";
 import CardList from "@/components/card-data/card-list";
-import ScoreDropdown from "@/components/ui/score-dropdown";
+import Heading from "@/components/ui/heading";
 import { SvgIcon } from "@/components/ui/svg-icons";
-import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import { ANIME_PROVIDER } from "@/lib/constants";
 import {
   consumetAnimeInfoObjectMapper,
@@ -160,23 +159,25 @@ export default async function InfoPage({
       <Spacer className="h-12" />
 
       {animeRelations.list.length > 0 && (
-        <CardList
-          title={animeRelations.name}
-          infoList={animeRelations.list}
-          key={animeRelations.name}
-          className="max-w-screen-2xl mx-auto mt-12 px-2 md:px-12"
-        />
+        <section className="max-w-screen-2xl mx-auto mt-12 px-2 md:px-12">
+          <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+            {animeRelations.name}
+          </Heading>
+
+          <CardList infoList={animeRelations.list} />
+        </section>
       )}
 
       <Spacer className="h-12" />
 
       {animeRecommendations.list.length > 0 && (
-        <CardList
-          title={animeRecommendations.name}
-          infoList={animeRecommendations.list}
-          key={animeRecommendations.name}
-          className="max-w-screen-2xl mx-auto px-2 md:px-12"
-        />
+        <section className="max-w-screen-2xl mx-auto mt-12 px-2 md:px-12">
+          <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+            {animeRecommendations.name}
+          </Heading>
+
+          <CardList infoList={animeRecommendations.list} />
+        </section>
       )}
     </main>
   );

@@ -1,5 +1,6 @@
 import { fetchRecentEpisodesAnimeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
+import Heading from "@/components/ui/heading";
 import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
@@ -36,8 +37,11 @@ export default async function RecentEpisodeList({
   });
 
   return (
-    <section className="max-w-screen-2xl mx-auto  px-2 lg:px-8">
-      <CardList title="Recent Episodes" infoList={animeList} />
+    <section className="max-w-screen-2xl mx-auto space-y-2 px-2 lg:px-8">
+      <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+        Recent Episodes
+      </Heading>
+      <CardList infoList={animeList} />
     </section>
   );
 }

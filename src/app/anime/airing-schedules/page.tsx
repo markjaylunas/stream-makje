@@ -1,5 +1,6 @@
 import { fetchAiringScheduleAnimeData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
+import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
 import { consumetAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
@@ -40,23 +41,24 @@ export default async function AiringSchedulesPage({
 
   return (
     <main className="max-w-screen-xl mx-auto p-4 mb-10">
-      <CardList
-        title="Airing Schedules"
-        infoList={animeList}
-        className="-ml-1"
-        endContent={
-          animeList.length > 0 && (
-            <div className="flex justify-center">
-              <PageNavigation
-                nextDisabled={
-                  (!data?.hasNextPage || true) && animeList.length !== perPage
-                }
-                prevDisabled={page <= 1}
-              />
-            </div>
-          )
-        }
-      />
+      <div className="flex justify-between p-2">
+        <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+          Airing Schedules
+        </Heading>
+
+        {animeList.length > 0 && (
+          <div className="flex justify-center">
+            <PageNavigation
+              nextDisabled={
+                (!data?.hasNextPage || true) && animeList.length !== perPage
+              }
+              prevDisabled={page <= 1}
+            />
+          </div>
+        )}
+      </div>
+
+      <CardList infoList={animeList} />
 
       <div className="flex justify-end px-2 mt-2">
         <PageNavigation

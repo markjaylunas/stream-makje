@@ -1,6 +1,7 @@
 import { searchAnime } from "@/actions/consumet";
 import { CardDataProps } from "@/components/card-data/card-data";
 import CardList from "@/components/card-data/card-list";
+import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
 import { consumetSearchAnimeObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
@@ -49,23 +50,24 @@ export default async function RecentEpisodePage({
   }
   return (
     <main className="max-w-screen-xl mx-auto p-4 mb-10">
-      <CardList
-        title="Recent Episodes"
-        infoList={animeList}
-        className="-ml-1"
-        endContent={
-          animeList.length > 0 && (
-            <div className="flex justify-center">
-              <PageNavigation
-                nextDisabled={
-                  (!data?.hasNextPage || true) && animeList.length !== perPage
-                }
-                prevDisabled={page <= 1}
-              />
-            </div>
-          )
-        }
-      />
+      <div className="flex justify-between p-2">
+        <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+          Next Season
+        </Heading>
+
+        {animeList.length > 0 && (
+          <div className="flex justify-center">
+            <PageNavigation
+              nextDisabled={
+                (!data?.hasNextPage || true) && animeList.length !== perPage
+              }
+              prevDisabled={page <= 1}
+            />
+          </div>
+        )}
+      </div>
+
+      <CardList infoList={animeList} className="-ml-1" />
 
       <div className="flex justify-end px-2 mt-2">
         <PageNavigation

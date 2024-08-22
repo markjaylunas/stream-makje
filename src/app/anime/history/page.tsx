@@ -1,17 +1,12 @@
 import { fetchAllEpisodeProgress } from "@/actions/action";
-import { searchAnime } from "@/actions/consumet";
 import { auth } from "@/auth";
-import { CardDataProps } from "@/components/card-data/card-data";
-import CardList from "@/components/card-data/card-list";
 import CardWatchedList from "@/components/card-data/card-watched-list";
+import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
-import {
-  consumetAnimeWatchedObjectMapper,
-  consumetSearchAnimeObjectMapper,
-} from "@/lib/object-mapper";
+import { consumetAnimeWatchedObjectMapper } from "@/lib/object-mapper";
 import { DEFAULT_SIGNIN_PATH } from "@/lib/routes";
 import { SearchParams, Tag } from "@/lib/types";
-import { getSeasonAndYear, parseSearchParamInt } from "@/lib/utils";
+import { parseSearchParamInt } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
 export default async function HistoryPage({
@@ -52,21 +47,22 @@ export default async function HistoryPage({
 
   return (
     <main className="max-w-screen-xl mx-auto p-4 mb-10">
-      <CardWatchedList
-        title="History"
-        infoList={mappedList}
-        className="-ml-1"
-        endContent={
-          episodeProgressData.totalCount > 0 && (
-            <div className="flex justify-center">
-              <PageNavigation
-                nextDisabled={page * perPage >= episodeProgressData.totalCount}
-                prevDisabled={page <= 1}
-              />
-            </div>
-          )
-        }
-      />
+      <div className="flex justify-between p-2">
+        <Heading order="xl" className="text-gray-700 dark:text-gray-300">
+          History
+        </Heading>
+
+        {episodeProgressData.totalCount > 0 && (
+          <div className="flex justify-center">
+            <PageNavigation
+              nextDisabled={page * perPage >= episodeProgressData.totalCount}
+              prevDisabled={page <= 1}
+            />
+          </div>
+        )}
+      </div>
+
+      <CardWatchedList infoList={mappedList} className="-ml-1" />
 
       <div className="flex justify-end px-2 mt-2">
         <PageNavigation
