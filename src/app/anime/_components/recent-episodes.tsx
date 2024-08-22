@@ -38,7 +38,7 @@ export default async function RecentEpisodeList({
   return (
     <CardList
       infoList={animeList}
-      className="max-w-screen-2xl mx-auto space-y-2 px-2 lg:px-8"
+      className="max-w-screen-2xl mx-auto px-2 lg:px-8"
     />
   );
 }
