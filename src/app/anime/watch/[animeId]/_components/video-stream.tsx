@@ -10,12 +10,12 @@ import {
   aniwatchEpisodeStreamObjectMapper,
   metaEpisodeStreamObjectMapper,
 } from "@/lib/object-mapper";
-import { EpisodeStream, VSAnime, VSEpisode, VSProvider } from "@/lib/types";
+import { EpisodeStream, VSEpisode, VSInfo, VSProvider } from "@/lib/types";
 import { decodeEpisodeId } from "@/lib/utils";
 
 type VideoStreamProps = {
   provider: VSProvider;
-  anime: VSAnime;
+  anime: VSInfo;
   episode: VSEpisode;
   category?: string;
   server?: string;
@@ -102,7 +102,7 @@ export default async function VideoStream({
   return (
     <VideoPlayer
       userId={userId}
-      anime={anime}
+      info={anime}
       episode={episode}
       episodeProgress={episodeProgress}
       provider={provider}
@@ -111,7 +111,7 @@ export default async function VideoStream({
       captionList={captions}
       intro={intro}
       outro={outro}
-      animeEpisodeId={animeEpisodeId}
+      infoEpisodeId={animeEpisodeId}
     />
   );
 }

@@ -173,7 +173,7 @@ export type Source = {
 
 // Start: Video Stream types
 
-export type VSAnime = {
+export type VSInfo = {
   id: string;
   title: string;
   image: string;

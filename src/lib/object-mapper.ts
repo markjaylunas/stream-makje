@@ -10,6 +10,7 @@ import {
   DCDramaDataSchema,
   DCEpisodeDataSchema,
   DCInfoDataSchema,
+  DCWatchDataSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
 } from "@/lib/consumet-validations";
@@ -434,3 +435,13 @@ export const consumetKdramaInfoEpisodesObjectMapper = (
     title: episode.title ? episode.title : null,
     number: episode.episode,
   }));
+
+export const consumetKdramaEpisodeStreamObjectMapper = (
+  source: DCWatchDataSchema
+): EpisodeStream => ({
+  sources: source.sources.map((source) => ({
+    type: source.isM3U8 ? "m3u8" : "",
+    url: source.url,
+  })),
+  tracks: [],
+});

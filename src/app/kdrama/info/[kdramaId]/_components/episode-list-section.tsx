@@ -40,9 +40,7 @@ export default function EpisodeListSection({
 
   const description =
     currentEpisodeNumber &&
-    `You are watching episode ${currentEpisodeNumber} of ${
-      episodeList.totalEpisodes
-    } ${Boolean(episodeTitle) && " - " + episodeTitle}`;
+    `You are watching episode ${currentEpisodeNumber} of ${episodeList.totalEpisodes}`;
 
   if (episodeList.list.length <= 0)
     return (

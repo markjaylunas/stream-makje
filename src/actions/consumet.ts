@@ -8,6 +8,7 @@ import {
   animeSortedDataSchema,
   dCDramaListDataSchema,
   dCInfoDataSchema,
+  dCWatchDataSchema,
   episodeDataSchema,
   episodeSourceDataSchema,
 } from "@/lib/consumet-validations";
@@ -301,6 +302,33 @@ export async function fetchKdramaInfo({ kdramaId }: { kdramaId: string }) {
     const data = await response.json();
 
     const parsed = dCInfoDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchDCEpisodeSourceData({
+  episodeId,
+}: {
+  episodeId: string;
+}) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.dramacool.watch({ episodeId }),
+      {
+        next: { revalidate: 3600 },
+      }
+    );
+    const data = await response.json();
+    const parsed = dCWatchDataSchema.safeParse(data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());
