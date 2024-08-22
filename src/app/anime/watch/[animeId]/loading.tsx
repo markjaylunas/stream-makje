@@ -31,7 +31,7 @@ export default function Loading() {
         </div>
       </section>
       <section className="max-w-7xl px-4 sm:mx-auto space-y-2 mt-4 sm:mt-8">
-        <CardListSkeleton cardCount={10} />
+        <CardListSkeleton count={10} />
       </section>
     </>
   );
