@@ -1,4 +1,4 @@
-import { TitleSchema } from "@/app/api/consumet-validations";
+import { TitleSchema } from "@/lib/consumet-validations";
 import { type ClassValue, clsx } from "clsx";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";

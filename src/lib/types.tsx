@@ -1,4 +1,3 @@
-import { TrailerSchema } from "@/app/api/consumet-validations";
 import { CardDataProps } from "@/components/card-data/card-data";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { ChipProps } from "@nextui-org/react";
@@ -10,6 +9,7 @@ import {
   ASStatusArray,
   ASTypeArray,
 } from "./constants";
+import { TrailerSchema } from "./consumet-validations";
 
 type IconName = keyof typeof SvgIcon;
 

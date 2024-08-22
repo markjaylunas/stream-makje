@@ -1,5 +1,5 @@
-import { TrailerSchema } from "@/app/api/consumet-validations";
 import { ANIME_PROVIDER } from "@/lib/constants";
+import { TrailerSchema } from "@/lib/consumet-validations";
 import { Tag } from "@/lib/types";
 import { cn, createURL, formatTimestamp } from "@/lib/utils";
 import { Card, CardFooter, CardHeader } from "@nextui-org/card";
