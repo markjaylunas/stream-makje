@@ -1,13 +1,13 @@
 import { fetchPopularKdramaData } from "@/actions/consumet";
 import CardList from "@/components/card-data/card-list";
-import { consumetDramacoolObjectMapper } from "@/lib/object-mapper";
+import { consumetKDramacoolObjectMapper } from "@/lib/object-mapper";
 
 export default async function KDramaPopularList() {
   const data = await fetchPopularKdramaData();
 
   if (!data) throw new Error("Failed to fetch (Kdrama List) data");
 
-  const kdramaList = consumetDramacoolObjectMapper({
+  const kdramaList = consumetKDramacoolObjectMapper({
     kdramaList: data.results,
   });
 

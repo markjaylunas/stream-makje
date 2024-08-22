@@ -7,6 +7,7 @@ import {
   animeSearchDataSchema,
   animeSortedDataSchema,
   dCDramaListDataSchema,
+  dCInfoDataSchema,
   episodeDataSchema,
   episodeSourceDataSchema,
 } from "@/lib/consumet-validations";
@@ -15,6 +16,7 @@ import {
   AnimeProviderAPI,
   AnimeProviders,
 } from "@/lib/types";
+import { decodeKdramaId } from "@/lib/utils";
 
 export async function fetchPopularAnimeData({
   page = 1,
@@ -276,6 +278,29 @@ export async function fetchPopularKdramaData() {
 
     const data = await response.json();
     const parsed = dCDramaListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchKdramaInfo({ kdramaId }: { kdramaId: string }) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.dramacool.info({ id: decodeKdramaId(kdramaId) }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = dCInfoDataSchema.safeParse(data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());

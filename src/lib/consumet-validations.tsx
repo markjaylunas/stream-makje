@@ -297,7 +297,7 @@ export const dCCharacterDataSchema = z.object({
 export const dCInfoDataSchema = z.object({
   id: z.string(),
   title: z.string(),
-  duration: z.string(),
+  duration: z.string().optional().nullable(),
   status: z.string(),
   genres: z.array(z.string()),
   otherNames: z.array(z.string()),

@@ -8,21 +8,24 @@ import {
   AnimeSearchDataSchema,
   AnimeSortedSchema,
   DCDramaDataSchema,
+  DCEpisodeDataSchema,
+  DCInfoDataSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
 import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
 import {
-  AnimeInfo,
   DataObject,
   Episode,
   EpisodeStream,
+  Info,
   OtherInfo,
   Tag,
 } from "./types";
 import {
   createURL,
+  encodeKdramaId,
   jaroWinklerDistance,
   pickTitle,
   searchKeysInObject,
@@ -89,7 +92,7 @@ export const consumetSearchAnimeObjectMapper = ({
 
 export const consumetAnimeInfoObjectMapper = (
   rawInfo: AnimeDataSchema
-): AnimeInfo => {
+): Info => {
   let aired = "";
 
   if (rawInfo.startDate) {
@@ -353,7 +356,7 @@ export const consumetAnimeWatchedObjectMapper = ({
     };
   });
 
-export const consumetDramacoolObjectMapper = ({
+export const consumetKDramacoolObjectMapper = ({
   kdramaList,
 }: {
   kdramaList: DCDramaDataSchema[];
@@ -362,5 +365,72 @@ export const consumetDramacoolObjectMapper = ({
     id: drama.id,
     name: drama.title,
     image: drama.image,
-    href: `/kdrama/info/${drama.id}`,
+    href: `/kdrama/info/${encodeKdramaId(drama.id)}`,
+  }));
+
+export const consumetKDramaInfoObjectMapper = (
+  rawInfo: DCInfoDataSchema
+): Info => {
+  const id = encodeKdramaId(rawInfo.id);
+  const otherInfo: OtherInfo = [
+    {
+      key: "status",
+      value: rawInfo.status,
+    },
+    {
+      key: "Episodes",
+      value: rawInfo.episodes.length.toString() || "0",
+    },
+    {
+      key: "duration",
+      value: rawInfo.duration || "",
+    },
+    {
+      key: "release date",
+      value: rawInfo.releaseDate,
+    },
+    {
+      key: "content rating",
+      value: rawInfo.contentRating,
+    },
+    {
+      key: "Airs On",
+      value: rawInfo.airsOn,
+    },
+    {
+      key: "director",
+      value: rawInfo.director,
+    },
+    {
+      key: "originalNetwork",
+      value: rawInfo.originalNetwork,
+    },
+  ].filter((c) => Boolean(c.value));
+
+  const synonyms =
+    rawInfo.otherNames.filter((v, i, a) => a.indexOf(v) == i).join(" | ") ||
+    null;
+  return {
+    id,
+    malId: id,
+    name: rawInfo.title,
+    poster: rawInfo.image,
+    cover: null,
+    type: null,
+    genres: rawInfo.genres,
+    synonyms,
+    sub: null,
+    dub: null,
+    description: rawInfo.description || null,
+    otherInfo,
+  };
+};
+
+export const consumetKdramaInfoEpisodesObjectMapper = (
+  episodes: DCEpisodeDataSchema[]
+): Episode[] =>
+  episodes.map((episode) => ({
+    episodeId: episode.id,
+    title: episode.title ? episode.title : null,
+    number: episode.episode,
   }));

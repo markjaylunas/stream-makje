@@ -1,11 +1,11 @@
 import { SvgIcon } from "@/components/ui/svg-icons";
-import { AnimeInfo } from "@/lib/types";
+import { Info } from "@/lib/types";
 import { cn, toTitleCase } from "@/lib/utils";
 import { Chip } from "@nextui-org/chip";
 import { Image } from "@nextui-org/image";
 
 type Props = {
-  anime: AnimeInfo;
+  anime: Info;
   classname?: string;
 };
 

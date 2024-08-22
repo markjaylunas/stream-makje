@@ -180,3 +180,11 @@ export function getSeasonAndYear(position: SeasonPosition): {
 
   return { season: SEASONS[seasonIndex], year };
 }
+
+export function encodeKdramaId(id: string) {
+  return id.replace(/\//g, "%2F"); // Encodes '/'
+}
+
+export function decodeKdramaId(id: string) {
+  return id.replace(/%2F/g, "/"); // Decodes '%2F' back to '/'
+}

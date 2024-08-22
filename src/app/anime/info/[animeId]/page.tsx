@@ -108,7 +108,7 @@ export default async function InfoPage({
     });
   }
 
-  if (firstEpisode) {
+  if (latestEpisode) {
     latestLink = createURL({
       path: `/anime/watch/${animeId}`,
       params: {
@@ -126,26 +126,26 @@ export default async function InfoPage({
     <main className="relative mb-12">
       <InfoSection anime={animeInfo} animeWatchStatus={animeWatchStatus}>
         <div className="flex flex-col md:flex-row justify-between items-end gap-2">
-          {Boolean(watchLink) && Boolean(latestLink) && (
+          {Boolean(watchLink) && (
             <ButtonGroup color="primary" size="lg" className="sm:w-fit w-full">
               <Button
                 as={NextLink}
-                href={watchLink || ""}
+                href={watchLink}
                 variant="shadow"
                 className="font-semibold w-full"
-                isDisabled={watchLink === null}
               >
                 Watch Now
               </Button>
-              <Button
-                as={NextLink}
-                href={latestLink || ""}
-                variant="bordered"
-                className="font-semibold w-full"
-                isDisabled={latestLink === null}
-              >
-                Latest
-              </Button>
+              {Boolean(latestLink) && (
+                <Button
+                  as={NextLink}
+                  href={latestLink}
+                  variant="bordered"
+                  className="font-semibold w-full"
+                >
+                  Latest
+                </Button>
+              )}
             </ButtonGroup>
           )}
         </div>
