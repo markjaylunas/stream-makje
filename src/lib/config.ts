@@ -89,7 +89,7 @@ export const routesConfig: RoutesConfig = {
       items: [
         {
           title: "K-drama Homepage",
-          href: "/kdrama",
+          href: "/k-drama",
           label:
             "Explore all k-drama-related content, from trending series to new releases.",
           icon: "home",

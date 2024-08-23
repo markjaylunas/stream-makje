@@ -44,7 +44,7 @@ export default function Home() {
         <CategoryCard
           description="Watch K-drama Now"
           image={GIFKdrama}
-          link="/kdrama"
+          link="/k-drama"
         />
 
         <CategoryCard

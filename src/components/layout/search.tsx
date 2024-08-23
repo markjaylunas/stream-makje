@@ -1,15 +1,21 @@
 "use client";
 
-import { searchAnime } from "@/actions/consumet";
-import { consumetSearchAnimeObjectMapper } from "@/lib/object-mapper";
+import { searchAnime, searchKdrama } from "@/actions/consumet";
+import {
+  consumetKDramacoolObjectMapper,
+  consumetSearchAnimeObjectMapper,
+} from "@/lib/object-mapper";
 import { Status, Tag } from "@/lib/types";
-import { cn, debounce } from "@/lib/utils";
+import { debounce } from "@/lib/utils";
 import {
   Button,
   Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Image,
   Input,
-  Kbd,
   Listbox,
   ListboxItem,
   Modal,
@@ -20,7 +26,8 @@ import {
   Skeleton,
 } from "@nextui-org/react";
 import NextLink from "next/link";
-import { useCallback, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
 import { CardDataProps } from "../card-data/card-data";
 import { SvgIcon } from "../ui/svg-icons";
 
@@ -36,6 +43,8 @@ const tagList: Tag[] = [
   },
 ];
 
+const categoryList = ["anime", "k-drama"];
+
 export default function Search({
   isOpen,
   onOpenChange,
@@ -43,20 +52,55 @@ export default function Search({
   isOpen: boolean;
   onOpenChange: () => void;
 }) {
+  const pathname = usePathname();
+  const defaultCategory = categoryList.find(
+    (v) => v === pathname.split("/")[1]
+  );
   const [dataList, setDataList] = useState<CardDataProps[]>([]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const [selectedCategory, setSelectedCategory] = useState(
+    new Set([defaultCategory || "all"])
+  );
+
+  const selectedValue = Array.from(selectedCategory)
+    .join(", ")
+    .replaceAll("_", " ");
+
+  const handleSearchAnime = async (q: string) => {
+    const animeListData = await searchAnime({ query: q });
+    if (!animeListData) return [];
+    const mappedList = consumetSearchAnimeObjectMapper({
+      searchData: animeListData,
+      tagList,
+    });
+    return mappedList;
+  };
+  const handleSearchKdrama = async (q: string) => {
+    const kdramaListData = await searchKdrama({ query: q });
+    if (!kdramaListData) return [];
+    const mappedList = consumetKDramacoolObjectMapper({
+      kdramaList: kdramaListData.results,
+    });
+    return mappedList;
+  };
 
   const handleSearch = useCallback(
-    debounce(async (q: string) => {
+    debounce(async (q: string, category: string) => {
       try {
         setStatus("loading");
-        const animeListData = await searchAnime({ query: q });
-        if (!animeListData) return setDataList([]);
-        const mappedList = consumetSearchAnimeObjectMapper({
-          searchData: animeListData,
-          tagList,
-        });
+        let mappedList: CardDataProps[] = [];
+
+        if (category === "anime") mappedList = await handleSearchAnime(q);
+        else if (category === "k-drama")
+          mappedList = await handleSearchKdrama(q);
+        else {
+          const [animeMappedList, kdramaMappedList] = await Promise.all([
+            handleSearchAnime(q),
+            handleSearchKdrama(q),
+          ]);
+          mappedList = [...animeMappedList, ...kdramaMappedList];
+        }
         setDataList(mappedList);
       } catch (error) {
         console.log(error);
@@ -79,10 +123,10 @@ export default function Search({
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
+              <ModalHeader className="flex gap-1">
                 <Input
                   onValueChange={(v) => {
-                    handleSearch(v);
+                    handleSearch(v, selectedValue);
                     setQuery(v);
                   }}
                   classNames={{ base: "max-w-lg" }}
@@ -92,6 +136,38 @@ export default function Search({
                   placeholder="Search title..."
                   aria-label="Search title"
                 />
+
+                <Dropdown classNames={{ base: "w-fit" }}>
+                  <DropdownTrigger>
+                    <Button
+                      variant="flat"
+                      color="primary"
+                      className="capitalize"
+                    >
+                      {selectedValue}
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    aria-label="Single selection example"
+                    variant="flat"
+                    disallowEmptySelection
+                    selectionMode="single"
+                    selectedKeys={selectedCategory}
+                    onSelectionChange={(selected) => {
+                      if (selected instanceof Set) {
+                        const value = Array.from(selected)
+                          .join(", ")
+                          .replaceAll("_", " ");
+                        setSelectedCategory(new Set([value]));
+                        handleSearch(query, value);
+                      }
+                    }}
+                  >
+                    <DropdownItem key="all">All</DropdownItem>
+                    <DropdownItem key="k-drama">K-drama</DropdownItem>
+                    <DropdownItem key="anime">Anime</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               </ModalHeader>
               <ModalBody>
                 <>
@@ -126,9 +202,15 @@ export default function Search({
                       const totalEpisodes = data.tagList?.find(
                         (tag) => tag.name === "totalEpisodes"
                       )?.value;
+
+                      let description = "";
+                      if (type) description += `${type}`;
+                      if (releaseDate) description += ` • ${releaseDate}`;
+                      if (totalEpisodes)
+                        description += ` • ${totalEpisodes} Episode`;
                       return (
                         <ListboxItem
-                          href={`/anime/info/${data.id}`}
+                          href={data.href}
                           classNames={{ title: "text-wrap line-clamp-2" }}
                           startContent={
                             <Image
@@ -144,10 +226,11 @@ export default function Search({
                           }
                           description={
                             <span>
-                              {`${type}`}&nbsp;&#183;&nbsp;{`${releaseDate}`}
+                              {description}
+                              {/* {`${type}`}&nbsp;&#183;&nbsp;{`${releaseDate}`}
                               &nbsp;&#183;&nbsp;{`${totalEpisodes}`}
                               &nbsp;Episode
-                              {Number(totalEpisodes) || 0 > 1 ? "s" : ""}
+                              {Number(totalEpisodes) || 0 > 1 ? "s" : ""} */}
                             </span>
                           }
                           key={data.id}

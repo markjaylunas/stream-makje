@@ -63,7 +63,7 @@ export default async function InfoPage({
 
   if (firstEpisode) {
     watchLink = createURL({
-      path: `/kdrama/watch/${kdramaId}`,
+      path: `/k-drama/watch/${kdramaId}`,
       params: {
         episodeId: firstEpisode.episodeId,
         episodeNumber: `${firstEpisode.number}`,
@@ -73,7 +73,7 @@ export default async function InfoPage({
 
   if (latestEpisode) {
     latestLink = createURL({
-      path: `/kdrama/watch/${kdramaId}`,
+      path: `/k-drama/watch/${kdramaId}`,
       params: {
         episodeId: latestEpisode.episodeId,
         episodeNumber: `${latestEpisode.number}`,
