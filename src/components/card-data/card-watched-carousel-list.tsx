@@ -6,7 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import CardViewMore from "./card-view-more";
+import CardLink from "./card-link";
 import {
   default as CardWatchedData,
   CardWatchedDataProps,
@@ -48,7 +48,11 @@ export default function CardWatchedCarouselList({
             key={viewMoreHref}
             className="p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-100 ease-soft-spring rounded-xl basis-[65%] md:basis-[35%] lg:basis-[18%]"
           >
-            <CardViewMore orientation="horizontal" href={viewMoreHref} />
+            <CardLink
+              orientation="horizontal"
+              href={viewMoreHref}
+              title="View More"
+            />
           </CarouselItem>
         )}
       </CarouselContent>

@@ -5,7 +5,7 @@ import GIFKdrama from "@/assets/kdrama.gif";
 import PNGKofi from "@/assets/kofi.png";
 import GIFManga from "@/assets/manga.gif";
 import GIFMovie from "@/assets/movie.gif";
-import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
+import CardWatchedCarouselListSkeleton from "@/components/card-data/skeleton/card-watched-carousel-list-skeleton";
 import Heading from "@/components/ui/heading";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import MyLink from "@/components/ui/my-link";
@@ -14,11 +14,12 @@ import { cn } from "@/lib/utils";
 import { Card, CardFooter } from "@nextui-org/react";
 import Image, { StaticImageData } from "next/image";
 import { Suspense } from "react";
-import PopularThisSeasonList from "./anime/_components/popular-this-season";
+import AnimeRecentlyWatchedList from "./anime/_components/recently-watched-list";
+import KdramaRecentlyWatchedList from "./k-drama/_components/recently-watched-list";
 
 export default function Home() {
   return (
-    <main className="min-h-screen mx-auto space-y-8">
+    <main className="min-h-screen mx-auto space-y-8 pb-12">
       <div className="px-4 py-8 space-y-8">
         <Heading className="text-center">Stream | Makje</Heading>
         <section className="max-w-screen-lg mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -71,9 +72,15 @@ export default function Home() {
         </section>
       </div>
 
-      <ListSectionWrapper title="Anime This Season">
-        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
-          <PopularThisSeasonList />
+      <ListSectionWrapper title="Anime History">
+        <Suspense fallback={<CardWatchedCarouselListSkeleton count={8} />}>
+          <AnimeRecentlyWatchedList />
+        </Suspense>
+      </ListSectionWrapper>
+
+      <ListSectionWrapper title="K-drama History">
+        <Suspense fallback={<CardWatchedCarouselListSkeleton count={8} />}>
+          <KdramaRecentlyWatchedList />
         </Suspense>
       </ListSectionWrapper>
     </main>

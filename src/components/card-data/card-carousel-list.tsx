@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import CardData, { CardDataProps } from "./card-data";
-import CardViewMore from "./card-view-more";
+import CardLink from "./card-link";
 
 type Props = {
   viewMoreHref?: string;
@@ -45,7 +45,7 @@ export default function CardCarouselList({
             key={viewMoreHref}
             className="p-2 hover:p-2 hover:bg-gray-500/50 transition-all delay-100 ease-soft-spring rounded-xl basis-[42%] xs:basis-[28%] md:basis-[23%] lg:basis-[19%] xl:basis-[15%] 2xl:basis-[13%]"
           >
-            <CardViewMore href={viewMoreHref} />
+            <CardLink href={viewMoreHref} title="View More" />
           </CarouselItem>
         )}
       </CarouselContent>

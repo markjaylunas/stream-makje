@@ -1,5 +1,7 @@
 import { fetchAllEpisodeProgress } from "@/actions/anime-action";
 import { auth } from "@/auth";
+import CardEmpty from "@/components/card-data/card-empty";
+import CardSignIn from "@/components/card-data/card-sign-in";
 import { default as CardWatchedCarouselList } from "@/components/card-data/card-watched-carousel-list";
 import { consumetAnimeWatchedObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
@@ -22,7 +24,7 @@ export default async function RecentlyWatchedList({
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId) return null;
+  if (!userId) return <CardSignIn />;
 
   const episodeProgressData = await fetchAllEpisodeProgress({
     userId,
@@ -30,7 +32,7 @@ export default async function RecentlyWatchedList({
     limit: perPage,
   });
 
-  if (episodeProgressData.episodes.length <= 0) return null;
+  if (episodeProgressData.totalCount === 0) return <CardEmpty />;
 
   const tagList: Tag[] = [
     { name: "episodeNumber", startContent: <span>Episode</span> },
@@ -41,9 +43,11 @@ export default async function RecentlyWatchedList({
     tagList,
   });
 
+  const hasNextPage = episodeProgressData.totalCount > perPage;
+
   return (
     <CardWatchedCarouselList
-      viewMoreHref="/anime/history"
+      viewMoreHref={hasNextPage ? "/anime/history" : undefined}
       infoList={mappedList}
     />
   );
