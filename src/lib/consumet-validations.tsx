@@ -308,7 +308,7 @@ export const dCInfoDataSchema = z.object({
   airsOn: z.string(),
   director: z.string(),
   originalNetwork: z.string(),
-  trailer: z.object({ id: z.string(), url: z.string() }),
+  trailer: z.object({ id: z.string().optional(), url: z.string().optional() }),
   characters: z.array(dCCharacterDataSchema),
   episodes: z.array(dCEpisodeDataSchema),
 });

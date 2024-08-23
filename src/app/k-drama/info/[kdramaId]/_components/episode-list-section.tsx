@@ -127,7 +127,7 @@ const EpisodeListView = ({
         color={episode.isFiller ? "warning" : "primary"}
         textValue={episode.title || `${episode.number}`}
         href={createURL({
-          path: `/kdrama/watch/${kdramaId}`,
+          path: `/k-drama/watch/${kdramaId}`,
           params: {
             episodeId: episode.episodeId,
             episodeNumber: `${episode.number}`,

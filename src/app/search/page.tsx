@@ -1,16 +1,21 @@
-import { searchAnime } from "@/actions/consumet";
+import { searchAnime, searchKdrama } from "@/actions/consumet";
 import { CardDataProps } from "@/components/card-data/card-data";
 import CardList from "@/components/card-data/card-list";
 import PageNavigation from "@/components/ui/page-navigation";
 import {
+  ASContentTypeArray,
   ASFormatArray,
   ASGenresArray,
   ASSeasonArray,
   ASSortArray,
   ASStatusArray,
 } from "@/lib/constants";
-import { consumetSearchAnimeObjectMapper } from "@/lib/object-mapper";
 import {
+  consumetKDramacoolObjectMapper,
+  consumetSearchAnimeObjectMapper,
+} from "@/lib/object-mapper";
+import {
+  ASContentType,
   ASFormat,
   ASGenres,
   ASSeason,
@@ -47,6 +52,10 @@ export default async function SearchAnimeResultsPage({
     typeof searchParams?.genres === "string" ? searchParams?.genres : undefined;
   const paramSort =
     typeof searchParams?.sort === "string" ? searchParams?.sort : undefined;
+  const paramContentType =
+    typeof searchParams?.contentType === "string"
+      ? searchParams?.contentType
+      : undefined;
 
   const genres: ASGenres[] | undefined =
     paramGenres
@@ -82,17 +91,18 @@ export default async function SearchAnimeResultsPage({
     ? (paramStatus as ASStatus)
     : undefined;
 
-  const data = await searchAnime({
-    query: q,
-    page,
-    perPage,
-    year,
-    season,
-    format,
-    status,
-    genres,
-    sort,
-  });
+  const contentType: ASContentType | undefined = ASContentTypeArray.includes(
+    paramContentType as ASContentType
+  )
+    ? (paramContentType as ASContentType)
+    : undefined;
+
+  let paginationData = {
+    currentPage: 1,
+    hasNextPage: false,
+    totalPages: 1,
+    totalResults: 0,
+  };
 
   const tagList: Tag[] = [
     {
@@ -109,24 +119,70 @@ export default async function SearchAnimeResultsPage({
       color: "success",
     },
   ];
-  let mappedList: CardDataProps[] = [];
 
-  if (data) {
-    mappedList = consumetSearchAnimeObjectMapper({
-      searchData: data,
+  const handleSearchAnime = async () => {
+    const animeListData = await searchAnime({
+      query: q,
+      page,
+      perPage,
+      year,
+      season,
+      format,
+      status,
+      genres,
+      sort,
+    });
+    if (!animeListData) return [];
+    const mappedList = consumetSearchAnimeObjectMapper({
+      searchData: animeListData,
       tagList,
     });
+    paginationData = {
+      currentPage: animeListData.currentPage,
+      hasNextPage: animeListData.hasNextPage,
+      totalPages: animeListData.totalPages,
+      totalResults: animeListData.totalResults,
+    };
+    return mappedList;
+  };
+
+  const handleSearchKdrama = async () => {
+    const kdramaListData = await searchKdrama({ query: q || "" });
+    if (!kdramaListData) return [];
+    const mappedList = consumetKDramacoolObjectMapper({
+      kdramaList: kdramaListData.results,
+    });
+    // paginationData = {
+    //   currentPage: kdramaListData.currentPage,
+    //   hasNextPage: kdramaListData.hasNextPage,
+    //   totalPages: kdramaListData.totalPages,
+    //   totalResults: kdramaListData.results.length,
+    // };
+    return mappedList;
+  };
+
+  let dataList: CardDataProps[] = [];
+
+  if (contentType === "ANIME") {
+    dataList = await handleSearchAnime();
+  } else if (contentType === "K-DRAMA") {
+    dataList = await handleSearchKdrama();
+  } else {
+    const [animeMappedList, kdramaMappedList] = await Promise.all([
+      handleSearchAnime(),
+      handleSearchKdrama(),
+    ]);
+    dataList = [...animeMappedList, ...kdramaMappedList];
   }
-  const hasAnime = mappedList.length > 0;
+
+  const hasAnime = dataList.length > 0;
 
   return (
     <>
-      {hasAnime && <CardList infoList={mappedList} />}
+      {hasAnime && <CardList infoList={dataList} />}
       <div className="flex justify-end px-2 mt-2">
         <PageNavigation
-          nextDisabled={
-            (!data?.hasNextPage || true) && mappedList.length !== perPage
-          }
+          nextDisabled={!paginationData?.hasNextPage || true}
           prevDisabled={page <= 1}
         />
       </div>

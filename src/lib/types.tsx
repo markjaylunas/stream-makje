@@ -2,6 +2,7 @@ import { CardDataProps } from "@/components/card-data/card-data";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { ChipProps } from "@nextui-org/react";
 import {
+  ASContentTypeArray,
   ASFormatArray,
   ASGenresArray,
   ASSeasonArray,
@@ -59,6 +60,7 @@ export type ASFormat = (typeof ASFormatArray)[number];
 export type ASSort = (typeof ASSortArray)[number];
 export type ASGenres = (typeof ASGenresArray)[number];
 export type ASStatus = (typeof ASStatusArray)[number];
+export type ASContentType = (typeof ASContentTypeArray)[number];
 
 export type AnimeProviders = "provider_1" | "provider_2";
 export type AnimeProviderAPI = "aniwatch" | "gogoanime";

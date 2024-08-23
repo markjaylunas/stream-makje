@@ -2,14 +2,22 @@
 
 import { SvgIcon } from "@/components/ui/svg-icons";
 import {
+  ASContentTypeArray,
   ASFormatArray,
   ASGenresArray,
   ASSeasonArray,
   ASSortArray,
   ASStatusArray,
 } from "@/lib/constants";
-import { ASFormat, ASGenres, ASSeason, ASSort, ASStatus } from "@/lib/types";
-import { debounce, toTitleCase } from "@/lib/utils";
+import {
+  ASContentType,
+  ASFormat,
+  ASGenres,
+  ASSeason,
+  ASSort,
+  ASStatus,
+} from "@/lib/types";
+import { cn, debounce, toTitleCase } from "@/lib/utils";
 import { Input } from "@nextui-org/input";
 import { Select, SelectItem } from "@nextui-org/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -26,6 +34,7 @@ export default function SearchInput() {
   const paramStatus = searchParams.get("status")?.toString();
   const paramGenres = searchParams.get("genres");
   const paramSort = searchParams.get("sort");
+  const paramContentType = searchParams.get("contentType");
 
   const season: ASSeason | undefined = ASSeasonArray.includes(
     paramSeason as ASSeason
@@ -53,6 +62,12 @@ export default function SearchInput() {
 
   const sort: ASSort | undefined = ASSortArray.includes(paramSort as ASSort)
     ? (paramSort as ASSort)
+    : undefined;
+
+  const contentType: ASContentType | undefined = ASContentTypeArray.includes(
+    paramContentType as ASContentType
+  )
+    ? (paramContentType as ASContentType)
     : undefined;
 
   const handleSearch = useCallback(
@@ -89,116 +104,142 @@ export default function SearchInput() {
         }}
       />
 
-      <div className="flex  gap-2 flex-wrap">
-        {/* year */}
+      <div className="flex gap-2 flex-wrap">
+        {/* content-type */}
         <Select
-          label="Year"
+          label="Content Type"
           size="sm"
           radius="md"
-          defaultSelectedKeys={year ? [year] : undefined}
+          defaultSelectedKeys={contentType ? [contentType] : undefined}
           onChange={(e) => {
-            handleSearch("year", e.target.value);
+            handleSearch("contentType", e.target.value);
           }}
           className="min-w-28 max-w-fit"
         >
-          {Array.from({ length: 2024 - 1917 + 1 }, (_, i) => `${2024 - i}`).map(
-            (item) => (
+          {ASContentTypeArray.map((item) => (
+            <SelectItem key={item} value={item}>
+              {toTitleCase(item.split("_").join(" "))}
+            </SelectItem>
+          ))}
+        </Select>
+
+        <div
+          className={cn(
+            "flex gap-2 flex-wrap",
+            contentType === "K-DRAMA" && "hidden"
+          )}
+        >
+          {/* year */}
+          <Select
+            label="Year"
+            size="sm"
+            radius="md"
+            defaultSelectedKeys={year ? [year] : undefined}
+            onChange={(e) => {
+              handleSearch("year", e.target.value);
+            }}
+            className="min-w-28 max-w-fit"
+          >
+            {Array.from(
+              { length: 2024 - 1917 + 1 },
+              (_, i) => `${2024 - i}`
+            ).map((item) => (
               <SelectItem key={item} value={item}>
                 {item}
               </SelectItem>
-            )
-          )}
-        </Select>
+            ))}
+          </Select>
 
-        {/* season */}
-        <Select
-          label="Season"
-          size="sm"
-          radius="md"
-          defaultSelectedKeys={season ? [season] : undefined}
-          onChange={(e) => {
-            handleSearch("season", e.target.value);
-          }}
-          className="min-w-28 max-w-fit"
-        >
-          {ASSeasonArray.map((item) => (
-            <SelectItem key={item} value={item}>
-              {toTitleCase(item.split("_").join(" "))}
-            </SelectItem>
-          ))}
-        </Select>
+          {/* season */}
+          <Select
+            label="Season"
+            size="sm"
+            radius="md"
+            defaultSelectedKeys={season ? [season] : undefined}
+            onChange={(e) => {
+              handleSearch("season", e.target.value);
+            }}
+            className="min-w-28 max-w-fit"
+          >
+            {ASSeasonArray.map((item) => (
+              <SelectItem key={item} value={item}>
+                {toTitleCase(item.split("_").join(" "))}
+              </SelectItem>
+            ))}
+          </Select>
 
-        {/* format */}
-        <Select
-          label="Format"
-          size="sm"
-          radius="md"
-          defaultSelectedKeys={format ? [format] : undefined}
-          onChange={(e) => {
-            handleSearch("format", e.target.value);
-          }}
-          className="min-w-28 max-w-fit"
-        >
-          {ASFormatArray.map((item) => (
-            <SelectItem key={item} value={item}>
-              {toTitleCase(item.split("_").join(" "))}
-            </SelectItem>
-          ))}
-        </Select>
+          {/* format */}
+          <Select
+            label="Format"
+            size="sm"
+            radius="md"
+            defaultSelectedKeys={format ? [format] : undefined}
+            onChange={(e) => {
+              handleSearch("format", e.target.value);
+            }}
+            className="min-w-28 max-w-fit"
+          >
+            {ASFormatArray.map((item) => (
+              <SelectItem key={item} value={item}>
+                {toTitleCase(item.split("_").join(" "))}
+              </SelectItem>
+            ))}
+          </Select>
 
-        {/* status */}
-        <Select
-          label="Status"
-          size="sm"
-          radius="md"
-          defaultSelectedKeys={status ? [status] : undefined}
-          onChange={(e) => {
-            handleSearch("status", e.target.value);
-          }}
-          className="min-w-28 max-w-fit"
-        >
-          {ASStatusArray.map((item) => (
-            <SelectItem key={item} value={item}>
-              {toTitleCase(item.split("_").join(" "))}
-            </SelectItem>
-          ))}
-        </Select>
+          {/* status */}
+          <Select
+            label="Status"
+            size="sm"
+            radius="md"
+            defaultSelectedKeys={status ? [status] : undefined}
+            onChange={(e) => {
+              handleSearch("status", e.target.value);
+            }}
+            className="min-w-28 max-w-fit"
+          >
+            {ASStatusArray.map((item) => (
+              <SelectItem key={item} value={item}>
+                {toTitleCase(item.split("_").join(" "))}
+              </SelectItem>
+            ))}
+          </Select>
 
-        {/* genres */}
-        <Select
-          label="Genres"
-          size="sm"
-          radius="md"
-          className="min-w-36 max-w-fit"
-          defaultSelectedKeys={genres ? [genres] : undefined}
-          onChange={(e) => {
-            handleSearch("genres", e.target.value);
-          }}
-        >
-          {ASGenresArray.map((item) => (
-            <SelectItem key={item} value={item}>
-              {toTitleCase(item.split("_").join(" "))}
-            </SelectItem>
-          ))}
-        </Select>
+          {/* genres */}
+          <Select
+            label="Genres"
+            size="sm"
+            radius="md"
+            className="min-w-36 max-w-fit"
+            defaultSelectedKeys={genres ? [genres] : undefined}
+            onChange={(e) => {
+              handleSearch("genres", e.target.value);
+            }}
+          >
+            {ASGenresArray.map((item) => (
+              <SelectItem key={item} value={item}>
+                {toTitleCase(item.split("_").join(" "))}
+              </SelectItem>
+            ))}
+          </Select>
 
-        {/* sort */}
-        <Select
-          label="Sort"
-          size="sm"
-          radius="md"
-          className="min-w-44 max-w-fit"
-          defaultSelectedKeys={sort ? [sort] : undefined}
-          onChange={(e) => {
-            handleSearch("sort", e.target.value);
-          }}
-        >
-          {ASSortArray.map((item) => (
-            <SelectItem key={item} value={item}>
-              {toTitleCase(item.split("_").join(" "))}
-            </SelectItem>
-          ))}
-        </Select>
+          {/* sort */}
+          <Select
+            label="Sort"
+            size="sm"
+            radius="md"
+            className="min-w-44 max-w-fit"
+            defaultSelectedKeys={sort ? [sort] : undefined}
+            onChange={(e) => {
+              handleSearch("sort", e.target.value);
+            }}
+          >
+            {ASSortArray.map((item) => (
+              <SelectItem key={item} value={item}>
+                {toTitleCase(item.split("_").join(" "))}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
       </div>
     </>
   );

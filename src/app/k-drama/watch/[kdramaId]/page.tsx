@@ -65,11 +65,11 @@ export default async function EpisodePage({
     } else {
       episode = episodeList.list[0];
     }
-    if (!episode) return redirect(`/kdrama/info/${kdramaInfo.id}`);
+    if (!episode) return redirect(`/k-drama/info/${kdramaInfo.id}`);
 
     return redirect(
       createURL({
-        path: `/kdrama/watch/${kdramaInfo.id}`,
+        path: `/k-drama/watch/${kdramaInfo.id}`,
         params: {
           episodeId: episode.episodeId,
           episodeNumber: episode.number,
@@ -118,7 +118,7 @@ export default async function EpisodePage({
             <div className="flex justify-start items-center gap-2">
               <Button
                 as={NextLink}
-                href={`/kdrama/info/${kdramaId}`}
+                href={`/k-drama/info/${kdramaId}`}
                 startContent={<SvgIcon.information />}
                 size="sm"
                 radius="md"

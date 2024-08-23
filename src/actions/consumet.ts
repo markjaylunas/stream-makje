@@ -341,3 +341,24 @@ export async function fetchDCEpisodeSourceData({
     return null;
   }
 }
+
+export async function searchKdrama(params: { query: string }) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.dramacool.search(params)
+    );
+
+    const data = await response.json();
+
+    const parsed = dCDramaListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}

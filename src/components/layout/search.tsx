@@ -1,15 +1,22 @@
 "use client";
 
-import { searchAnime } from "@/actions/consumet";
-import { consumetSearchAnimeObjectMapper } from "@/lib/object-mapper";
-import { Status, Tag } from "@/lib/types";
-import { cn, debounce } from "@/lib/utils";
+import { searchAnime, searchKdrama } from "@/actions/consumet";
+import { ASContentTypeArray } from "@/lib/constants";
+import {
+  consumetKDramacoolObjectMapper,
+  consumetSearchAnimeObjectMapper,
+} from "@/lib/object-mapper";
+import { ASContentType, Status, Tag } from "@/lib/types";
+import { debounce, toTitleCase } from "@/lib/utils";
 import {
   Button,
   Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Image,
   Input,
-  Kbd,
   Listbox,
   ListboxItem,
   Modal,
@@ -20,7 +27,8 @@ import {
   Skeleton,
 } from "@nextui-org/react";
 import NextLink from "next/link";
-import { useCallback, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
 import { CardDataProps } from "../card-data/card-data";
 import { SvgIcon } from "../ui/svg-icons";
 
@@ -43,20 +51,55 @@ export default function Search({
   isOpen: boolean;
   onOpenChange: () => void;
 }) {
+  const pathname = usePathname();
+  const defaultContentType = ASContentTypeArray.find(
+    (v) => v === pathname.split("/")[1]
+  );
   const [dataList, setDataList] = useState<CardDataProps[]>([]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const [selectedContentType, setSelectedContentType] = useState(
+    new Set([defaultContentType || "ALL"])
+  );
+
+  const selectedValue = Array.from(selectedContentType)
+    .join(", ")
+    .replaceAll("_", " ");
+
+  const handleSearchAnime = async (q: string) => {
+    const animeListData = await searchAnime({ query: q });
+    if (!animeListData) return [];
+    const mappedList = consumetSearchAnimeObjectMapper({
+      searchData: animeListData,
+      tagList,
+    });
+    return mappedList;
+  };
+  const handleSearchKdrama = async (q: string) => {
+    const kdramaListData = await searchKdrama({ query: q });
+    if (!kdramaListData) return [];
+    const mappedList = consumetKDramacoolObjectMapper({
+      kdramaList: kdramaListData.results,
+    });
+    return mappedList;
+  };
 
   const handleSearch = useCallback(
-    debounce(async (q: string) => {
+    debounce(async (q: string, contentType: string) => {
       try {
         setStatus("loading");
-        const animeListData = await searchAnime({ query: q });
-        if (!animeListData) return setDataList([]);
-        const mappedList = consumetSearchAnimeObjectMapper({
-          searchData: animeListData,
-          tagList,
-        });
+        let mappedList: CardDataProps[] = [];
+
+        if (contentType === "ANIME") mappedList = await handleSearchAnime(q);
+        else if (contentType === "K-DRAMA")
+          mappedList = await handleSearchKdrama(q);
+        else {
+          const [animeMappedList, kdramaMappedList] = await Promise.all([
+            handleSearchAnime(q),
+            handleSearchKdrama(q),
+          ]);
+          mappedList = [...animeMappedList, ...kdramaMappedList];
+        }
         setDataList(mappedList);
       } catch (error) {
         console.log(error);
@@ -79,10 +122,10 @@ export default function Search({
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
+              <ModalHeader className="flex gap-1">
                 <Input
                   onValueChange={(v) => {
-                    handleSearch(v);
+                    handleSearch(v, selectedValue);
                     setQuery(v);
                   }}
                   classNames={{ base: "max-w-lg" }}
@@ -92,6 +135,40 @@ export default function Search({
                   placeholder="Search title..."
                   aria-label="Search title"
                 />
+
+                <Dropdown classNames={{ base: "w-fit" }}>
+                  <DropdownTrigger>
+                    <Button
+                      variant="flat"
+                      color="primary"
+                      className="capitalize"
+                    >
+                      {toTitleCase(selectedValue.split("_").join(" "))}
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    aria-label="Single selection example"
+                    variant="flat"
+                    disallowEmptySelection
+                    selectionMode="single"
+                    selectedKeys={selectedContentType}
+                    onSelectionChange={(selected) => {
+                      if (selected instanceof Set) {
+                        const value = Array.from(selected)
+                          .join(", ")
+                          .replaceAll("_", " ");
+                        setSelectedContentType(
+                          new Set([value as ASContentType])
+                        );
+                        handleSearch(query, value);
+                      }
+                    }}
+                  >
+                    <DropdownItem key="ALL">All</DropdownItem>
+                    <DropdownItem key="ANIME">Anime</DropdownItem>
+                    <DropdownItem key="K-DRAMA">K-drama</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               </ModalHeader>
               <ModalBody>
                 <>
@@ -126,9 +203,15 @@ export default function Search({
                       const totalEpisodes = data.tagList?.find(
                         (tag) => tag.name === "totalEpisodes"
                       )?.value;
+
+                      let description = "";
+                      if (type) description += `${type}`;
+                      if (releaseDate) description += ` • ${releaseDate}`;
+                      if (totalEpisodes)
+                        description += ` • ${totalEpisodes} Episode`;
                       return (
                         <ListboxItem
-                          href={`/anime/info/${data.id}`}
+                          href={data.href}
                           classNames={{ title: "text-wrap line-clamp-2" }}
                           startContent={
                             <Image
@@ -144,10 +227,11 @@ export default function Search({
                           }
                           description={
                             <span>
-                              {`${type}`}&nbsp;&#183;&nbsp;{`${releaseDate}`}
+                              {description}
+                              {/* {`${type}`}&nbsp;&#183;&nbsp;{`${releaseDate}`}
                               &nbsp;&#183;&nbsp;{`${totalEpisodes}`}
                               &nbsp;Episode
-                              {Number(totalEpisodes) || 0 > 1 ? "s" : ""}
+                              {Number(totalEpisodes) || 0 > 1 ? "s" : ""} */}
                             </span>
                           }
                           key={data.id}
@@ -163,7 +247,7 @@ export default function Search({
                 {query && dataList.length > 0 && (
                   <Button
                     as={NextLink}
-                    href={`/search?q=${query}`}
+                    href={`/search?q=${query}&contentType=${selectedValue}`}
                     onPress={onClose}
                     size="sm"
                     variant="light"
