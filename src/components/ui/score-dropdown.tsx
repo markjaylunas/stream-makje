@@ -1,6 +1,6 @@
 "use client";
 
-import { upsertWatchStatus } from "@/actions/action";
+import { upsertWatchStatus } from "@/actions/anime-action";
 import { AnimeInsert, AnimeUserStatus } from "@/db/schema";
 import { DEFAULT_SIGNIN_PATH } from "@/lib/routes";
 import {

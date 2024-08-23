@@ -7,7 +7,7 @@ import "@vidstack/react/player/styles/default/theme.css";
 import {
   upsertEpisodeProgress,
   UpsertEpisodeProgressData,
-} from "@/actions/action";
+} from "@/actions/anime-action";
 import { EpisodeProgress } from "@/db/schema";
 import {
   Source,

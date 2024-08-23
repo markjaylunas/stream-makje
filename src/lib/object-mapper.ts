@@ -1,4 +1,4 @@
-import { FetchAllEpisodeProgress } from "@/actions/action";
+import { FetchAllEpisodeProgress } from "@/actions/anime-action";
 import { CardDataProps } from "@/components/card-data/card-data";
 import { CardWatchedDataProps } from "@/components/card-data/card-watched-data";
 import { AWEpisodeSourceDataSchema } from "@/lib/aniwatch-validations";

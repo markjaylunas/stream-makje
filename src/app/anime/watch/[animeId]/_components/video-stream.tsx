@@ -1,4 +1,4 @@
-import { fetchEpisodeProgress } from "@/actions/action";
+import { fetchEpisodeProgress } from "@/actions/anime-action";
 import { fetchAWEpisodeSourceData } from "@/actions/aniwatch";
 import { fetchAnimeEpisodeSource } from "@/actions/consumet";
 import { auth } from "@/auth";

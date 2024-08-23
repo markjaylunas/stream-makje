@@ -1,4 +1,7 @@
-import { fetchAllWatchStatus, FetchAllWatchStatusSort } from "@/actions/action";
+import {
+  fetchAllWatchStatus,
+  FetchAllWatchStatusSort,
+} from "@/actions/anime-action";
 import { auth } from "@/auth";
 import NotSignedIn from "@/components/ui/not-signed-in";
 import { WatchStatus } from "@/db/schema";

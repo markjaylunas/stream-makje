@@ -1,4 +1,4 @@
-import { fetchAllEpisodeProgress } from "@/actions/action";
+import { fetchAllEpisodeProgress } from "@/actions/anime-action";
 import { auth } from "@/auth";
 import CardWatchedList from "@/components/card-data/card-watched-list";
 import Heading from "@/components/ui/heading";

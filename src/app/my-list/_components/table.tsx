@@ -1,6 +1,6 @@
 "use client";
 
-import { FetchAllWatchStatusReturnType } from "@/actions/action";
+import { FetchAllWatchStatusReturnType } from "@/actions/anime-action";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { WatchStatus } from "@/db/schema";
 import { debounce, toTitleCase } from "@/lib/utils";
@@ -38,7 +38,6 @@ type ColumnKey =
   | "animeTitle"
   | "animeImage"
   | "status"
-  // | "isLiked"
   | "score"
   | "updatedAt";
 
@@ -47,7 +46,6 @@ const columns = [
   { name: "Image", uid: "animeImage" },
   { name: "Title", uid: "animeTitle", sortable: true },
   { name: "Status", uid: "status", sortable: true },
-  // { name: "Is Liked", uid: "isLiked" },
   { name: "Score", uid: "score", sortable: true },
   { name: "Updated At", uid: "updatedAt", sortable: true },
 ];
@@ -62,15 +60,16 @@ const statusOptions = [
 
 const INITIAL_VISIBLE_COLUMNS = ["animeImage", "animeTitle", "status"];
 
-type Anime = {
+type Data = {
   id: string;
-  animeId: string;
-  animeTitle: string;
-  animeImage: string;
+  dataId: string;
+  title: string;
+  image: string;
   status: WatchStatus;
   isLiked: boolean;
   score: number;
   updatedAt: Date;
+  href: string;
 };
 
 type Descriptor = {
@@ -109,7 +108,7 @@ export default function WatchListTable({
   filters: { query, status, page, limit },
 }: {
   watchListData: {
-    watchList: Anime[];
+    watchList: Data[];
     totalCount: number;
   };
   filters: {
@@ -153,59 +152,59 @@ export default function WatchListTable({
 
   const renderCell = useCallback(
     ({
-      anime,
+      info,
       columnKey,
     }: {
-      anime: FetchAllWatchStatusReturnType["watchList"][0];
+      info: FetchAllWatchStatusReturnType["watchList"][0];
       columnKey: ColumnKey;
     }) => {
       switch (columnKey) {
         case "animeImage":
           return (
             <User
-              avatarProps={{ radius: "lg", src: anime.animeImage }}
-              name={anime.animeTitle}
+              avatarProps={{ radius: "lg", src: info.image }}
+              name={info.title}
               classNames={{ name: "sr-only" }}
               className="cursor-pointer"
             >
-              {anime.animeTitle}
+              {info.title}
             </User>
           );
         case "animeTitle":
           return (
             <p className="text-bold text-small capitalize text-wrap min-w-24">
-              {anime.animeTitle}
+              {info.title}
             </p>
           );
         case "status":
           return (
             <Chip
               className="capitalize"
-              color={getStatusColor(anime.status)}
+              color={getStatusColor(info.status)}
               size="sm"
               variant="flat"
             >
-              {toTitleCase(anime.status.split("_").join(" "))}
+              {toTitleCase(info.status.split("_").join(" "))}
             </Chip>
           );
 
         case "animeId":
           return (
-            <p className="text-bold text-small text-wrap">{anime.animeId}</p>
+            <p className="text-bold text-small text-wrap">{info.dataId}</p>
           );
 
         case "score":
-          return anime.score ? (
+          return info.score ? (
             <div className="flex gap-1">
               <SvgIcon.startFill className="text-primary-500" />
-              <p>{anime.score}</p>
+              <p>{info.score}</p>
             </div>
           ) : (
             <SvgIcon.star className="text-primary-500" />
           );
 
         // case "isLiked":
-        //   return anime.isLiked ? (
+        //   return info.isLiked ? (
         //     <SvgIcon.heartFill className="text-rose-500" />
         //   ) : (
         //     <SvgIcon.heart className="text-rose-500" />
@@ -214,7 +213,7 @@ export default function WatchListTable({
         case "updatedAt":
           return (
             <p className="text-bold text-small text-wrap">
-              {moment(anime.updatedAt).format("DD/MM/YYYY HH:mm")}
+              {moment(info.updatedAt).format("DD/MM/YYYY HH:mm")}
             </p>
           );
         default:
@@ -363,7 +362,7 @@ export default function WatchListTable({
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {totalCount} anime
+            Total {totalCount}
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -437,13 +436,13 @@ export default function WatchListTable({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No anime found"} items={watchList}>
+        <TableBody emptyContent={"No info found"} items={watchList}>
           {(item) => (
-            <TableRow key={item.id} href={`/anime/info/${item.animeId}`}>
+            <TableRow key={item.id} href={item.href}>
               {(columnKey) => (
                 <TableCell>
                   {renderCell({
-                    anime: item,
+                    info: item,
                     columnKey: columnKey as ColumnKey,
                   })}
                 </TableCell>

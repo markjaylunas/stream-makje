@@ -1,4 +1,4 @@
-import { fetchAllEpisodeProgress } from "@/actions/action";
+import { fetchAllEpisodeProgress } from "@/actions/anime-action";
 import { auth } from "@/auth";
 import { default as CardWatchedCarouselList } from "@/components/card-data/card-watched-carousel-list";
 import { consumetAnimeWatchedObjectMapper } from "@/lib/object-mapper";

@@ -172,13 +172,14 @@ export async function fetchWatchStatus({
 export type FetchAllWatchStatusReturnType = {
   watchList: {
     id: string;
-    animeId: string;
-    animeTitle: string;
-    animeImage: string;
+    dataId: string;
+    title: string;
+    image: string;
     status: WatchStatus;
     isLiked: boolean;
     score: number;
     updatedAt: Date;
+    href: string;
   }[];
   totalCount: number;
 };
@@ -250,13 +251,14 @@ export async function fetchAllWatchStatus({
   const watchList: FetchAllWatchStatusReturnType["watchList"] =
     watchListData.map((data) => ({
       id: data.anime_user_status.id,
-      animeId: data.anime.id,
-      animeTitle: data.anime.title,
-      animeImage: data.anime.image,
+      dataId: data.anime.id,
+      title: data.anime.title,
+      image: data.anime.image,
       status: data.anime_user_status.status,
       isLiked: data.anime_user_status.isLiked,
       score: data.anime_user_status.score,
       updatedAt: data.anime_user_status.updatedAt,
+      href: `/anime/info/${data.anime.id}`,
     }));
 
   return {
