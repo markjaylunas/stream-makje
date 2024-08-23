@@ -2,8 +2,10 @@ import { fetchWatchStatus } from "@/actions/anime-action";
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { fetchAnimeData } from "@/actions/consumet";
 import { auth } from "@/auth";
+import CardImageCarouselList from "@/components/card-data/card-image-carousel-list";
 import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
+import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import ScoreDropdown from "@/components/ui/score-dropdown";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import WatchListDropdown from "@/components/ui/watchlist-dropdown";
@@ -219,6 +221,16 @@ export default async function EpisodePage({
           />
         </div>
       </section>
+
+      {Boolean(animeInfo.characters) && (
+        <>
+          <Spacer className="h-12" />
+
+          <ListSectionWrapper title="Characters">
+            <CardImageCarouselList imageList={animeInfo.characters || []} />
+          </ListSectionWrapper>
+        </>
+      )}
 
       <Spacer className="h-6" />
 

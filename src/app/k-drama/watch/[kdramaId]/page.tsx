@@ -1,6 +1,12 @@
 import { fetchKdramaInfo } from "@/actions/consumet";
+import { fetchKdramaWatchStatus } from "@/actions/kdrama-action";
+import { auth } from "@/auth";
+import CardImageCarouselList from "@/components/card-data/card-image-carousel-list";
 import Heading from "@/components/ui/heading";
+import ListSectionWrapper from "@/components/ui/list-section-wrapper";
+import ScoreDropdown from "@/components/ui/score-dropdown";
 import { SvgIcon } from "@/components/ui/svg-icons";
+import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import {
   consumetKdramaInfoEpisodesObjectMapper,
   consumetKDramaInfoObjectMapper,
@@ -23,8 +29,8 @@ export default async function EpisodePage({
 }) {
   const { kdramaId } = params;
 
-  // const session = await auth();
-  // const userId = session?.user?.id;
+  const session = await auth();
+  const userId = session?.user?.id;
 
   const episodeId =
     typeof searchParams?.episodeId === "string"
@@ -36,12 +42,9 @@ export default async function EpisodePage({
       ? searchParams?.episodeNumber || ""
       : "";
 
-  const [
-    infoData,
-    // animeWatchStatus
-  ] = await Promise.all([
+  const [infoData, kdramaWatchStatus] = await Promise.all([
     fetchKdramaInfo({ kdramaId }),
-    // userId ? fetchWatchStatus({ userId, animeId }) : [],
+    userId ? fetchKdramaWatchStatus({ userId, kdramaId }) : [],
   ]);
 
   if (!infoData) {
@@ -125,30 +128,31 @@ export default async function EpisodePage({
               >
                 More Info
               </Button>
-              {/* <WatchListDropdown
-                animeWatchStatus={
-                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
-                }
-                anime={{
-                  id: animeId,
-                  title: pickTitle(infoData.title),
-                  image: infoData.image || "",
-                  cover: infoData.cover || "",
-                }}
-                size="sm"
-              />
               <ScoreDropdown
-                animeWatchStatus={
-                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+                contentType="k-drama"
+                watchStatus={
+                  kdramaWatchStatus.length > 0 ? kdramaWatchStatus[0] : null
                 }
-                anime={{
-                  id: animeId,
-                  title: pickTitle(infoData.title),
-                  image: infoData.image || "",
-                  cover: infoData.cover || "",
+                info={{
+                  id: kdramaInfo.id || "",
+                  title: kdramaInfo.name,
+                  image: kdramaInfo.poster || "",
+                  cover: kdramaInfo.cover || "",
                 }}
-                size="sm"
-              /> */}
+              />
+
+              <WatchListDropdown
+                contentType="k-drama"
+                watchStatus={
+                  kdramaWatchStatus.length > 0 ? kdramaWatchStatus[0] : null
+                }
+                info={{
+                  id: kdramaInfo.id || "",
+                  title: kdramaInfo.name,
+                  image: kdramaInfo.poster || "",
+                  cover: kdramaInfo.cover || "",
+                }}
+              />
             </div>
           </div>
 
@@ -165,7 +169,15 @@ export default async function EpisodePage({
         </div>
       </section>
 
-      <Spacer className="h-6" />
+      {Boolean(kdramaInfo.characters) && (
+        <>
+          <Spacer className="h-12" />
+
+          <ListSectionWrapper title="Characters">
+            <CardImageCarouselList imageList={kdramaInfo.characters || []} />
+          </ListSectionWrapper>
+        </>
+      )}
     </>
   );
 }
