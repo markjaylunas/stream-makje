@@ -165,7 +165,6 @@ export const animeUserStatus = pgTable(
     userId: userIdRef,
     animeId: animeIdRef,
     status: watchStatus("status").default("WATCHING").notNull(),
-    isLiked: boolean("is_liked").default(false).notNull(),
     score: integer("score").default(0).notNull(),
     updatedAt,
     createdAt,
@@ -185,7 +184,6 @@ export const kdramaUserStatus = pgTable(
     userId: userIdRef,
     kdramaId: kdramaIdRef,
     status: watchStatus("status").default("WATCHING").notNull(),
-    isLiked: boolean("is_liked").default(false).notNull(),
     score: integer("score").default(0).notNull(),
     updatedAt,
     createdAt,
@@ -223,4 +221,9 @@ export type KdramaEpisodeProgress = typeof kdramaEpisodeProgress.$inferSelect;
 export type KdramaUserStatusInsert = typeof kdramaUserStatus.$inferInsert;
 export type KdramaUserStatus = typeof kdramaUserStatus.$inferSelect;
 
-export type WatchStatus = AnimeUserStatus["status"];
+export type WatchStatus =
+  | "WATCHING"
+  | "COMPLETED"
+  | "ON_HOLD"
+  | "DROPPED"
+  | "PLAN_TO_WATCH";

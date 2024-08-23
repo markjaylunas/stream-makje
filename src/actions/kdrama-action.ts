@@ -157,7 +157,6 @@ export async function upsertKdramaWatchStatus({
       target: [kdramaUserStatus.kdramaId, kdramaUserStatus.userId],
       set: {
         status: data.status,
-        isLiked: data.isLiked,
         score: data.score,
         updatedAt: new Date(),
       },
@@ -254,10 +253,9 @@ export async function fetchAllKdramaWatchStatus({
       title: data.kdrama.title,
       image: data.kdrama.image,
       status: data.kdrama_user_status.status,
-      isLiked: data.kdrama_user_status.isLiked,
       score: data.kdrama_user_status.score,
       updatedAt: data.kdrama_user_status.updatedAt,
-      href: `/kdrama/info/${data.kdrama.id}`,
+      href: `/k-drama/info/${data.kdrama.id}`,
     }));
 
   return {

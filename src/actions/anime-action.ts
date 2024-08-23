@@ -10,9 +10,12 @@ import {
   EpisodeInsert,
   episodeProgress,
   EpisodeProgressInsert,
+  kdrama,
+  kdramaUserStatus,
   WatchStatus,
 } from "@/db/schema";
 import { DEFAULT_PAGE_LIMIT } from "@/lib/constants";
+import { ASContentType } from "@/lib/types";
 import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 
 export async function fetchEpisodeProgress({
@@ -97,8 +100,8 @@ export async function fetchAllEpisodeProgress({
     await db
       .select({
         id: episodeProgress.id,
-        animeId: anime.id,
-        animeTitle: anime.title,
+        dataId: anime.id,
+        title: anime.title,
         animeImage: anime.image,
         episodeId: episode.id,
         episodeTitle: episode.title,
@@ -143,7 +146,6 @@ export async function upsertWatchStatus({
       target: [animeUserStatus.animeId, animeUserStatus.userId],
       set: {
         status: data.status,
-        isLiked: data.isLiked,
         score: data.score,
         updatedAt: new Date(),
       },
@@ -176,25 +178,27 @@ export type FetchAllWatchStatusReturnType = {
     title: string;
     image: string;
     status: WatchStatus;
-    isLiked: boolean;
     score: number;
     updatedAt: Date;
     href: string;
+    contentType?: ASContentType;
   }[];
   totalCount: number;
 };
 
 export type FetchAllWatchStatusSort =
-  | "animeTitle"
+  | "title"
   | "updatedAt"
   | "status"
   | "score";
 
 type SortOptions = {
-  animeTitle: typeof anime.title;
-  status: typeof animeUserStatus.status;
-  score: typeof animeUserStatus.score;
-  updatedAt: typeof animeUserStatus.updatedAt;
+  title: typeof anime.title | typeof kdrama.title;
+  status: typeof animeUserStatus.status | typeof kdramaUserStatus.status;
+  score: typeof animeUserStatus.score | typeof kdramaUserStatus.score;
+  updatedAt:
+    | typeof animeUserStatus.updatedAt
+    | typeof kdramaUserStatus.updatedAt;
 };
 
 export async function fetchAllWatchStatus({
@@ -203,8 +207,9 @@ export async function fetchAllWatchStatus({
   page = 1,
   status = [],
   query,
-  sort = "animeTitle",
+  sort = "title",
   direction = "ascending",
+  contentType,
 }: {
   userId: string;
   limit?: number;
@@ -213,56 +218,130 @@ export async function fetchAllWatchStatus({
   query?: string;
   sort?: FetchAllWatchStatusSort;
   direction?: "ascending" | "descending";
+  contentType: ASContentType[];
 }): Promise<FetchAllWatchStatusReturnType> {
-  const filters = and(
+  // start: anime filters
+  const animeFilters = and(
     eq(animeUserStatus.userId, userId),
     status.length > 0 ? inArray(animeUserStatus.status, status) : undefined,
     query ? ilike(anime.title, `%${query}%`) : undefined
   );
 
-  const sortOptions: SortOptions = {
-    animeTitle: anime.title,
+  const animeSortOptions: SortOptions = {
+    title: anime.title,
     status: animeUserStatus.status,
     score: animeUserStatus.score,
     updatedAt: animeUserStatus.updatedAt,
   };
 
-  const orderBy = sort ? sortOptions[sort] : animeUserStatus.updatedAt;
-  const directionOrder = direction === "ascending" ? asc : desc;
-  const sortQuery = directionOrder(orderBy);
+  const animeOrderBy = sort
+    ? animeSortOptions[sort]
+    : animeUserStatus.updatedAt;
+  const animeDirectionOrder = direction === "ascending" ? asc : desc;
+  const animeSortQuery = animeDirectionOrder(animeOrderBy);
 
-  const [watchListData, totalCount] = await Promise.all([
-    db
-      .select()
-      .from(anime)
-      .innerJoin(animeUserStatus, eq(anime.id, animeUserStatus.animeId))
-      .where(filters)
-      .limit(limit)
-      .offset((page - 1) * limit)
-      .orderBy(sortQuery),
+  // end: anime filters
 
-    db
-      .select({ count: count() })
-      .from(anime)
-      .innerJoin(animeUserStatus, eq(anime.id, animeUserStatus.animeId))
-      .where(filters),
+  // start: kdrama filters
+  const kdramaFilters = and(
+    eq(kdramaUserStatus.userId, userId),
+    status.length > 0 ? inArray(kdramaUserStatus.status, status) : undefined,
+    query ? ilike(kdrama.title, `%${query}%`) : undefined
+  );
+
+  const kdramaSortOptions: SortOptions = {
+    title: kdrama.title,
+    status: kdramaUserStatus.status,
+    score: kdramaUserStatus.score,
+    updatedAt: kdramaUserStatus.updatedAt,
+  };
+
+  const kdramaOrderBy = sort
+    ? kdramaSortOptions[sort]
+    : kdramaUserStatus.updatedAt;
+  const kdramaDirectionOrder = direction === "ascending" ? asc : desc;
+  const kdramaSortQuery = kdramaDirectionOrder(kdramaOrderBy);
+
+  // end: anime filters
+
+  const isAll = contentType.includes("ALL");
+  const isAnime = contentType.includes("ANIME");
+  const isKdrama = contentType.includes("K-DRAMA");
+
+  const [
+    animeWatchListData,
+    animeTotalCount,
+    kdramaWatchListData,
+    kdramaTotalCount,
+  ] = await Promise.all([
+    isAll || isAnime
+      ? db
+          .select()
+          .from(anime)
+          .innerJoin(animeUserStatus, eq(anime.id, animeUserStatus.animeId))
+          .where(animeFilters)
+          .limit(limit)
+          .offset((page - 1) * limit)
+          .orderBy(animeSortQuery)
+      : [],
+
+    isAll || isAnime
+      ? db
+          .select({ count: count() })
+          .from(anime)
+          .innerJoin(animeUserStatus, eq(anime.id, animeUserStatus.animeId))
+          .where(animeFilters)
+      : [],
+    isAll || isKdrama
+      ? db
+          .select()
+          .from(kdrama)
+          .innerJoin(kdramaUserStatus, eq(kdrama.id, kdramaUserStatus.kdramaId))
+          .where(kdramaFilters)
+          .limit(limit)
+          .offset((page - 1) * limit)
+          .orderBy(kdramaSortQuery)
+      : [],
+
+    isAll || isKdrama
+      ? db
+          .select({ count: count() })
+          .from(kdrama)
+          .innerJoin(kdramaUserStatus, eq(kdrama.id, kdramaUserStatus.kdramaId))
+          .where(kdramaFilters)
+      : [],
+    ,
   ]);
 
-  const watchList: FetchAllWatchStatusReturnType["watchList"] =
-    watchListData.map((data) => ({
+  const animeWatchList: FetchAllWatchStatusReturnType["watchList"] =
+    animeWatchListData.map((data) => ({
       id: data.anime_user_status.id,
       dataId: data.anime.id,
       title: data.anime.title,
       image: data.anime.image,
       status: data.anime_user_status.status,
-      isLiked: data.anime_user_status.isLiked,
       score: data.anime_user_status.score,
       updatedAt: data.anime_user_status.updatedAt,
       href: `/anime/info/${data.anime.id}`,
+      contentType: "ANIME",
+    }));
+
+  const kdramaWatchList: FetchAllWatchStatusReturnType["watchList"] =
+    kdramaWatchListData.map((data) => ({
+      id: data.kdrama_user_status.id,
+      dataId: data.kdrama.id,
+      title: data.kdrama.title,
+      image: data.kdrama.image,
+      status: data.kdrama_user_status.status,
+      score: data.kdrama_user_status.score,
+      updatedAt: data.kdrama_user_status.updatedAt,
+      href: `/k-drama/info/${data.kdrama.id}`,
+      contentType: "K-DRAMA",
     }));
 
   return {
-    watchList,
-    totalCount: totalCount[0]?.count || 0,
+    watchList: [...animeWatchList, ...kdramaWatchList],
+    totalCount:
+      (animeTotalCount[0]?.count || 0) + (kdramaTotalCount[0]?.count || 0),
   };
 }

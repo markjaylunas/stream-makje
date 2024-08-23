@@ -319,12 +319,12 @@ export const consumetAnimeWatchedObjectMapper = ({
 }): CardWatchedDataProps[] =>
   animeList.map((anime) => {
     const {
-      animeTitle,
+      title,
       episodeTitle,
       episodeImage,
       episodeId,
       animeImage,
-      animeId,
+      dataId,
       currentTime,
       durationTime,
       provider,
@@ -333,12 +333,12 @@ export const consumetAnimeWatchedObjectMapper = ({
       ...others
     } = anime;
 
-    const name = animeTitle || "";
+    const name = title || "";
     const episodeName = episodeTitle || "";
     const episodeNumber = anime.episodeNumber || 1;
     const image = episodeImage || animeImage || "";
     const href = createURL({
-      path: `/anime/watch/${animeId}`,
+      path: `/anime/watch/${dataId}`,
       params: {
         episodeId: providerEpisodeId,
         episodeNumber,
@@ -346,7 +346,7 @@ export const consumetAnimeWatchedObjectMapper = ({
       },
     });
     return {
-      id: animeId || "",
+      id: dataId || "",
       name,
       episodeName,
       episodeNumber,

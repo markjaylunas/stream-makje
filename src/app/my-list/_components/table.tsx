@@ -3,6 +3,8 @@
 import { FetchAllWatchStatusReturnType } from "@/actions/anime-action";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { WatchStatus } from "@/db/schema";
+import { ASContentTypeArray } from "@/lib/constants";
+import { ASContentType } from "@/lib/types";
 import { debounce, toTitleCase } from "@/lib/utils";
 import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
@@ -34,19 +36,21 @@ import {
 import React, { ChangeEvent, useCallback, useState } from "react";
 
 type ColumnKey =
-  | "animeId"
-  | "animeTitle"
-  | "animeImage"
+  | "id"
+  | "title"
+  | "image"
   | "status"
   | "score"
+  | "contentType"
   | "updatedAt";
 
 const columns = [
-  { name: "Anime ID", uid: "animeId" },
-  { name: "Image", uid: "animeImage" },
-  { name: "Title", uid: "animeTitle", sortable: true },
+  { name: "ID", uid: "id" },
+  { name: "Image", uid: "image" },
+  { name: "Title", uid: "title", sortable: true },
   { name: "Status", uid: "status", sortable: true },
   { name: "Score", uid: "score", sortable: true },
+  { name: "Content Type", uid: "contentType", sortable: false },
   { name: "Updated At", uid: "updatedAt", sortable: true },
 ];
 
@@ -58,7 +62,7 @@ const statusOptions = [
   { name: "Plan to Watch", uid: "plan-to-watch" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = ["animeImage", "animeTitle", "status"];
+const INITIAL_VISIBLE_COLUMNS = ["image", "title", "status"];
 
 type Data = {
   id: string;
@@ -66,10 +70,10 @@ type Data = {
   title: string;
   image: string;
   status: WatchStatus;
-  isLiked: boolean;
   score: number;
   updatedAt: Date;
   href: string;
+  contentType?: ASContentType;
 };
 
 type Descriptor = {
@@ -105,13 +109,14 @@ const getStatusColor = (
 
 export default function WatchListTable({
   watchListData,
-  filters: { query, status, page, limit },
+  filters: { contentType, query, status, page, limit },
 }: {
   watchListData: {
     watchList: Data[];
     totalCount: number;
   };
   filters: {
+    contentType: ASContentType[];
     query: string;
     status: string[];
     page: number;
@@ -132,6 +137,10 @@ export default function WatchListTable({
   );
   const [statusFilter, setStatusFilter] = useState<Set<string>>(
     new Set(status)
+  );
+
+  const [contentTypeFilter, setContentTypeFilter] = useState<Set<string>>(
+    new Set(contentType)
   );
   const [sortDescriptor, setSortDescriptor] = useState<Descriptor>({
     column: "updatedAt",
@@ -159,7 +168,7 @@ export default function WatchListTable({
       columnKey: ColumnKey;
     }) => {
       switch (columnKey) {
-        case "animeImage":
+        case "image":
           return (
             <User
               avatarProps={{ radius: "lg", src: info.image }}
@@ -170,7 +179,7 @@ export default function WatchListTable({
               {info.title}
             </User>
           );
-        case "animeTitle":
+        case "title":
           return (
             <p className="text-bold text-small capitalize text-wrap min-w-24">
               {info.title}
@@ -188,9 +197,14 @@ export default function WatchListTable({
             </Chip>
           );
 
-        case "animeId":
+        case "id":
           return (
             <p className="text-bold text-small text-wrap">{info.dataId}</p>
+          );
+
+        case "contentType":
+          return (
+            <p className="text-bold text-small text-wrap">{info.contentType}</p>
           );
 
         case "score":
@@ -202,13 +216,6 @@ export default function WatchListTable({
           ) : (
             <SvgIcon.star className="text-primary-500" />
           );
-
-        // case "isLiked":
-        //   return info.isLiked ? (
-        //     <SvgIcon.heartFill className="text-rose-500" />
-        //   ) : (
-        //     <SvgIcon.heart className="text-rose-500" />
-        //   );
 
         case "updatedAt":
           return (
@@ -271,6 +278,15 @@ export default function WatchListTable({
     router.replace(`${pathname}?${params.toString()}`);
   };
 
+  const onContentTypeChange = () => {
+    const params = new URLSearchParams(searchParams);
+    const contentTypeList = Array.from(contentTypeFilter);
+    params.delete("contentType");
+    contentTypeList.forEach((type) => params.append("contentType", type));
+    params.set("page", "1");
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   const handleSearch = useCallback(
     debounce(async (term: string) => {
       const params = new URLSearchParams(searchParams);
@@ -301,6 +317,35 @@ export default function WatchListTable({
             }}
           />
           <div className="flex gap-3">
+            <Dropdown onClose={onContentTypeChange}>
+              <DropdownTrigger>
+                <Button
+                  endContent={<SvgIcon.chevronDown className="text-small" />}
+                  variant="flat"
+                >
+                  Content Type
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Content type"
+                closeOnSelect={false}
+                defaultSelectedKeys={["ALL"]}
+                selectedKeys={contentTypeFilter}
+                selectionMode="multiple"
+                onSelectionChange={(value) => {
+                  if (value instanceof Set) {
+                    setContentTypeFilter(value as Set<string>);
+                  }
+                }}
+              >
+                {ASContentTypeArray.map((type) => (
+                  <DropdownItem key={type} className="capitalize">
+                    {toTitleCase(type.split("_").join(" "))}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
             <Dropdown onClose={onStatusChange}>
               <DropdownTrigger>
                 <Button
@@ -407,7 +452,7 @@ export default function WatchListTable({
     <>
       <Table
         isCompact
-        aria-label="Anime watch list table"
+        aria-label="Watch list table"
         isHeaderSticky
         selectionMode="single"
         bottomContent={bottomContent}
