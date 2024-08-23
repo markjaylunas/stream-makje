@@ -145,7 +145,7 @@ export type Info = {
   type: string | null;
   sub?: number | null;
   dub?: number | null;
-
+  characters?: { name: string; image: string }[];
   otherInfo: OtherInfo;
 };
 

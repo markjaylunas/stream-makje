@@ -151,6 +151,12 @@ export const consumetAnimeInfoObjectMapper = (
     [...otherTitle, ...rawInfo.synonyms]
       .filter((v, i, a) => a.indexOf(v) == i)
       .join(" | ") || null;
+
+  const characters = rawInfo.characters.map((char) => ({
+    name: char.name.full || "",
+    image: char.image || "",
+  }));
+
   return {
     id: rawInfo.id ? `${rawInfo.id}` : "",
     infoId: rawInfo.malId ? `${rawInfo.malId}` : "",
@@ -163,6 +169,7 @@ export const consumetAnimeInfoObjectMapper = (
     sub: rawInfo.totalEpisodes,
     dub: null,
     description: rawInfo.description || null,
+    characters,
     otherInfo,
   };
 };
@@ -472,6 +479,10 @@ export const consumetKDramaInfoObjectMapper = (
     sub: null,
     dub: null,
     description: rawInfo.description || null,
+    characters: rawInfo.characters.map((char) => ({
+      name: char.name,
+      image: char.image,
+    })),
     otherInfo,
   };
 };

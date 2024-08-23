@@ -2,13 +2,15 @@ import { fetchKdramaInfo } from "@/actions/consumet";
 import { fetchKdramaWatchStatus } from "@/actions/kdrama-action";
 import InfoSection from "@/app/anime/info/[animeId]/_components/info-section";
 import { auth } from "@/auth";
+import CardImageCarouselList from "@/components/card-data/card-image-carousel-list";
+import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import {
   consumetKdramaInfoEpisodesObjectMapper,
   consumetKDramaInfoObjectMapper,
 } from "@/lib/object-mapper";
 import { EpisodeList, SearchParams } from "@/lib/types";
 import { createURL } from "@/lib/utils";
-import { Button, ButtonGroup } from "@nextui-org/react";
+import { Button, ButtonGroup, Spacer } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
 import EpisodeListSection from "./_components/episode-list-section";
@@ -91,7 +93,7 @@ export default async function InfoPage({
         watchStatus={kdramaWatchStatus}
         isGenreLinkDisabled={true}
       >
-        <div className="flex flex-col md:flex-row justify-between items-end gap-2">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-2 space-y-6">
           {Boolean(watchLink) && (
             <ButtonGroup color="primary" size="lg" className="sm:w-fit w-full">
               <Button
@@ -118,6 +120,16 @@ export default async function InfoPage({
 
         <EpisodeListSection episodeList={episodeList} />
       </InfoSection>
+
+      {Boolean(kdramaInfo.characters) && (
+        <>
+          <Spacer className="h-12" />
+
+          <ListSectionWrapper title="Characters">
+            <CardImageCarouselList imageList={kdramaInfo.characters || []} />
+          </ListSectionWrapper>
+        </>
+      )}
     </main>
   );
 }

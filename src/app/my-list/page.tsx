@@ -75,7 +75,6 @@ export default async function MyListPage({
     direction: direction as "ascending" | "descending",
     contentType,
   });
-  console.log(watchListData.watchList[watchListData.watchList.length - 1]);
 
   return (
     <>
