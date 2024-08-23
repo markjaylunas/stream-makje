@@ -1,12 +1,13 @@
 "use client";
 
 import { searchAnime, searchKdrama } from "@/actions/consumet";
+import { ASContentTypeArray } from "@/lib/constants";
 import {
   consumetKDramacoolObjectMapper,
   consumetSearchAnimeObjectMapper,
 } from "@/lib/object-mapper";
-import { Status, Tag } from "@/lib/types";
-import { debounce } from "@/lib/utils";
+import { ASContentType, Status, Tag } from "@/lib/types";
+import { debounce, toTitleCase } from "@/lib/utils";
 import {
   Button,
   Chip,
@@ -43,8 +44,6 @@ const tagList: Tag[] = [
   },
 ];
 
-const categoryList = ["anime", "k-drama"];
-
 export default function Search({
   isOpen,
   onOpenChange,
@@ -53,17 +52,17 @@ export default function Search({
   onOpenChange: () => void;
 }) {
   const pathname = usePathname();
-  const defaultCategory = categoryList.find(
+  const defaultContentType = ASContentTypeArray.find(
     (v) => v === pathname.split("/")[1]
   );
   const [dataList, setDataList] = useState<CardDataProps[]>([]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [selectedCategory, setSelectedCategory] = useState(
-    new Set([defaultCategory || "all"])
+  const [selectedContentType, setSelectedContentType] = useState(
+    new Set([defaultContentType || "ALL"])
   );
 
-  const selectedValue = Array.from(selectedCategory)
+  const selectedValue = Array.from(selectedContentType)
     .join(", ")
     .replaceAll("_", " ");
 
@@ -86,13 +85,13 @@ export default function Search({
   };
 
   const handleSearch = useCallback(
-    debounce(async (q: string, category: string) => {
+    debounce(async (q: string, contentType: string) => {
       try {
         setStatus("loading");
         let mappedList: CardDataProps[] = [];
 
-        if (category === "anime") mappedList = await handleSearchAnime(q);
-        else if (category === "k-drama")
+        if (contentType === "ANIME") mappedList = await handleSearchAnime(q);
+        else if (contentType === "K-DRAMA")
           mappedList = await handleSearchKdrama(q);
         else {
           const [animeMappedList, kdramaMappedList] = await Promise.all([
@@ -144,7 +143,7 @@ export default function Search({
                       color="primary"
                       className="capitalize"
                     >
-                      {selectedValue}
+                      {toTitleCase(selectedValue.split("_").join(" "))}
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu
@@ -152,20 +151,22 @@ export default function Search({
                     variant="flat"
                     disallowEmptySelection
                     selectionMode="single"
-                    selectedKeys={selectedCategory}
+                    selectedKeys={selectedContentType}
                     onSelectionChange={(selected) => {
                       if (selected instanceof Set) {
                         const value = Array.from(selected)
                           .join(", ")
                           .replaceAll("_", " ");
-                        setSelectedCategory(new Set([value]));
+                        setSelectedContentType(
+                          new Set([value as ASContentType])
+                        );
                         handleSearch(query, value);
                       }
                     }}
                   >
-                    <DropdownItem key="all">All</DropdownItem>
-                    <DropdownItem key="k-drama">K-drama</DropdownItem>
-                    <DropdownItem key="anime">Anime</DropdownItem>
+                    <DropdownItem key="ALL">All</DropdownItem>
+                    <DropdownItem key="ANIME">Anime</DropdownItem>
+                    <DropdownItem key="K-DRAMA">K-drama</DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </ModalHeader>
@@ -246,7 +247,7 @@ export default function Search({
                 {query && dataList.length > 0 && (
                   <Button
                     as={NextLink}
-                    href={`/search?q=${query}`}
+                    href={`/search?q=${query}&contentType=${selectedValue}`}
                     onPress={onClose}
                     size="sm"
                     variant="light"
