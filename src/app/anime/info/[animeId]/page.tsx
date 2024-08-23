@@ -124,7 +124,11 @@ export default async function InfoPage({
 
   return (
     <main className="relative mb-12">
-      <InfoSection anime={animeInfo} animeWatchStatus={animeWatchStatus}>
+      <InfoSection
+        contentType="anime"
+        info={animeInfo}
+        watchStatus={animeWatchStatus}
+      >
         <div className="flex flex-col md:flex-row justify-between items-end gap-2">
           {Boolean(watchLink) && (
             <ButtonGroup color="primary" size="lg" className="sm:w-fit w-full">

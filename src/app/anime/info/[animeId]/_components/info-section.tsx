@@ -2,8 +2,8 @@ import Heading from "@/components/ui/heading";
 import { ReadMore } from "@/components/ui/read-more";
 import ScoreDropdown from "@/components/ui/score-dropdown";
 import WatchListDropdown from "@/components/ui/watchlist-dropdown";
-import { AnimeUserStatus } from "@/db/schema";
-import { Info } from "@/lib/types";
+import { AnimeUserStatus, KdramaUserStatus } from "@/db/schema";
+import { ContentType, Info } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
@@ -12,26 +12,28 @@ import InfoCover from "./info-cover";
 import PosterMoreInfo from "./poster-more-info";
 
 type Props = {
-  anime: Info;
+  contentType: ContentType;
+  info: Info;
   className?: string;
   children?: ReactNode;
-  animeWatchStatus: AnimeUserStatus[];
+  watchStatus: AnimeUserStatus[] | KdramaUserStatus[];
   isGenreLinkDisabled?: boolean;
 };
 
 export default function InfoSection({
-  anime,
+  contentType,
+  info,
   className,
   children,
-  animeWatchStatus,
+  watchStatus,
   isGenreLinkDisabled = false,
 }: Props) {
   return (
     <section className="relative">
       <InfoCover
-        title={anime.name}
-        cover={anime.cover}
-        backupCover={anime.poster}
+        title={info.name}
+        cover={info.cover}
+        backupCover={info.poster}
       />
 
       <section className="max-w-7xl z-0 px-4 sm:mx-auto -mt-16 sm:-mt-40 flex justify-start items-center sm:items-start flex-col sm:flex-row gap-6 sm:gap-12 ">
@@ -40,59 +42,58 @@ export default function InfoSection({
             className="block sm:hidden mx-8 text-center mt-5 text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1"
             order={"2xl"}
           >
-            {anime.name}
+            {info.name}
           </Heading>
 
           <h3 className="flex sm:hidden text-xs mx-8 text-center mb-5 text-gray-400">
-            {Array.from(new Set([anime.synonyms])).join(" | ")}
+            {Array.from(new Set([info.synonyms])).join(" | ")}
           </h3>
         </div>
 
-        <PosterMoreInfo anime={anime} />
+        <PosterMoreInfo info={info} />
 
         <div className="flex z-10 flex-col gap-6">
           <section className={cn("space-y-6", className)}>
             <Heading className="hidden sm:block" order={"6xl"}>
-              {anime.name}
+              {info.name}
             </Heading>
             <h2 className="hidden sm:block text-xs text-foreground-500">
-              {Array.from(new Set([anime.synonyms])).join(" | ")}
+              {Array.from(new Set([info.synonyms])).join(" | ")}
             </h2>
 
-            {/* <div className="flex justify-start gap-2"> */}
-            <div className="hidden">
+            <div className="flex justify-start gap-2">
               <ScoreDropdown
-                animeWatchStatus={
-                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
-                }
-                anime={{
-                  id: anime.id || "",
-                  title: anime.name,
-                  image: anime.poster || "",
-                  cover: anime.cover || "",
+                contentType={contentType}
+                watchStatus={watchStatus.length > 0 ? watchStatus[0] : null}
+                info={{
+                  id: info.id || "",
+                  title: info.name,
+                  image: info.poster || "",
+                  cover: info.cover || "",
                 }}
               />
 
               <WatchListDropdown
-                animeWatchStatus={
-                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
-                }
-                anime={{
-                  id: anime.id || "",
-                  title: anime.name,
-                  image: anime.poster || "",
-                  cover: anime.cover || "",
+                contentType={contentType}
+                watchStatus={watchStatus.length > 0 ? watchStatus[0] : null}
+                info={{
+                  id: info.id || "",
+                  title: info.name,
+                  image: info.poster || "",
+                  cover: info.cover || "",
                 }}
               />
             </div>
 
-            {anime.genres && (
+            {info.genres && (
               <div className="flex flex-wrap gap-2">
-                {anime.genres.map((genre) => (
+                {info.genres.map((genre) => (
                   <Button
                     as={!isGenreLinkDisabled ? NextLink : undefined}
                     href={
-                      !isGenreLinkDisabled ? `/anime/genre/${genre}` : undefined
+                      !isGenreLinkDisabled
+                        ? `/${contentType}/genre/${genre}`
+                        : undefined
                     }
                     key={genre}
                     variant="bordered"
@@ -107,9 +108,7 @@ export default function InfoSection({
 
             <ReadMore
               className="indent-8 text-justify"
-              text={
-                anime.description ? `${anime.description}` : "No description"
-              }
+              text={info.description ? `${info.description}` : "No description"}
             />
           </section>
 

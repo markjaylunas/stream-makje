@@ -52,6 +52,8 @@ export type SearchParamValue = string | string[] | undefined;
 
 export type OAuthProvider = "google" | "github";
 
+export type ContentType = "anime" | "k-drama";
+
 // Start: Consumet API types
 
 export type ASType = (typeof ASTypeArray)[number];
@@ -133,7 +135,7 @@ export type OtherInfo = { key: string; value: string | string[] }[];
 
 export type Info = {
   id?: string | null;
-  malId: string;
+  infoId: string;
   name: string;
   description: string | null;
   poster: string;

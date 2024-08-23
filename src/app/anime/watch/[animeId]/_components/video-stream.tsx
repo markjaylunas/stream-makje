@@ -101,7 +101,7 @@ export default async function VideoStream({
 
   return (
     <VideoPlayer
-      type="anime"
+      contentType="anime"
       userId={userId}
       info={anime}
       episode={episode}

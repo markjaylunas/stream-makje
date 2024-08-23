@@ -1,7 +1,12 @@
 "use client";
 
 import { upsertWatchStatus } from "@/actions/anime-action";
-import { AnimeInsert, AnimeUserStatus } from "@/db/schema";
+import {
+  AnimeInsert,
+  AnimeUserStatus,
+  KdramaInsert,
+  KdramaUserStatus,
+} from "@/db/schema";
 import { DEFAULT_SIGNIN_PATH } from "@/lib/routes";
 import {
   Dropdown,
@@ -12,27 +17,32 @@ import {
 
 import { Button } from "@nextui-org/button";
 
+import { upsertKdramaWatchStatus } from "@/actions/kdrama-action";
+import { ContentType } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SvgIcon } from "./svg-icons";
 
 type Props = {
-  animeWatchStatus: AnimeUserStatus | null;
-  anime: AnimeInsert;
+  contentType: ContentType;
+  watchStatus: AnimeUserStatus | KdramaUserStatus | null;
+  info: AnimeInsert | KdramaInsert;
   size?: "lg" | "sm" | "md" | undefined;
 };
 
 export default function ScoreDropdown({
-  animeWatchStatus,
-  anime,
+  contentType,
+  info,
+  watchStatus,
   size,
 }: Props) {
   const session = useSession();
   const userId = session?.data?.user?.id;
   const router = useRouter();
-  const [userWatchStatus, setUserWatchStatus] =
-    useState<AnimeUserStatus | null>(animeWatchStatus);
+  const [userWatchStatus, setUserWatchStatus] = useState<
+    AnimeUserStatus | KdramaUserStatus | null
+  >(watchStatus);
   const [isLoading, setIsLoading] = useState(false);
 
   const labelsMap: Record<string, string> = {
@@ -61,16 +71,30 @@ export default function ScoreDropdown({
     setIsLoading(true);
     const score = parseInt(selected.values().next().value || "");
     if (!score) return;
-    const upsertData = await upsertWatchStatus({
-      animeInsert: anime,
-      data: {
-        id: userWatchStatus?.id || undefined,
-        score,
-        animeId: anime.id,
-        userId,
-      },
-    });
-    setUserWatchStatus(upsertData[0]);
+    if (contentType === "anime") {
+      const upsertData = await upsertWatchStatus({
+        animeInsert: info,
+        data: {
+          id: userWatchStatus?.id || undefined,
+          score,
+          animeId: info.id,
+          userId,
+        },
+      });
+      setUserWatchStatus(upsertData[0]);
+    }
+    if (contentType === "k-drama") {
+      const upsertData = await upsertKdramaWatchStatus({
+        kdramaInsert: info,
+        data: {
+          id: userWatchStatus?.id || undefined,
+          score,
+          kdramaId: info.id,
+          userId,
+        },
+      });
+      setUserWatchStatus(upsertData[0]);
+    }
     setIsLoading(false);
   };
 

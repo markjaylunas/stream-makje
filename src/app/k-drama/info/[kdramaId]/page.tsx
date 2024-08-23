@@ -1,5 +1,7 @@
 import { fetchKdramaInfo } from "@/actions/consumet";
+import { fetchKdramaWatchStatus } from "@/actions/kdrama-action";
 import InfoSection from "@/app/anime/info/[animeId]/_components/info-section";
+import { auth } from "@/auth";
 import {
   consumetKdramaInfoEpisodesObjectMapper,
   consumetKDramaInfoObjectMapper,
@@ -20,8 +22,8 @@ export default async function InfoPage({
 }) {
   const { kdramaId } = params;
 
-  // const session = await auth();
-  // const userId = session?.user?.id;
+  const session = await auth();
+  const userId = session?.user?.id;
 
   const toWatch =
     typeof searchParams?.watch === "string"
@@ -33,12 +35,9 @@ export default async function InfoPage({
       ? Boolean(searchParams?.latest) || false
       : false;
 
-  const [
-    infoData,
-    // kdramaWatchStatus
-  ] = await Promise.all([
+  const [infoData, kdramaWatchStatus] = await Promise.all([
     fetchKdramaInfo({ kdramaId }),
-    // userId ? fetchWatchStatus({ userId, animeId }) : [],
+    userId ? fetchKdramaWatchStatus({ userId, kdramaId }) : [],
   ]);
 
   if (!infoData) {
@@ -50,7 +49,7 @@ export default async function InfoPage({
     totalEpisodes: infoData.episodes.length,
   };
 
-  const animeInfo = consumetKDramaInfoObjectMapper(infoData);
+  const kdramaInfo = consumetKDramaInfoObjectMapper(infoData);
 
   const firstEpisode = episodeList.list[0];
   const latestEpisode =
@@ -87,8 +86,9 @@ export default async function InfoPage({
   return (
     <main className="relative mb-12">
       <InfoSection
-        anime={animeInfo}
-        animeWatchStatus={[]}
+        contentType="k-drama"
+        info={kdramaInfo}
+        watchStatus={kdramaWatchStatus}
         isGenreLinkDisabled={true}
       >
         <div className="flex flex-col md:flex-row justify-between items-end gap-2">

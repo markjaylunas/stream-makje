@@ -175,10 +175,11 @@ export default async function EpisodePage({
                 More Info
               </Button>
               <WatchListDropdown
-                animeWatchStatus={
+                contentType="anime"
+                watchStatus={
                   animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
                 }
-                anime={{
+                info={{
                   id: animeId,
                   title: pickTitle(infoData.title),
                   image: infoData.image || "",
@@ -187,10 +188,11 @@ export default async function EpisodePage({
                 size="sm"
               />
               <ScoreDropdown
-                animeWatchStatus={
+                contentType="anime"
+                watchStatus={
                   animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
                 }
-                anime={{
+                info={{
                   id: animeId,
                   title: pickTitle(infoData.title),
                   image: infoData.image || "",

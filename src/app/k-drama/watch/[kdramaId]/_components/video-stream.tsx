@@ -1,8 +1,9 @@
 import { fetchDCEpisodeSourceData } from "@/actions/consumet";
+import { fetchKdramaEpisodeProgress } from "@/actions/kdrama-action";
 import { auth } from "@/auth";
 import NoVideo from "@/components/video-player/no-video";
 import VideoPlayer from "@/components/video-player/video-player";
-import { EpisodeProgress } from "@/db/schema";
+import { EpisodeProgress, KdramaEpisodeProgress } from "@/db/schema";
 import { consumetKdramaEpisodeStreamObjectMapper } from "@/lib/object-mapper";
 import { EpisodeStream, VSEpisode, VSInfo } from "@/lib/types";
 import { decodeEpisodeId } from "@/lib/utils";
@@ -26,27 +27,24 @@ export default async function VideoStream({
   const userId = session?.user?.id;
   const decodedEpisodeId = decodeEpisodeId(episode.id);
   const infoEpisodeId = `${kdrama.id}-${episode.number}`;
-  // const kdramaEpisodeId = `${kdrama.id}-${episode.number}`;
+  const kdramaEpisodeId = `${kdrama.id}-${episode.number}`;
   let source: EpisodeStream | null = null;
-  let episodeProgress: EpisodeProgress | null = null;
+  let episodeProgress: KdramaEpisodeProgress | null = null;
 
-  const [
-    episodeSourceData,
-    // episodeProgressData
-  ] = await Promise.all([
+  const [episodeSourceData, episodeProgressData] = await Promise.all([
     fetchDCEpisodeSourceData({
       episodeId: decodedEpisodeId,
     }),
-    // userId
-    //   ? await fetchEpisodeProgress({
-    //       userId,
-    //       animeId: anime.id,
-    //       episodeId: animeEpisodeId,
-    //     })
-    //   : null,
+    userId
+      ? await fetchKdramaEpisodeProgress({
+          userId,
+          kdramaId: kdrama.id,
+          episodeId: kdramaEpisodeId,
+        })
+      : null,
   ]);
 
-  // episodeProgress = episodeProgressData ? episodeProgressData[0] : null;
+  episodeProgress = episodeProgressData ? episodeProgressData[0] : null;
 
   source = episodeSourceData
     ? consumetKdramaEpisodeStreamObjectMapper(episodeSourceData)
@@ -60,7 +58,7 @@ export default async function VideoStream({
 
   return (
     <VideoPlayer
-      type="kdrama"
+      contentType="k-drama"
       userId={userId}
       info={kdrama}
       episode={episode}

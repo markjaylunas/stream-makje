@@ -5,11 +5,11 @@ import { Chip } from "@nextui-org/chip";
 import { Image } from "@nextui-org/image";
 
 type Props = {
-  anime: Info;
+  info: Info;
   classname?: string;
 };
 
-export default function PosterMoreInfo({ anime, classname }: Props) {
+export default function PosterMoreInfo({ info, classname }: Props) {
   return (
     <section
       className={cn(
@@ -18,12 +18,12 @@ export default function PosterMoreInfo({ anime, classname }: Props) {
       )}
     >
       <div className="max-w-60 flex-1">
-        <Image isBlurred width={240} src={anime.poster} alt={anime.name} />
+        <Image isBlurred width={240} src={info.poster} alt={info.name} />
       </div>
 
       <article className="space-y-2 w-full flex-1">
         <div className="flex justify-between items-start ">
-          {anime.type && (
+          {info.type && (
             <Chip
               radius="sm"
               size="sm"
@@ -31,11 +31,11 @@ export default function PosterMoreInfo({ anime, classname }: Props) {
               variant="shadow"
               className="text-xs"
             >
-              {anime.type}
+              {info.type}
             </Chip>
           )}
           <div className="flex justify-center items-center ">
-            {Boolean(anime?.sub) && (
+            {Boolean(info?.sub) && (
               <Chip
                 size="sm"
                 radius="sm"
@@ -43,35 +43,35 @@ export default function PosterMoreInfo({ anime, classname }: Props) {
                 variant="shadow"
                 className={cn(
                   "text-xs mx-auto space-x-1",
-                  anime?.dub && "rounded-r-none"
+                  info?.dub && "rounded-r-none"
                 )}
                 startContent={<SvgIcon.closedCaption className="size-3" />}
               >
-                {anime?.sub}
+                {info?.sub}
               </Chip>
             )}
 
-            {Boolean(anime?.dub) && (
+            {Boolean(info?.dub) && (
               <Chip
                 radius="sm"
                 size="sm"
                 color="secondary"
                 variant="shadow"
-                className={cn("text-xs", anime?.sub && "rounded-l-none")}
+                className={cn("text-xs", info?.sub && "rounded-l-none")}
                 startContent={<SvgIcon.microphone className="size-3" />}
               >
-                {anime?.dub}
+                {info?.dub}
               </Chip>
             )}
           </div>
         </div>
 
-        {anime.otherInfo.map((info) => (
-          <p className="flex justify-between text-tiny" key={info.key}>
+        {info.otherInfo.map((data) => (
+          <p className="flex justify-between text-tiny" key={data.key}>
             <span className="text-foreground-500 pr-2">
-              {toTitleCase(info.key)}
+              {toTitleCase(data.key)}
             </span>{" "}
-            <span className="text-right">{info.value}</span>
+            <span className="text-right">{data.value}</span>
           </p>
         ))}
       </article>

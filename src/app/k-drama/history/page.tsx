@@ -1,9 +1,13 @@
 import { fetchAllEpisodeProgress } from "@/actions/anime-action";
+import { fetchAllKdramaEpisodeProgress } from "@/actions/kdrama-action";
 import { auth } from "@/auth";
 import CardWatchedList from "@/components/card-data/card-watched-list";
 import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
-import { consumetAnimeWatchedObjectMapper } from "@/lib/object-mapper";
+import {
+  consumetAnimeWatchedObjectMapper,
+  consumetKdramaWatchedObjectMapper,
+} from "@/lib/object-mapper";
 import { DEFAULT_SIGNIN_PATH } from "@/lib/routes";
 import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
@@ -28,7 +32,7 @@ export default async function HistoryPage({
 
   if (!userId) return redirect(DEFAULT_SIGNIN_PATH);
 
-  const episodeProgressData = await fetchAllEpisodeProgress({
+  const episodeProgressData = await fetchAllKdramaEpisodeProgress({
     userId,
     page,
     limit: perPage,
@@ -40,8 +44,8 @@ export default async function HistoryPage({
     { name: "episodeNumber", startContent: <span>Episode</span> },
   ];
 
-  const mappedList = consumetAnimeWatchedObjectMapper({
-    animeList: episodeProgressData.episodes,
+  const mappedList = consumetKdramaWatchedObjectMapper({
+    kdramaList: episodeProgressData.episodes,
     tagList,
   });
 

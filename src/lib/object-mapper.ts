@@ -1,4 +1,5 @@
 import { FetchAllEpisodeProgress } from "@/actions/anime-action";
+import { FetchAllKdramaEpisodeProgress } from "@/actions/kdrama-action";
 import { CardDataProps } from "@/components/card-data/card-data";
 import { CardWatchedDataProps } from "@/components/card-data/card-watched-data";
 import { AWEpisodeSourceDataSchema } from "@/lib/aniwatch-validations";
@@ -152,7 +153,7 @@ export const consumetAnimeInfoObjectMapper = (
       .join(" | ") || null;
   return {
     id: rawInfo.id ? `${rawInfo.id}` : "",
-    malId: rawInfo.malId ? `${rawInfo.malId}` : "",
+    infoId: rawInfo.malId ? `${rawInfo.malId}` : "",
     name: pickTitle(rawInfo.title),
     poster: rawInfo.image || "",
     cover: rawInfo.cover || null,
@@ -357,6 +358,54 @@ export const consumetAnimeWatchedObjectMapper = ({
     };
   });
 
+export const consumetKdramaWatchedObjectMapper = ({
+  kdramaList,
+  tagList,
+}: {
+  kdramaList: FetchAllKdramaEpisodeProgress["episodes"];
+  tagList: Tag[];
+}): CardWatchedDataProps[] =>
+  kdramaList.map((kdrama) => {
+    const {
+      title,
+      episodeTitle,
+      episodeImage,
+      episodeId,
+      image: infoImage,
+      infoId,
+      currentTime,
+      durationTime,
+      provider,
+      providerEpisodeId,
+      episodeProgressUpdatedAt: _,
+      ...others
+    } = kdrama;
+
+    const name = title || "";
+    const episodeName = episodeTitle || "";
+    const episodeNumber = kdrama.episodeNumber || 1;
+    const image = episodeImage || infoImage || "";
+    const href = createURL({
+      path: `/k-drama/watch/${infoId}`,
+      params: {
+        episodeId: providerEpisodeId,
+        episodeNumber,
+        provider,
+      },
+    });
+    return {
+      id: infoId || "",
+      name,
+      episodeName,
+      episodeNumber,
+      image,
+      currentTime,
+      durationTime: durationTime || 0,
+      href,
+      tagList: searchKeysInObject(tagList, others as DataObject),
+    };
+  });
+
 export const consumetKDramacoolObjectMapper = ({
   kdramaList,
 }: {
@@ -413,7 +462,7 @@ export const consumetKDramaInfoObjectMapper = (
     null;
   return {
     id,
-    malId: id,
+    infoId: id,
     name: rawInfo.title,
     poster: rawInfo.image,
     cover: null,

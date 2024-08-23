@@ -16,7 +16,7 @@ import { DEFAULT_PAGE_LIMIT } from "@/lib/constants";
 import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { FetchAllWatchStatusReturnType } from "./anime-action";
 
-export async function fetchEpisodeProgress({
+export async function fetchKdramaEpisodeProgress({
   userId,
   kdramaId,
   episodeId,
@@ -34,15 +34,15 @@ export async function fetchEpisodeProgress({
     .limit(1);
 }
 
-export type UpsertEpisodeProgressData = {
+export type UpsertKdramaEpisodeProgressData = {
   kdrama: KdramaInsert;
   kdramaEpisode: KdramaEpisodeInsert;
   kdramaEpisodeProgress: KdramaEpisodeProgressInsert;
 };
-export async function upsertEpisodeProgress({
+export async function upsertKdramaEpisodeProgress({
   data,
 }: {
-  data: UpsertEpisodeProgressData;
+  data: UpsertKdramaEpisodeProgressData;
 }) {
   const kdramaInsert = db
     .insert(kdrama)
@@ -76,11 +76,11 @@ export async function upsertEpisodeProgress({
 
   await Promise.all([kdramaInsert, episodeInsert, episodeProgressInsert]);
 }
-export type FetchAllEpisodeProgress = Awaited<
-  ReturnType<typeof fetchAllEpisodeProgress>
+export type FetchAllKdramaEpisodeProgress = Awaited<
+  ReturnType<typeof fetchAllKdramaEpisodeProgress>
 >;
 
-export async function fetchAllEpisodeProgress({
+export async function fetchAllKdramaEpisodeProgress({
   userId,
   limit = DEFAULT_PAGE_LIMIT,
   page = 1,
@@ -141,7 +141,7 @@ export async function fetchAllEpisodeProgress({
   };
 }
 
-export async function upsertWatchStatus({
+export async function upsertKdramaWatchStatus({
   kdramaInsert,
   data,
 }: {
@@ -167,7 +167,7 @@ export async function upsertWatchStatus({
   return kdramaUserStatusData;
 }
 
-export async function fetchWatchStatus({
+export async function fetchKdramaWatchStatus({
   userId,
   kdramaId,
 }: {
@@ -183,7 +183,7 @@ export async function fetchWatchStatus({
     .limit(1);
 }
 
-export type FetchAllWatchStatusSort =
+export type FetchAllKdramaWatchStatusSort =
   | "title"
   | "updatedAt"
   | "status"
@@ -196,7 +196,7 @@ type SortOptions = {
   updatedAt: typeof kdramaUserStatus.updatedAt;
 };
 
-export async function fetchAllWatchStatus({
+export async function fetchAllKdramaWatchStatus({
   userId,
   limit = DEFAULT_PAGE_LIMIT,
   page = 1,
@@ -210,7 +210,7 @@ export async function fetchAllWatchStatus({
   page?: number;
   status?: WatchStatus[];
   query?: string;
-  sort?: FetchAllWatchStatusSort;
+  sort?: FetchAllKdramaWatchStatusSort;
   direction?: "ascending" | "descending";
 }): Promise<FetchAllWatchStatusReturnType> {
   const filters = and(

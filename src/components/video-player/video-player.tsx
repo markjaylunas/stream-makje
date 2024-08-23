@@ -8,8 +8,13 @@ import {
   upsertEpisodeProgress,
   UpsertEpisodeProgressData,
 } from "@/actions/anime-action";
-import { EpisodeProgress } from "@/db/schema";
 import {
+  upsertKdramaEpisodeProgress,
+  UpsertKdramaEpisodeProgressData,
+} from "@/actions/kdrama-action";
+import { EpisodeProgress, KdramaEpisodeProgress } from "@/db/schema";
+import {
+  ContentType,
   Source,
   TimeLine,
   Track,
@@ -42,7 +47,7 @@ import { useEffect, useRef, useState } from "react";
 import { SvgIcon } from "../ui/svg-icons";
 
 type Props = {
-  type: "anime" | "kdrama";
+  contentType: ContentType;
   info: VSInfo;
   episode: VSEpisode;
   thumbnail?: string;
@@ -51,13 +56,13 @@ type Props = {
   intro?: TimeLine;
   outro?: TimeLine;
   userId?: string;
-  episodeProgress: EpisodeProgress | null;
+  episodeProgress: EpisodeProgress | KdramaEpisodeProgress | null;
   provider: VSProvider;
   infoEpisodeId: string;
 };
 
 export default function VideoPlayer({
-  type,
+  contentType,
   userId,
   sourceList,
   captionList,
@@ -99,34 +104,64 @@ export default function VideoPlayer({
       const currentTime = player.current?.currentTime || 0;
       const durationTime = player.current?.duration || 0;
       if (userId && currentTime && currentTime > 10) {
-        if (type === "kdrama") return; //todo: temporary
-        let data: UpsertEpisodeProgressData = {
-          anime: {
-            id: info.id,
-            title: info.title,
-            image: info.image,
-            cover: info.cover || "",
-          },
-          episode: {
-            id: infoEpisodeId,
-            animeId: info.id,
-            number: episode.number,
-            title: episode.title,
-            image: episode.image,
-            durationTime,
-          },
-          episodeProgress: {
-            id: episodeProgress?.id,
-            userId,
-            animeId: info.id,
-            episodeId: infoEpisodeId,
-            currentTime,
-            isFinished: currentTime / durationTime > 0.9,
-            provider: provider.name,
-            providerEpisodeId: provider.episodeId,
-          },
-        };
-        upsertEpisodeProgress({ data });
+        if (contentType === "anime") {
+          let data: UpsertEpisodeProgressData = {
+            anime: {
+              id: info.id,
+              title: info.title,
+              image: info.image,
+              cover: info.cover || "",
+            },
+            episode: {
+              id: infoEpisodeId,
+              animeId: info.id,
+              number: episode.number,
+              title: episode.title,
+              image: episode.image,
+              durationTime,
+            },
+            episodeProgress: {
+              id: episodeProgress?.id,
+              userId,
+              animeId: info.id,
+              episodeId: infoEpisodeId,
+              currentTime,
+              isFinished: currentTime / durationTime > 0.9,
+              provider: provider.name,
+              providerEpisodeId: provider.episodeId,
+            },
+          };
+          upsertEpisodeProgress({ data });
+        }
+        if (contentType === "k-drama") {
+          let data: UpsertKdramaEpisodeProgressData = {
+            kdrama: {
+              id: info.id,
+              title: info.title,
+              image: info.image,
+              cover: info.cover || "",
+            },
+            kdramaEpisode: {
+              id: infoEpisodeId,
+              kdramaId: info.id,
+              number: episode.number,
+              title: episode.title,
+              image: episode.image,
+              durationTime,
+            },
+            kdramaEpisodeProgress: {
+              id: episodeProgress?.id,
+              userId,
+              kdramaId: info.id,
+              episodeId: infoEpisodeId,
+              currentTime,
+              isFinished: currentTime / durationTime > 0.9,
+              provider: provider.name,
+              providerEpisodeId: provider.episodeId,
+            },
+          };
+          upsertKdramaEpisodeProgress({ data });
+        }
       }
     };
   }, []);
