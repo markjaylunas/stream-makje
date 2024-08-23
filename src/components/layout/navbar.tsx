@@ -32,9 +32,14 @@ type Props = {
 
 export default function Navbar({ user }: Props) {
   const { onOpen, isOpen, onOpenChange } = useDisclosure();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   return (
     <>
-      <NextNavbar shouldHideOnScroll>
+      <NextNavbar
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
+        shouldHideOnScroll
+      >
         <NavbarContent>
           <NavbarBrand>
             <MyLink
@@ -109,7 +114,10 @@ export default function Navbar({ user }: Props) {
             <UserAvatar user={user} />
           </NavbarItem>
 
-          <NavbarMenuToggle aria-label="Menu Toggle" className="sm:hidden" />
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="sm:hidden"
+          />
         </NavbarContent>
 
         <NavbarMenu>
@@ -138,6 +146,7 @@ export default function Navbar({ user }: Props) {
                         href={sublink.href}
                         size="lg"
                         key={sublink.href}
+                        onPress={() => setIsMenuOpen(false)}
                       >
                         <div className="grid grid-cols-5 place-items-center size-full">
                           {IconComponent && (
