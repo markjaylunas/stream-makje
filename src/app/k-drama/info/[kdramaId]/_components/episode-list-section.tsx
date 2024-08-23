@@ -51,8 +51,15 @@ export default function EpisodeListSection({
         className="w-full mx-auto h-fit px-8 py-4"
       >
         <h3 className="text-center text-xl font-bold text-warning">
-          No Episodes found
+          Episodes Coming Soon
         </h3>
+
+        <p className="text-foreground-500 text-center text-pretty mt-2">
+          This Kdrama is set to captivate audiences with its intriguing
+          storyline and unforgettable characters. Stay tuned for the release of
+          upcoming episodes. Check back regularly for updates and be among the
+          first to watch as the story unfolds!
+        </p>
       </Chip>
     );
 
