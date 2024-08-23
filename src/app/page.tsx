@@ -18,56 +18,58 @@ import PopularThisSeasonList from "./anime/_components/popular-this-season";
 
 export default function Home() {
   return (
-    <main className="min-h-screen mx-auto space-y-8 px-4 py-8">
-      <Heading className="text-center">Stream | Makje</Heading>
-      <section className="max-w-screen-lg mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <CategoryCard
-          description="Watch Anime Now"
-          image={GIFAnime}
-          link="/anime"
-        />
+    <main className="min-h-screen mx-auto space-y-8">
+      <div className="px-4 py-8 space-y-8">
+        <Heading className="text-center">Stream | Makje</Heading>
+        <section className="max-w-screen-lg mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <CategoryCard
+            description="Watch Anime"
+            image={GIFAnime}
+            link="/anime"
+          />
 
-        <CategoryCard
-          description="Manga: Coming soon"
-          image={GIFManga}
-          link="#"
-          isDisabled={true}
-        />
+          <CategoryCard
+            description="Manga: Coming soon"
+            image={GIFManga}
+            link="#"
+            isDisabled={true}
+          />
 
-        <CategoryCard
-          description="Movie: Coming soon"
-          image={GIFMovie}
-          link="#"
-          isDisabled={true}
-        />
+          <CategoryCard
+            description="Movie: Coming soon"
+            image={GIFMovie}
+            link="#"
+            isDisabled={true}
+          />
 
-        <CategoryCard
-          description="Watch K-drama Now"
-          image={GIFKdrama}
-          link="/k-drama"
-        />
+          <CategoryCard
+            description="Watch K-drama"
+            image={GIFKdrama}
+            link="/k-drama"
+          />
 
-        <CategoryCard
-          description="Visit Makje's Official Website"
-          image={PNGDev}
-          link={siteConfig.links.portfolio}
-          isNewtab={true}
-        />
+          <CategoryCard
+            description="Visit Makje's Official Website"
+            image={PNGDev}
+            link={siteConfig.links.portfolio}
+            isNewtab={true}
+          />
 
-        <CategoryCard
-          description="Support on Ko-fi"
-          image={PNGKofi}
-          link={siteConfig.links.kofi}
-          isNewtab={true}
-        />
+          <CategoryCard
+            description="Support on Ko-fi"
+            image={PNGKofi}
+            link={siteConfig.links.kofi}
+            isNewtab={true}
+          />
 
-        <CategoryCard
-          description="Visit Makje's Github"
-          image={PNGGithub}
-          link={siteConfig.links.github}
-          isNewtab={true}
-        />
-      </section>
+          <CategoryCard
+            description="Visit Makje's Github"
+            image={PNGGithub}
+            link={siteConfig.links.github}
+            isNewtab={true}
+          />
+        </section>
+      </div>
 
       <ListSectionWrapper title="Anime This Season">
         <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
