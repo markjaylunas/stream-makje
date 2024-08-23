@@ -30,14 +30,14 @@ export default function Home() {
         <CategoryCard
           description="Manga: Coming soon"
           image={GIFManga}
-          link=""
+          link="#"
           isDisabled={true}
         />
 
         <CategoryCard
           description="Movie: Coming soon"
           image={GIFMovie}
-          link=""
+          link="#"
           isDisabled={true}
         />
 
@@ -93,27 +93,26 @@ const CategoryCard = ({
   isNewtab?: boolean;
   className?: string;
 }) => (
-  <Card
-    as={!isDisabled ? MyLink : undefined}
-    href={link}
-    target={isNewtab ? "_blank" : undefined}
-    isPressable
-    isDisabled={isDisabled}
-    isFooterBlurred
-    radius="lg"
-    className={cn("border-none", className)}
-  >
-    <Image
-      unoptimized
-      alt={description}
-      className="object-cover rounded-xl w-full max-w-md aspect-square"
-      src={image}
-      width={250}
-    />
-    <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-      <p className="text-tiny md:text-base text-white/80 text-center py-2 w-full mx-auto">
-        {description}
-      </p>
-    </CardFooter>
-  </Card>
+  <MyLink href={link} target={isNewtab ? "_blank" : undefined}>
+    <Card
+      isPressable
+      isDisabled={isDisabled}
+      isFooterBlurred
+      radius="lg"
+      className={cn("border-none", className)}
+    >
+      <Image
+        unoptimized
+        alt={description}
+        className="object-cover rounded-xl w-full max-w-md aspect-square"
+        src={image}
+        width={250}
+      />
+      <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+        <p className="text-tiny md:text-base text-white/80 text-center py-2 w-full mx-auto">
+          {description}
+        </p>
+      </CardFooter>
+    </Card>
+  </MyLink>
 );
