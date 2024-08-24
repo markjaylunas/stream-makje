@@ -499,9 +499,10 @@ export const consumetKdramaInfoEpisodesObjectMapper = (
 export const consumetKdramaEpisodeStreamObjectMapper = (
   source: DCWatchDataSchema
 ): EpisodeStream => ({
-  sources: source.sources.map((source) => ({
+  sources: source.sources.map((source, sourceIdx) => ({
     type: source.isM3U8 ? "m3u8" : "",
     url: source.url,
+    quality: ["default", "backup", ...sourcePriority][sourceIdx],
   })),
   tracks: [],
 });
