@@ -1,6 +1,7 @@
 import Heading from "@/components/ui/heading";
 import { ReadMore } from "@/components/ui/read-more";
 import ScoreDropdown from "@/components/ui/score-dropdown";
+import ShareButton from "@/components/ui/share-button";
 import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import { AnimeUserStatus, KdramaUserStatus } from "@/db/schema";
 import { ContentType, Info } from "@/lib/types";
@@ -83,6 +84,10 @@ export default function InfoSection({
                   cover: info.cover || "",
                 }}
               />
+
+              <ShareButton variant="flat" isIconOnly>
+                <span className="sr-only">Share</span>
+              </ShareButton>
             </div>
 
             {info.genres && (

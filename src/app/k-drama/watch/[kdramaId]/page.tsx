@@ -5,6 +5,7 @@ import CardImageCarouselList from "@/components/card-data/card-image-carousel-li
 import Heading from "@/components/ui/heading";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import ScoreDropdown from "@/components/ui/score-dropdown";
+import ShareButton from "@/components/ui/share-button";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import {
@@ -125,6 +126,7 @@ export default async function EpisodePage({
                 startContent={<SvgIcon.information />}
                 size="sm"
                 radius="md"
+                variant="flat"
               >
                 More Info
               </Button>
@@ -155,6 +157,10 @@ export default async function EpisodePage({
                   cover: kdramaInfo.cover || "",
                 }}
               />
+
+              <ShareButton size="sm" variant="flat" isIconOnly>
+                <span className="sr-only">Share</span>
+              </ShareButton>
             </div>
           </div>
 

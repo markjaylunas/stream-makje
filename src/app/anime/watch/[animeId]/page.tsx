@@ -7,6 +7,7 @@ import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import ScoreDropdown from "@/components/ui/score-dropdown";
+import ShareButton from "@/components/ui/share-button";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import WatchListDropdown from "@/components/ui/watchlist-dropdown";
 import { ANIME_PROVIDER } from "@/lib/constants";
@@ -173,6 +174,7 @@ export default async function EpisodePage({
                 startContent={<SvgIcon.information />}
                 size="sm"
                 radius="md"
+                variant="flat"
               >
                 More Info
               </Button>
@@ -202,6 +204,10 @@ export default async function EpisodePage({
                 }}
                 size="sm"
               />
+
+              <ShareButton size="sm" radius="md" variant="flat" isIconOnly>
+                <span className="sr-only">Share</span>
+              </ShareButton>
             </div>
           </div>
 
