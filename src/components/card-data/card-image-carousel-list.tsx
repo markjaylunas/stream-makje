@@ -6,9 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import CardData, { CardDataProps } from "./card-data";
 import CardImage, { CardImageProps } from "./card-image";
-import CardLink from "./card-link";
 
 type Props = {
   imageList: CardImageProps[];

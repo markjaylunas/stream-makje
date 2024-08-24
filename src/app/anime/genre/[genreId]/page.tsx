@@ -7,7 +7,7 @@ import PageNavigation from "@/components/ui/page-navigation";
 import { genreList } from "@/lib/constants";
 import { consumetSearchAnimeObjectMapper } from "@/lib/object-mapper";
 import { ASGenres, SearchParams, Tag } from "@/lib/types";
-import { getSeasonAndYear, parseSearchParamInt } from "@/lib/utils";
+import { parseSearchParamInt } from "@/lib/utils";
 import { notFound } from "next/navigation";
 
 export default async function GenrePage({

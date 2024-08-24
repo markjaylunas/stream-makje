@@ -22,7 +22,6 @@ export type CardDataProps = {
 export default function CardData({ tagList = [], ...props }: CardDataProps) {
   const filteredTagList = tagList.filter((tag) => !tag.isCentered);
   const centerTagList = tagList.filter((tag) => tag.isCentered);
-  const episodeTag = tagList.filter((tag) => tag.name === "episodeNumber")[0];
 
   return (
     <Card

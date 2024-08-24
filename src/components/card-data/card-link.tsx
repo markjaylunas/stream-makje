@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Card, CardBody, Skeleton } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/react";
 import NextLink from "next/link";
 import { SvgIcon } from "../ui/svg-icons";
 

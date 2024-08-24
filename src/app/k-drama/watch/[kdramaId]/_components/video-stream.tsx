@@ -3,7 +3,7 @@ import { fetchKdramaEpisodeProgress } from "@/actions/kdrama-action";
 import { auth } from "@/auth";
 import NoVideo from "@/components/video-player/no-video";
 import VideoPlayer from "@/components/video-player/video-player";
-import { EpisodeProgress, KdramaEpisodeProgress } from "@/db/schema";
+import { KdramaEpisodeProgress } from "@/db/schema";
 import { consumetKdramaEpisodeStreamObjectMapper } from "@/lib/object-mapper";
 import { EpisodeStream, VSEpisode, VSInfo } from "@/lib/types";
 import { decodeEpisodeId } from "@/lib/utils";

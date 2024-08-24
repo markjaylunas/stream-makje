@@ -8,7 +8,6 @@ import {
   AnimeUserStatusInsert,
   episode,
   EpisodeInsert,
-  EpisodeProgress,
   episodeProgress,
   EpisodeProgressInsert,
   kdrama,

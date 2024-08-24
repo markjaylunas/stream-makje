@@ -1,6 +1,5 @@
-import { ANIME_PROVIDER } from "@/lib/constants";
 import { Tag } from "@/lib/types";
-import { createURL, formatTimestamp } from "@/lib/utils";
+import { formatTimestamp } from "@/lib/utils";
 import { Card, CardFooter, CardHeader } from "@nextui-org/card";
 import { Image } from "@nextui-org/image";
 import { Chip, Progress } from "@nextui-org/react";

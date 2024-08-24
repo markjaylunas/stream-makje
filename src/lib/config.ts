@@ -1,5 +1,4 @@
-import { SvgIcon } from "@/components/ui/svg-icons";
-import { MainNavItem, NavItemWithChildren } from "./types";
+import { NavItemWithChildren } from "./types";
 
 export const siteConfig = {
   name: "Stream",

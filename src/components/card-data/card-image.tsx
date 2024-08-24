@@ -1,7 +1,5 @@
-import { formatTimestamp } from "@/lib/utils";
 import { Card, CardFooter } from "@nextui-org/card";
 import { Image } from "@nextui-org/image";
-import { Chip } from "@nextui-org/react";
 
 export type CardImageProps = {
   name: string;

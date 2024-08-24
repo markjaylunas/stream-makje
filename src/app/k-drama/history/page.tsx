@@ -1,13 +1,9 @@
-import { fetchAllEpisodeProgress } from "@/actions/anime-action";
 import { fetchAllKdramaEpisodeProgress } from "@/actions/kdrama-action";
 import { auth } from "@/auth";
 import CardWatchedList from "@/components/card-data/card-watched-list";
 import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
-import {
-  consumetAnimeWatchedObjectMapper,
-  consumetKdramaWatchedObjectMapper,
-} from "@/lib/object-mapper";
+import { consumetKdramaWatchedObjectMapper } from "@/lib/object-mapper";
 import { DEFAULT_SIGNIN_PATH } from "@/lib/routes";
 import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";

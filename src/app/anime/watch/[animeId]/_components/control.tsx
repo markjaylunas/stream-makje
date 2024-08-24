@@ -1,7 +1,5 @@
-import { SvgIcon } from "@/components/ui/svg-icons";
 import Text from "@/components/ui/text";
-import { Button, Skeleton } from "@nextui-org/react";
-import NextLink from "next/link";
+import { Skeleton } from "@nextui-org/react";
 import { Suspense } from "react";
 import ServerList from "./server-list";
 
