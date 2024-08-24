@@ -129,6 +129,7 @@ export default async function EpisodePage({
                 More Info
               </Button>
               <ScoreDropdown
+                size="sm"
                 contentType="k-drama"
                 watchStatus={
                   kdramaWatchStatus.length > 0 ? kdramaWatchStatus[0] : null
@@ -142,6 +143,7 @@ export default async function EpisodePage({
               />
 
               <WatchListDropdown
+                size="sm"
                 contentType="k-drama"
                 watchStatus={
                   kdramaWatchStatus.length > 0 ? kdramaWatchStatus[0] : null
