@@ -63,8 +63,10 @@ export async function upsertKdramaEpisodeProgress({
   const episodeProgressInsert = db
     .insert(kdramaEpisodeProgress)
     .values(data.kdramaEpisodeProgress)
+    .returning()
     .onConflictDoUpdate({
-      target: kdramaEpisodeProgress.id,
+      target: [kdramaEpisodeProgress.episodeId, kdramaEpisodeProgress.userId],
+
       set: {
         provider: data.kdramaEpisodeProgress.provider,
         providerEpisodeId: data.kdramaEpisodeProgress.providerEpisodeId,
@@ -74,7 +76,12 @@ export async function upsertKdramaEpisodeProgress({
       },
     });
 
-  await Promise.all([kdramaInsert, episodeInsert, episodeProgressInsert]);
+  const [_, __, kdramaEpisodeProgressData] = await Promise.all([
+    kdramaInsert,
+    episodeInsert,
+    episodeProgressInsert,
+  ]);
+  return kdramaEpisodeProgressData[0];
 }
 export type FetchAllKdramaEpisodeProgress = Awaited<
   ReturnType<typeof fetchAllKdramaEpisodeProgress>

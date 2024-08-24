@@ -120,35 +120,53 @@ export const kdramaEpisode = pgTable("kdrama-episode", {
   createdAt,
 });
 
-export const episodeProgress = pgTable("episode_progress", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: userIdRef,
-  animeId: animeIdRef,
-  episodeId: text("episode_id")
-    .references(() => episode.id)
-    .notNull(),
-  provider: text("provider"),
-  providerEpisodeId: text("provider_episode_id"),
-  currentTime: real("current_time").notNull(),
-  isFinished: boolean("is_finished").notNull(),
-  updatedAt,
-  createdAt,
-});
+export const episodeProgress = pgTable(
+  "episode_progress",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: userIdRef,
+    animeId: animeIdRef,
+    episodeId: text("episode_id")
+      .references(() => episode.id)
+      .notNull(),
+    provider: text("provider"),
+    providerEpisodeId: text("provider_episode_id"),
+    currentTime: real("current_time").notNull(),
+    isFinished: boolean("is_finished").notNull(),
+    updatedAt,
+    createdAt,
+  },
+  (t) => ({
+    uniqueAnimeEpisodeProgress: unique("unique_anime_episode_progress").on(
+      t.userId,
+      t.episodeId
+    ),
+  })
+);
 
-export const kdramaEpisodeProgress = pgTable("kdrama_episode_progress", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: userIdRef,
-  kdramaId: kdramaIdRef,
-  episodeId: text("episode_id")
-    .references(() => kdramaEpisode.id)
-    .notNull(),
-  provider: text("provider"),
-  providerEpisodeId: text("provider_episode_id"),
-  currentTime: real("current_time").notNull(),
-  isFinished: boolean("is_finished").notNull(),
-  updatedAt,
-  createdAt,
-});
+export const kdramaEpisodeProgress = pgTable(
+  "kdrama_episode_progress",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: userIdRef,
+    kdramaId: kdramaIdRef,
+    episodeId: text("episode_id")
+      .references(() => kdramaEpisode.id)
+      .notNull(),
+    provider: text("provider"),
+    providerEpisodeId: text("provider_episode_id"),
+    currentTime: real("current_time").notNull(),
+    isFinished: boolean("is_finished").notNull(),
+    updatedAt,
+    createdAt,
+  },
+  (t) => ({
+    uniqueKdramaEpisodeProgress: unique("unique_kdrama_episode_progress").on(
+      t.userId,
+      t.episodeId
+    ),
+  })
+);
 
 export const watchStatus = pgEnum("watch_status", [
   "WATCHING",

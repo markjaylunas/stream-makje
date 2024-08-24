@@ -8,6 +8,7 @@ import {
   AnimeUserStatusInsert,
   episode,
   EpisodeInsert,
+  EpisodeProgress,
   episodeProgress,
   EpisodeProgressInsert,
   kdrama,
@@ -62,8 +63,9 @@ export async function upsertEpisodeProgress({
   const episodeProgressInsert = db
     .insert(episodeProgress)
     .values(data.episodeProgress)
+    .returning()
     .onConflictDoUpdate({
-      target: episodeProgress.id,
+      target: [episodeProgress.episodeId, episodeProgress.userId],
       set: {
         provider: data.episodeProgress.provider,
         providerEpisodeId: data.episodeProgress.providerEpisodeId,
@@ -73,7 +75,12 @@ export async function upsertEpisodeProgress({
       },
     });
 
-  await Promise.all([animeInsert, episodeInsert, episodeProgressInsert]);
+  const [_, __, episodeProgressData] = await Promise.all([
+    animeInsert,
+    episodeInsert,
+    episodeProgressInsert,
+  ]);
+  return episodeProgressData[0];
 }
 export type FetchAllEpisodeProgress = Awaited<
   ReturnType<typeof fetchAllEpisodeProgress>

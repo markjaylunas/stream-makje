@@ -27,15 +27,12 @@ import {
   MediaLoadedDataEvent,
   MediaPlayer,
   MediaPlayerInstance,
-  MediaPlayEvent,
-  MediaPlayingEvent,
   MediaProvider,
   Menu,
   Poster,
   TimeSlider,
   ToggleButton,
   useMediaRemote,
-  useMediaStore,
   Track as VidTrack,
 } from "@vidstack/react";
 import {
@@ -69,7 +66,7 @@ export default function VideoPlayer({
   thumbnail,
   intro,
   outro,
-  episodeProgress,
+  episodeProgress: initialEpisodeProgress,
   info,
   episode,
   provider,
@@ -77,11 +74,13 @@ export default function VideoPlayer({
 }: Props) {
   const player = useRef<MediaPlayerInstance>(null);
   const remote = useMediaRemote(player);
-
-  const { currentTime } = useMediaStore(player);
-  const progressTime = episodeProgress?.currentTime || 0;
+  const progressTime = initialEpisodeProgress?.currentTime || 0;
   const [source, setSource] = useState<Source>(sourceList[0]);
   const [timeBefore, setTimeBefore] = useState<number>(progressTime || 0);
+  const [canSkip, setCanSkip] = useState<"intro" | "outro" | null>(null);
+  const [episodeProgress, setEpisodeProgress] = useState(
+    initialEpisodeProgress
+  );
 
   function onLoadedData(nativeEvent: MediaLoadedDataEvent) {
     setTimeout(() => {
@@ -94,75 +93,172 @@ export default function VideoPlayer({
     if (!intro) return;
     remote.seek(intro.end - 3);
   };
+
   const handleSkipOutro = () => {
     if (!outro) return;
     remote.seek(outro.end - 3);
   };
 
+  const handleInsertAnimeProgress = async ({
+    userId,
+    currentTime,
+    durationTime,
+  }: {
+    userId: string;
+    currentTime: number;
+    durationTime: number;
+  }) => {
+    const data: UpsertEpisodeProgressData = {
+      anime: {
+        id: info.id,
+        title: info.title,
+        image: info.image,
+        cover: info.cover || "",
+      },
+      episode: {
+        id: infoEpisodeId,
+        animeId: info.id,
+        number: episode.number,
+        title: episode.title,
+        image: episode.image,
+        durationTime,
+      },
+      episodeProgress: {
+        id: episodeProgress?.id,
+        userId,
+        animeId: info.id,
+        episodeId: infoEpisodeId,
+        currentTime,
+        isFinished: currentTime / durationTime > 0.9,
+        provider: provider.name,
+        providerEpisodeId: provider.episodeId,
+      },
+    };
+    const progress = await upsertEpisodeProgress({ data });
+    setEpisodeProgress(progress);
+  };
+
+  const handleInsertKdramaProgress = async ({
+    userId,
+    currentTime,
+    durationTime,
+  }: {
+    userId: string;
+    currentTime: number;
+    durationTime: number;
+  }) => {
+    const data: UpsertKdramaEpisodeProgressData = {
+      kdrama: {
+        id: info.id,
+        title: info.title,
+        image: info.image,
+        cover: info.cover || "",
+      },
+      kdramaEpisode: {
+        id: infoEpisodeId,
+        kdramaId: info.id,
+        number: episode.number,
+        title: episode.title,
+        image: episode.image,
+        durationTime,
+      },
+      kdramaEpisodeProgress: {
+        id: episodeProgress?.id,
+        userId,
+        kdramaId: info.id,
+        episodeId: infoEpisodeId,
+        currentTime,
+        isFinished: currentTime / durationTime > 0.9,
+        provider: provider.name,
+        providerEpisodeId: provider.episodeId,
+      },
+    };
+    const progress = await upsertKdramaEpisodeProgress({ data });
+    setEpisodeProgress(progress);
+  };
+
+  const handleInsert = ({
+    userId,
+    currentTime,
+    durationTime,
+  }: {
+    userId: string;
+    currentTime: number;
+    durationTime: number;
+  }) => {
+    if (contentType === "anime")
+      handleInsertAnimeProgress({ userId, currentTime, durationTime });
+    if (contentType === "k-drama")
+      handleInsertKdramaProgress({ userId, currentTime, durationTime });
+  };
+
   useEffect(() => {
     return () => {
-      const currentTime = player.current?.currentTime || 0;
-      const durationTime = player.current?.duration || 0;
-      if (userId && currentTime && currentTime > 10) {
-        if (contentType === "anime") {
-          let data: UpsertEpisodeProgressData = {
-            anime: {
-              id: info.id,
-              title: info.title,
-              image: info.image,
-              cover: info.cover || "",
-            },
-            episode: {
-              id: infoEpisodeId,
-              animeId: info.id,
-              number: episode.number,
-              title: episode.title,
-              image: episode.image,
-              durationTime,
-            },
-            episodeProgress: {
-              id: episodeProgress?.id,
-              userId,
-              animeId: info.id,
-              episodeId: infoEpisodeId,
-              currentTime,
-              isFinished: currentTime / durationTime > 0.9,
-              provider: provider.name,
-              providerEpisodeId: provider.episodeId,
-            },
-          };
-          upsertEpisodeProgress({ data });
+      if (!userId) return;
+      let lastMultiple = 0;
+      let seekTimeout: NodeJS.Timeout | null = null;
+      const SEEK_DELAY = 3000;
+      const CLOSE_THRESHOLD = 5;
+      let wasSeeking = false;
+
+      player.current!.subscribe(
+        ({
+          realCurrentTime: rawCurrentTime,
+          seeking,
+          realDuration: durationTime,
+        }) => {
+          const currentTime = Math.floor(rawCurrentTime);
+
+          // update skip state
+          if (intro && currentTime >= intro.start && currentTime <= intro.end)
+            setCanSkip("intro");
+          else if (
+            outro &&
+            currentTime >= outro.start &&
+            currentTime <= outro.end
+          )
+            setCanSkip("outro");
+          else setCanSkip(null);
+
+          if (seeking) {
+            // Reset lastMultiple when seeking starts
+            lastMultiple = 0;
+
+            // If a timeout is already set, clear it
+            if (seekTimeout) {
+              clearTimeout(seekTimeout);
+            }
+
+            // Update seeking status
+            wasSeeking = true;
+          } else {
+            // If seeking stops, set a timeout to update after 3 seconds
+            if (wasSeeking) {
+              if (seekTimeout) {
+                clearTimeout(seekTimeout);
+              }
+
+              seekTimeout = setTimeout(() => {
+                handleInsert({ userId, currentTime, durationTime });
+              }, SEEK_DELAY);
+
+              // Reset seeking status
+              wasSeeking = false;
+            }
+          }
+
+          // Update progress if we are at a new multiple of 30 seconds
+          if (!seeking) {
+            if (currentTime % 30 === 0) {
+              // Check if the current time is too close to the last multiple
+              if (Math.abs(currentTime - lastMultiple) >= CLOSE_THRESHOLD) {
+                handleInsert({ userId, currentTime, durationTime });
+                lastMultiple = currentTime;
+              }
+            }
+          }
         }
-        if (contentType === "k-drama") {
-          let data: UpsertKdramaEpisodeProgressData = {
-            kdrama: {
-              id: info.id,
-              title: info.title,
-              image: info.image,
-              cover: info.cover || "",
-            },
-            kdramaEpisode: {
-              id: infoEpisodeId,
-              kdramaId: info.id,
-              number: episode.number,
-              title: episode.title,
-              image: episode.image,
-              durationTime,
-            },
-            kdramaEpisodeProgress: {
-              id: episodeProgress?.id,
-              userId,
-              kdramaId: info.id,
-              episodeId: infoEpisodeId,
-              currentTime,
-              isFinished: currentTime / durationTime > 0.9,
-              provider: provider.name,
-              providerEpisodeId: provider.episodeId,
-            },
-          };
-          upsertKdramaEpisodeProgress({ data });
-        }
-      }
+      );
     };
   }, []);
   return (
@@ -256,10 +352,8 @@ export default function VideoPlayer({
                 {intro && (
                   <ToggleButton
                     className={cn(
-                      "vds-button w-20",
-                      currentTime >= intro.start && currentTime <= intro.end
-                        ? ""
-                        : "hidden"
+                      "vds-button w-20 hidden",
+                      canSkip === "intro" && "inline-block"
                     )}
                     onClick={handleSkipIntro}
                   >
@@ -269,10 +363,8 @@ export default function VideoPlayer({
                 {outro && (
                   <ToggleButton
                     className={cn(
-                      "vds-button w-20",
-                      currentTime >= outro.start && currentTime <= outro.end
-                        ? ""
-                        : "hidden"
+                      "vds-button w-20 hidden",
+                      canSkip === "outro" && "inline-block"
                     )}
                     onClick={handleSkipOutro}
                   >
