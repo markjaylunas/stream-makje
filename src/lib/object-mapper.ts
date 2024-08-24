@@ -14,6 +14,7 @@ import {
   DCWatchDataSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
+  FHQDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
 import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
@@ -507,3 +508,23 @@ export const consumetKdramaEpisodeStreamObjectMapper = (
   tracks: [],
   download: source.download,
 });
+
+export const consumetMovieObjectMapper = ({
+  movieList,
+  tagList,
+}: {
+  movieList: FHQDataSchema[];
+  tagList: Tag[];
+}): CardDataProps[] =>
+  movieList.map((movie, movieIdx) => {
+    const { id, title, image, ...others } = movie;
+    return {
+      id,
+      name: title,
+      image,
+      href: `/movie/info/${encodeSlashId(id)}`,
+      tagList: searchKeysInObject(tagList, others as DataObject).filter(
+        (v) => v.value
+      ),
+    };
+  });

@@ -337,9 +337,9 @@ export const fHQDataSchema = z.object({
   id: z.string(),
   title: z.string(),
   image: z.string(),
-  duration: z.string(),
   type: z.string(),
 
+  duration: z.string().optional(),
   releaseDate: z.string().optional(),
   season: z.string().optional(),
   seasons: z.number().optional(),
@@ -347,11 +347,7 @@ export const fHQDataSchema = z.object({
   url: z.string().optional(),
 });
 
-export const fHQTrendingDataSchema = z.object({
-  results: z.array(fHQDataSchema),
-});
-
-export const fHQRecentDataSchema = z.array(fHQDataSchema);
+export const fHQListDataSchema = z.array(fHQDataSchema);
 
 // by country, genre, search
 export const fHQSearchDataSchema = z.object({
@@ -397,3 +393,11 @@ export const fHQSourceDataSchema = z.object({
   ),
   subtitles: z.array(z.object({ url: z.string(), lang: z.string() })),
 });
+
+export type FHQDataSchema = z.infer<typeof fHQDataSchema>;
+export type FHQListDataSchema = z.infer<typeof fHQListDataSchema>;
+export type FHQSearchDataSchema = z.infer<typeof fHQSearchDataSchema>;
+export type FHQEpisodeSchema = z.infer<typeof fHQEpisodeSchema>;
+export type FHQInfoDataSchema = z.infer<typeof fHQInfoDataSchema>;
+export type FHQServerDataSchema = z.infer<typeof fHQServerDataSchema>;
+export type FHQSourceDataSchema = z.infer<typeof fHQSourceDataSchema>;

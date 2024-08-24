@@ -198,3 +198,9 @@ export type VSProvider = {
 };
 
 // End: Video Stream types
+
+// Start: Movie/Tv types
+
+export type TrendingType = "movie" | "tv";
+
+// End: Movie/Tv types

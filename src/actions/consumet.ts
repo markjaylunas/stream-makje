@@ -11,11 +11,13 @@ import {
   dCWatchDataSchema,
   episodeDataSchema,
   episodeSourceDataSchema,
+  fHQListDataSchema,
 } from "@/lib/consumet-validations";
 import {
   AnimeAdvancedSearchParams,
   AnimeProviderAPI,
   AnimeProviders,
+  TrendingType,
 } from "@/lib/types";
 import { decodeSlashId } from "@/lib/utils";
 
@@ -356,6 +358,75 @@ export async function searchKdrama(params: { query: string }) {
       console.error(parsed.error.toString());
       return;
     }
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchTrendingMovieData({
+  type,
+}: {
+  type?: TrendingType;
+}) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.trending({ type }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+    const parsed = fHQListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchRecentMoviesMovieData() {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.recentMovies(),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+    const parsed = fHQListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchRecentShowsMovieData() {
+  try {
+    const response = await fetch(consumetAPIQuery.movies.flixhq.recentShows(), {
+      next: { revalidate: 3600 },
+    });
+
+    const data = await response.json();
+    const parsed = fHQListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
     return parsed.data;
   } catch (error) {
     console.log(error);

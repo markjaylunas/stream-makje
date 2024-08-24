@@ -2,6 +2,7 @@ import {
   AnimeAdvancedSearchParams,
   AnimeProviderAPI,
   AnimeProviders,
+  TrendingType,
 } from "@/lib/types";
 
 const anilistBase = `${process.env.CONSUMET_API_BASE_URL}/meta/anilist`;
@@ -119,7 +120,7 @@ export const consumetAPIQuery = {
       country: ({ countryId }: { countryId: string }) =>
         createURL(flixhqBase, `country/${countryId}`, {}),
 
-      trending: (params: { type: "MOVIE" | "TV" }) =>
+      trending: (params: { type?: TrendingType }) =>
         createURL(flixhqBase, `trending`, params),
 
       recentMovies: () => createURL(flixhqBase, `recent-movies`, {}),

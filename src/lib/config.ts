@@ -97,8 +97,17 @@ export const routesConfig: RoutesConfig = {
       ],
     },
     {
-      title: "Movies",
+      title: "Movie",
       items: [
+        {
+          title: "Movie Homepage",
+          href: "/movie",
+          label:
+            "Explore all movie and tv related content, from trending series to new releases.",
+          icon: "home",
+          iconClass: "text-primary",
+          items: [],
+        },
         {
           title: "Trending",
           href: "/movies/trending",
