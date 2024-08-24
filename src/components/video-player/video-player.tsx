@@ -40,7 +40,7 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { SvgIcon } from "../ui/svg-icons";
 
 type Props = {
@@ -177,90 +177,27 @@ export default function VideoPlayer({
     setEpisodeProgress(progress);
   };
 
-  const handleInsert = ({
-    userId,
-    currentTime,
-    durationTime,
-  }: {
-    userId: string;
-    currentTime: number;
-    durationTime: number;
-  }) => {
+  const handleProgress = (isSeeked = false) => {
+    const currentTime = Math.floor(player.current?.currentTime || 0);
+    const durationTime = player.current?.duration;
+
+    if (intro && currentTime >= intro.start && currentTime <= intro.end)
+      setCanSkip("intro");
+    else if (outro && currentTime >= outro.start && currentTime <= outro.end)
+      setCanSkip("outro");
+    else setCanSkip(null);
+
+    if (!userId) return;
+    if (!currentTime || !durationTime) return;
+    const episodeProgressTime = episodeProgress?.currentTime || 0;
+    if (currentTime < episodeProgressTime + 30 && !isSeeked) return;
+
     if (contentType === "anime")
       handleInsertAnimeProgress({ userId, currentTime, durationTime });
     if (contentType === "k-drama")
       handleInsertKdramaProgress({ userId, currentTime, durationTime });
   };
 
-  useEffect(() => {
-    return () => {
-      if (!userId) return;
-      let lastMultiple = 0;
-      let seekTimeout: NodeJS.Timeout | null = null;
-      const SEEK_DELAY = 3000;
-      const CLOSE_THRESHOLD = 5;
-      let wasSeeking = false;
-
-      player.current!.subscribe(
-        ({
-          realCurrentTime: rawCurrentTime,
-          seeking,
-          realDuration: durationTime,
-        }) => {
-          const currentTime = Math.floor(rawCurrentTime);
-
-          // update skip state
-          if (intro && currentTime >= intro.start && currentTime <= intro.end)
-            setCanSkip("intro");
-          else if (
-            outro &&
-            currentTime >= outro.start &&
-            currentTime <= outro.end
-          )
-            setCanSkip("outro");
-          else setCanSkip(null);
-
-          if (seeking) {
-            // Reset lastMultiple when seeking starts
-            lastMultiple = 0;
-
-            // If a timeout is already set, clear it
-            if (seekTimeout) {
-              clearTimeout(seekTimeout);
-            }
-
-            // Update seeking status
-            wasSeeking = true;
-          } else {
-            // If seeking stops, set a timeout to update after 3 seconds
-            if (wasSeeking) {
-              if (seekTimeout) {
-                clearTimeout(seekTimeout);
-              }
-
-              seekTimeout = setTimeout(() => {
-                handleInsert({ userId, currentTime, durationTime });
-              }, SEEK_DELAY);
-
-              // Reset seeking status
-              wasSeeking = false;
-            }
-          }
-
-          // Update progress if we are at a new multiple of 30 seconds
-          if (!seeking) {
-            if (currentTime % 30 === 0) {
-              // Check if the current time is too close to the last multiple
-              if (Math.abs(currentTime - lastMultiple) >= CLOSE_THRESHOLD) {
-                handleInsert({ userId, currentTime, durationTime });
-                lastMultiple = currentTime;
-              }
-            }
-          }
-        }
-      );
-    };
-  }, []);
   return (
     <section className="overflow-hidden relative">
       <MediaPlayer
@@ -275,6 +212,9 @@ export default function VideoPlayer({
         crossOrigin
         playsInline
         onLoadedData={onLoadedData}
+        onSeeked={() => handleProgress(true)}
+        onEnded={() => handleProgress(true)}
+        onProgress={() => handleProgress()}
         className="relative"
       >
         <MediaProvider>
