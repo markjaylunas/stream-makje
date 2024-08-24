@@ -505,4 +505,5 @@ export const consumetKdramaEpisodeStreamObjectMapper = (
     quality: ["default", "backup", ...sourcePriority][sourceIdx],
   })),
   tracks: [],
+  download: source.download,
 });

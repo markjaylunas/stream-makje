@@ -54,7 +54,7 @@ export default async function VideoStream({
     return (
       <NoVideo bgSrc={kdrama.cover || kdrama.image} title={`No source found`} />
     );
-  const { sources } = source;
+  const { sources, download } = source;
 
   return (
     <VideoPlayer
@@ -67,6 +67,7 @@ export default async function VideoStream({
       sourceList={sources}
       captionList={[]}
       infoEpisodeId={infoEpisodeId}
+      download={download}
     />
   );
 }

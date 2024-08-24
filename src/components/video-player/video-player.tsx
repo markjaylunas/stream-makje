@@ -41,6 +41,7 @@ import {
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
 import { useRef, useState } from "react";
+import MyLink from "../ui/my-link";
 import { SvgIcon } from "../ui/svg-icons";
 
 type Props = {
@@ -56,6 +57,7 @@ type Props = {
   episodeProgress: EpisodeProgress | KdramaEpisodeProgress | null;
   provider: VSProvider;
   infoEpisodeId: string;
+  download?: string;
 };
 
 export default function VideoPlayer({
@@ -71,6 +73,7 @@ export default function VideoPlayer({
   episode,
   provider,
   infoEpisodeId,
+  download,
 }: Props) {
   const player = useRef<MediaPlayerInstance>(null);
   const remote = useMediaRemote(player);
@@ -250,6 +253,18 @@ export default function VideoPlayer({
                 <TimeSlider.Progress className="vds-slider-progress vds-slider-track bg-[#ffffffdf]" />
                 <TimeSlider.Thumb className="vds-slider-thumb" />
               </TimeSlider.Root>
+            ),
+            downloadButton: (
+              <>
+                {download && (
+                  <MyLink href={download} target="_blank">
+                    <ToggleButton className="vds-button">
+                      <SvgIcon.download className="size-5" />{" "}
+                      <span className="sr-only">Download</span>
+                    </ToggleButton>
+                  </MyLink>
+                )}
+              </>
             ),
             beforeSettingsMenuEndItems: (
               <Menu.Root>

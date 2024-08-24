@@ -154,6 +154,7 @@ export type EpisodeStream = {
   tracks: Track[];
   intro?: TimeLine;
   outro?: TimeLine;
+  download?: string;
 };
 
 export type Track = {
