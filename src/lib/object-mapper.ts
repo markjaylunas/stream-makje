@@ -422,7 +422,7 @@ export const consumetKDramacoolObjectMapper = ({
     id: drama.id,
     name: drama.title,
     image: drama.image,
-    href: `/k-drama/info/${encodeKdramaId(drama.id)}`,
+    href: `/k-drama/watch/${encodeKdramaId(drama.id)}`,
   }));
 
 export const consumetKDramaInfoObjectMapper = (

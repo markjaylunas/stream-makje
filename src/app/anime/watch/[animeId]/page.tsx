@@ -167,47 +167,51 @@ export default async function EpisodePage({
             <Heading className="text-primary-500 text-lg sm:text-xl">
               {animeInfo.name}
             </Heading>
-            <div className="flex justify-start items-center gap-2">
-              <Button
-                as={NextLink}
-                href={`/anime/info/${animeId}`}
-                startContent={<SvgIcon.information />}
-                size="sm"
-                radius="md"
-                variant="flat"
-              >
-                More Info
-              </Button>
-              <WatchListDropdown
-                contentType="anime"
-                watchStatus={
-                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
-                }
-                info={{
-                  id: animeId,
-                  title: pickTitle(infoData.title),
-                  image: infoData.image || "",
-                  cover: infoData.cover || "",
-                }}
-                size="sm"
-              />
-              <ScoreDropdown
-                contentType="anime"
-                watchStatus={
-                  animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
-                }
-                info={{
-                  id: animeId,
-                  title: pickTitle(infoData.title),
-                  image: infoData.image || "",
-                  cover: infoData.cover || "",
-                }}
-                size="sm"
-              />
+            <div className="flex justify-end flex-col flex-wrap items-center gap-2">
+              <div className="flex gap-2 justify-end w-full">
+                <Button
+                  as={NextLink}
+                  href={`/anime/info/${animeId}`}
+                  startContent={<SvgIcon.information />}
+                  size="sm"
+                  radius="md"
+                  variant="flat"
+                >
+                  More Info
+                </Button>
 
-              <ShareButton size="sm" radius="md" variant="flat" isIconOnly>
-                <span className="sr-only">Share</span>
-              </ShareButton>
+                <ShareButton radius="md" size="sm" variant="flat">
+                  Share
+                </ShareButton>
+              </div>
+              <div className="flex gap-2 justify-end w-full">
+                <WatchListDropdown
+                  contentType="anime"
+                  watchStatus={
+                    animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+                  }
+                  info={{
+                    id: animeId,
+                    title: pickTitle(infoData.title),
+                    image: infoData.image || "",
+                    cover: infoData.cover || "",
+                  }}
+                  size="sm"
+                />
+                <ScoreDropdown
+                  contentType="anime"
+                  watchStatus={
+                    animeWatchStatus.length > 0 ? animeWatchStatus[0] : null
+                  }
+                  info={{
+                    id: animeId,
+                    title: pickTitle(infoData.title),
+                    image: infoData.image || "",
+                    cover: infoData.cover || "",
+                  }}
+                  size="sm"
+                />
+              </div>
             </div>
           </div>
 

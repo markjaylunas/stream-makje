@@ -62,7 +62,7 @@ export default function InfoSection({
               {Array.from(new Set([info.synonyms])).join(" | ")}
             </h2>
 
-            <div className="flex justify-start gap-2">
+            <div className="flex justify-start gap-2 flex-wrap">
               <ScoreDropdown
                 contentType={contentType}
                 watchStatus={watchStatus.length > 0 ? watchStatus[0] : null}
@@ -85,9 +85,7 @@ export default function InfoSection({
                 }}
               />
 
-              <ShareButton variant="flat" isIconOnly>
-                <span className="sr-only">Share</span>
-              </ShareButton>
+              <ShareButton variant="flat">Share</ShareButton>
             </div>
 
             {info.genres && (

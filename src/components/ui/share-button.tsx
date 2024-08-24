@@ -8,9 +8,9 @@ export default function ShareButton({ children, ...props }: ButtonProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const path = `${process.env.NEXT_PUBLIC_BASE_URL}${pathname}${
-    params ? `?${params.toString()}` : ""
-  }`;
+  const path = `${
+    process.env.NEXT_PUBLIC_BASE_URL
+  }${pathname}${params.toString()}`;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -32,7 +32,7 @@ export default function ShareButton({ children, ...props }: ButtonProps) {
     <Button
       onClick={handleShare}
       variant="bordered"
-      startContent={<SvgIcon.share />}
+      startContent={<SvgIcon.share className="size-4" />}
       {...props}
     >
       {children}

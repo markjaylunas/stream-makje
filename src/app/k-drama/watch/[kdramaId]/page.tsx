@@ -119,48 +119,52 @@ export default async function EpisodePage({
             <Heading className="text-primary-500 text-lg sm:text-xl">
               {kdramaInfo.name}
             </Heading>
-            <div className="flex justify-start items-center gap-2">
-              <Button
-                as={NextLink}
-                href={`/k-drama/info/${kdramaId}`}
-                startContent={<SvgIcon.information />}
-                size="sm"
-                radius="md"
-                variant="flat"
-              >
-                More Info
-              </Button>
-              <ScoreDropdown
-                size="sm"
-                contentType="k-drama"
-                watchStatus={
-                  kdramaWatchStatus.length > 0 ? kdramaWatchStatus[0] : null
-                }
-                info={{
-                  id: kdramaInfo.id || "",
-                  title: kdramaInfo.name,
-                  image: kdramaInfo.poster || "",
-                  cover: kdramaInfo.cover || "",
-                }}
-              />
+            <div className="flex justify-end flex-col flex-wrap items-center gap-2">
+              <div className="flex gap-2 justify-end w-full">
+                <Button
+                  as={NextLink}
+                  href={`/k-drama/info/${kdramaId}`}
+                  startContent={<SvgIcon.information />}
+                  size="sm"
+                  radius="md"
+                  variant="flat"
+                >
+                  More Info
+                </Button>
 
-              <WatchListDropdown
-                size="sm"
-                contentType="k-drama"
-                watchStatus={
-                  kdramaWatchStatus.length > 0 ? kdramaWatchStatus[0] : null
-                }
-                info={{
-                  id: kdramaInfo.id || "",
-                  title: kdramaInfo.name,
-                  image: kdramaInfo.poster || "",
-                  cover: kdramaInfo.cover || "",
-                }}
-              />
+                <ShareButton radius="md" size="sm" variant="flat">
+                  Share
+                </ShareButton>
+              </div>
+              <div className="flex gap-2 justify-end w-full">
+                <WatchListDropdown
+                  size="sm"
+                  contentType="k-drama"
+                  watchStatus={
+                    kdramaWatchStatus.length > 0 ? kdramaWatchStatus[0] : null
+                  }
+                  info={{
+                    id: kdramaInfo.id || "",
+                    title: kdramaInfo.name,
+                    image: kdramaInfo.poster || "",
+                    cover: kdramaInfo.cover || "",
+                  }}
+                />
 
-              <ShareButton size="sm" variant="flat" isIconOnly>
-                <span className="sr-only">Share</span>
-              </ShareButton>
+                <ScoreDropdown
+                  size="sm"
+                  contentType="k-drama"
+                  watchStatus={
+                    kdramaWatchStatus.length > 0 ? kdramaWatchStatus[0] : null
+                  }
+                  info={{
+                    id: kdramaInfo.id || "",
+                    title: kdramaInfo.name,
+                    image: kdramaInfo.poster || "",
+                    cover: kdramaInfo.cover || "",
+                  }}
+                />
+              </div>
             </div>
           </div>
 
