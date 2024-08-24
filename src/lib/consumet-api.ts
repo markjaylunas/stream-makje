@@ -6,6 +6,7 @@ import {
 
 const anilistBase = `${process.env.CONSUMET_API_BASE_URL}/meta/anilist`;
 const dramacoolBase = `${process.env.CONSUMET_API_BASE_URL}/movies/dramacool`;
+const flixhqBase = `${process.env.CONSUMET_API_BASE_URL}/movies/flixhq`;
 
 function createURL(
   base: string,
@@ -99,6 +100,31 @@ export const consumetAPIQuery = {
         createURL(dramacoolBase, `watch`, params),
 
       popular: () => createURL(dramacoolBase, `popular`, {}),
+    },
+    flixhq: {
+      search: ({ query, ...params }: { query: string; page: number }) =>
+        createURL(flixhqBase, `${query}`, params),
+
+      info: (params: { id: string }) => createURL(flixhqBase, `info`, params),
+
+      watch: (params: { episodeId: string; mediaId: string }) =>
+        createURL(flixhqBase, `watch`, params),
+
+      servers: (params: { episodeId: string; mediaId: string }) =>
+        createURL(flixhqBase, `servers`, params),
+
+      genre: ({ genreId }: { genreId: string }) =>
+        createURL(flixhqBase, `genre/${genreId}`, {}),
+
+      country: ({ countryId }: { countryId: string }) =>
+        createURL(flixhqBase, `country/${countryId}`, {}),
+
+      trending: (params: { type: "MOVIE" | "TV" }) =>
+        createURL(flixhqBase, `trending`, params),
+
+      recentMovies: () => createURL(flixhqBase, `recent-movies`, {}),
+
+      recentShows: () => createURL(flixhqBase, `recent-shows`, {}),
     },
   },
 };

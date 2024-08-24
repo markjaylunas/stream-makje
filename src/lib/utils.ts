@@ -181,10 +181,10 @@ export function getSeasonAndYear(position: SeasonPosition): {
   return { season: SEASONS[seasonIndex], year };
 }
 
-export function encodeKdramaId(id: string) {
+export function encodeSlashId(id: string) {
   return id.replace(/\//g, "%2F"); // Encodes '/'
 }
 
-export function decodeKdramaId(id: string) {
+export function decodeSlashId(id: string) {
   return id.replace(/%2F/g, "/"); // Decodes '%2F' back to '/'
 }

@@ -17,7 +17,7 @@ import {
   AnimeProviderAPI,
   AnimeProviders,
 } from "@/lib/types";
-import { decodeKdramaId } from "@/lib/utils";
+import { decodeSlashId } from "@/lib/utils";
 
 export async function fetchPopularAnimeData({
   page = 1,
@@ -295,7 +295,7 @@ export async function fetchPopularKdramaData() {
 export async function fetchKdramaInfo({ kdramaId }: { kdramaId: string }) {
   try {
     const response = await fetch(
-      consumetAPIQuery.movies.dramacool.info({ id: decodeKdramaId(kdramaId) }),
+      consumetAPIQuery.movies.dramacool.info({ id: decodeSlashId(kdramaId) }),
       { next: { revalidate: 3600 } }
     );
 

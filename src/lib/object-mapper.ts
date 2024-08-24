@@ -27,7 +27,7 @@ import {
 } from "./types";
 import {
   createURL,
-  encodeKdramaId,
+  encodeSlashId,
   jaroWinklerDistance,
   pickTitle,
   searchKeysInObject,
@@ -422,13 +422,13 @@ export const consumetKDramacoolObjectMapper = ({
     id: drama.id,
     name: drama.title,
     image: drama.image,
-    href: `/k-drama/watch/${encodeKdramaId(drama.id)}`,
+    href: `/k-drama/watch/${encodeSlashId(drama.id)}`,
   }));
 
 export const consumetKDramaInfoObjectMapper = (
   rawInfo: DCInfoDataSchema
 ): Info => {
-  const id = encodeKdramaId(rawInfo.id);
+  const id = encodeSlashId(rawInfo.id);
   const otherInfo: OtherInfo = [
     {
       key: "status",
