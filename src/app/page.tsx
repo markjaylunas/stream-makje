@@ -37,10 +37,9 @@ export default function Home() {
           />
 
           <CategoryCard
-            description="Movie: Coming soon"
+            description="Watch Movie"
             image={GIFMovie}
-            link="#"
-            isDisabled={true}
+            link="/movie"
           />
 
           <CategoryCard

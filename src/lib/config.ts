@@ -17,7 +17,6 @@ export type SiteConfig = typeof siteConfig;
 type RoutesConfig = {
   mainNav: NavItemWithChildren[];
 };
-
 export const routesConfig: RoutesConfig = {
   mainNav: [
     {
@@ -93,6 +92,43 @@ export const routesConfig: RoutesConfig = {
             "Explore all k-drama-related content, from trending series to new releases.",
           icon: "home",
           iconClass: "text-primary",
+          items: [],
+        },
+      ],
+    },
+    {
+      title: "Movies",
+      items: [
+        {
+          title: "Trending",
+          href: "/movies/trending",
+          label: "Check out the trending movies everyone is watching.",
+          icon: "flame",
+          iconClass: "text-red-500",
+          items: [],
+        },
+        {
+          title: "Recent Movies",
+          href: "/movies/recent-movies",
+          label: "Explore the most recent movie releases across genres.",
+          icon: "movie",
+          iconClass: "text-blue-500",
+          items: [],
+        },
+        {
+          title: "Recent Shows",
+          href: "/movies/recent-shows",
+          label: "Discover the latest shows that have been released.",
+          icon: "tv",
+          iconClass: "text-green-500",
+          items: [],
+        },
+        {
+          title: "By Country",
+          href: "/movies/by-country",
+          label: "Find movies based on country or region of production.",
+          icon: "globe",
+          iconClass: "text-orange-500",
           items: [],
         },
       ],
