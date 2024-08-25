@@ -31,7 +31,7 @@ export default function CardWatchedData({
     <Card
       as={NextLink}
       href={props.href}
-      className="relative group h-full w-full mx-auto aspect-5/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
+      className="relative group h-full w-fit mx-auto aspect-5/3 bg-transparent select-none hover:cursor-pointer overflow-hidden "
     >
       <CardHeader className="absolute z-20 top-0 p-2 flex flex-wrap gap-2 justify-between items-end">
         {filteredTagList.map((tag, tagIndex) => (
@@ -57,8 +57,8 @@ export default function CardWatchedData({
         src={props.image}
         classNames={{
           wrapper:
-            "z-0 w-full h-full bg-blur-md flex items-center justify-center",
-          img: "w-full object-cover",
+            "z-0 w-full h-full mx-auto bg-blur-md flex items-center justify-center",
+          img: "object-cover min-w-full min-h-full",
         }}
       />
 
