@@ -24,6 +24,8 @@ export default function CardWatchedData({
   const filteredTagList = tagList.filter((tag) => !tag.isCentered);
   const centerTagList = tagList.filter((tag) => tag.isCentered);
   const progressPercentage = (props.currentTime / props.durationTime) * 100;
+  const isTitleDuplicate =
+    props.name.toLowerCase() === props.episodeName.toLowerCase();
 
   return (
     <Card
@@ -82,9 +84,11 @@ export default function CardWatchedData({
           {props.name}
         </h6>
 
-        <p className="text-white/90 text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1 w-full font-normal text-tiny line-clamp-2 text-left text-pretty">
-          {props.episodeName}
-        </p>
+        {!isTitleDuplicate && (
+          <p className="text-white/90 text-shadow text-shadow-black text-shadow-x-1 text-shadow-y-1 w-full font-normal text-tiny line-clamp-2 text-left text-pretty">
+            {props.episodeName}
+          </p>
+        )}
 
         <Progress
           aria-label={`progress ${progressPercentage}`}

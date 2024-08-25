@@ -1,5 +1,6 @@
 import { FetchAllEpisodeProgress } from "@/actions/anime-action";
 import { FetchAllKdramaEpisodeProgress } from "@/actions/kdrama-action";
+import { FetchAllMovieEpisodeProgress } from "@/actions/movie-action";
 import { CardDataProps } from "@/components/card-data/card-data";
 import { CardWatchedDataProps } from "@/components/card-data/card-watched-data";
 import { AWEpisodeSourceDataSchema } from "@/lib/aniwatch-validations";
@@ -603,3 +604,51 @@ export const consumetMovieEpisodeStreamObjectMapper = (
     return { file: sub.url, kind: "captions", label };
   }),
 });
+
+export const consumetMovieWatchedObjectMapper = ({
+  movieList,
+  tagList,
+}: {
+  movieList: FetchAllMovieEpisodeProgress["episodes"];
+  tagList: Tag[];
+}): CardWatchedDataProps[] =>
+  movieList.map((movie) => {
+    const {
+      title,
+      episodeTitle,
+      episodeImage,
+      episodeId,
+      image: infoImage,
+      infoId,
+      currentTime,
+      durationTime,
+      provider,
+      providerEpisodeId,
+      episodeProgressUpdatedAt: _,
+      ...others
+    } = movie;
+
+    const name = title || "";
+    const episodeName = episodeTitle || "";
+    const episodeNumber = movie.episodeNumber || 1;
+    const image = episodeImage || infoImage || "";
+    const href = createURL({
+      path: `/movie/watch/${infoId}`,
+      params: {
+        episodeId: providerEpisodeId,
+        episodeNumber,
+        provider,
+      },
+    });
+    return {
+      id: infoId || "",
+      name,
+      episodeName,
+      episodeNumber,
+      image,
+      currentTime,
+      durationTime: durationTime || 0,
+      href,
+      tagList: searchKeysInObject(tagList, others as DataObject),
+    };
+  });
