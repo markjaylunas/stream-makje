@@ -3,7 +3,11 @@ import { ReadMore } from "@/components/ui/read-more";
 import ScoreDropdown from "@/components/ui/score-dropdown";
 import ShareButton from "@/components/ui/share-button";
 import WatchListDropdown from "@/components/ui/watchlist-dropdown";
-import { AnimeUserStatus, KdramaUserStatus } from "@/db/schema";
+import {
+  AnimeUserStatus,
+  KdramaUserStatus,
+  MovieUserStatus,
+} from "@/db/schema";
 import { ContentType, Info } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@nextui-org/button";
@@ -17,7 +21,7 @@ type Props = {
   info: Info;
   className?: string;
   children?: ReactNode;
-  watchStatus: AnimeUserStatus[] | KdramaUserStatus[];
+  watchStatus: AnimeUserStatus[] | KdramaUserStatus[] | MovieUserStatus[];
   isGenreLinkDisabled?: boolean;
 };
 

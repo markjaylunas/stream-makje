@@ -15,6 +15,8 @@ import {
   EpisodeSchema,
   EpisodeSourceDataSchema,
   FHQDataSchema,
+  FHQEpisodeDataSchema,
+  FHQInfoDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
 import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
@@ -528,3 +530,57 @@ export const consumetMovieObjectMapper = ({
       ),
     };
   });
+
+export const consumetMovieInfoEpisodesObjectMapper = (
+  episodes: FHQEpisodeDataSchema[]
+): Episode[] =>
+  episodes.map((episode, episodeIdx) => ({
+    episodeId: episode.id,
+    title: episode.title ? episode.title : null,
+    number: episodeIdx + 1,
+  }));
+
+export const consumetMovieInfoObjectMapper = (
+  rawInfo: FHQInfoDataSchema
+): Info => {
+  const id = encodeSlashId(rawInfo.id);
+  const otherInfo: OtherInfo = [
+    {
+      key: "type",
+      value: rawInfo.type,
+    },
+    {
+      key: "duration",
+      value: rawInfo.duration,
+    },
+    {
+      key: "rating",
+      value: rawInfo.rating?.toString() || "",
+    },
+    {
+      key: "release date",
+      value: rawInfo.releaseDate,
+    },
+    {
+      key: "production",
+      value: rawInfo.production,
+    },
+    {
+      key: "country",
+      value: rawInfo.country,
+    },
+  ].filter((c) => Boolean(c.value));
+
+  return {
+    id,
+    infoId: id,
+    name: rawInfo.title,
+    poster: rawInfo.image,
+    cover: null,
+    type: null,
+    genres: rawInfo.genres,
+    synonyms: "",
+    description: rawInfo.description,
+    otherInfo,
+  };
+};

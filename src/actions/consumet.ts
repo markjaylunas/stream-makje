@@ -11,6 +11,7 @@ import {
   dCWatchDataSchema,
   episodeDataSchema,
   episodeSourceDataSchema,
+  fHQInfoDataSchema,
   fHQListDataSchema,
   fHQSearchDataSchema,
 } from "@/lib/consumet-validations";
@@ -446,6 +447,29 @@ export async function fetchCountryMovieData({ country }: { country: string }) {
 
     const data = await response.json();
     const parsed = fHQSearchDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchMovieInfo({ movieId }: { movieId: string }) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.info({ id: decodeSlashId(movieId) }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = fHQInfoDataSchema.safeParse(data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());

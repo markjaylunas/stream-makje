@@ -52,7 +52,7 @@ export type SearchParamValue = string | string[] | undefined;
 
 export type OAuthProvider = "google" | "github";
 
-export type ContentType = "anime" | "k-drama";
+export type ContentType = "anime" | "k-drama" | "movie";
 
 // Start: Consumet API types
 

@@ -2,11 +2,13 @@
 
 import { upsertWatchStatus } from "@/actions/anime-action";
 import { upsertKdramaWatchStatus } from "@/actions/kdrama-action";
+import { upsertMovieWatchStatus } from "@/actions/movie-action";
 import {
   AnimeInsert,
   AnimeUserStatus,
   KdramaInsert,
   KdramaUserStatus,
+  MovieUserStatus,
   WatchStatus,
 } from "@/db/schema";
 import { DEFAULT_SIGNIN_PATH } from "@/lib/routes";
@@ -28,7 +30,7 @@ type Status = WatchStatus | "null";
 
 type Props = {
   contentType: ContentType;
-  watchStatus: AnimeUserStatus | KdramaUserStatus | null;
+  watchStatus: AnimeUserStatus | KdramaUserStatus | MovieUserStatus | null;
   info: AnimeInsert | KdramaInsert;
   size?: "lg" | "sm" | "md" | undefined;
 };
@@ -44,7 +46,7 @@ export default function WatchListDropdown({
   const router = useRouter();
 
   const [userWatchStatus, setUserWatchStatus] = useState<
-    AnimeUserStatus | KdramaUserStatus | null
+    AnimeUserStatus | KdramaUserStatus | MovieUserStatus | null
   >(watchStatus);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -90,6 +92,19 @@ export default function WatchListDropdown({
           id: userWatchStatus?.id || undefined,
           status,
           kdramaId: info.id,
+          userId,
+        },
+      });
+      setUserWatchStatus(upsertData[0]);
+    }
+
+    if (contentType === "movie") {
+      const upsertData = await upsertMovieWatchStatus({
+        movieInsert: info,
+        data: {
+          id: userWatchStatus?.id || undefined,
+          status,
+          movieId: info.id,
           userId,
         },
       });

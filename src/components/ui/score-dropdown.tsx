@@ -6,6 +6,7 @@ import {
   AnimeUserStatus,
   KdramaInsert,
   KdramaUserStatus,
+  MovieUserStatus,
 } from "@/db/schema";
 import { DEFAULT_SIGNIN_PATH } from "@/lib/routes";
 import {
@@ -18,6 +19,7 @@ import {
 import { Button } from "@nextui-org/button";
 
 import { upsertKdramaWatchStatus } from "@/actions/kdrama-action";
+import { upsertMovieWatchStatus } from "@/actions/movie-action";
 import { ContentType } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -26,7 +28,7 @@ import { SvgIcon } from "./svg-icons";
 
 type Props = {
   contentType: ContentType;
-  watchStatus: AnimeUserStatus | KdramaUserStatus | null;
+  watchStatus: AnimeUserStatus | KdramaUserStatus | MovieUserStatus | null;
   info: AnimeInsert | KdramaInsert;
   size?: "lg" | "sm" | "md" | undefined;
 };
@@ -41,7 +43,7 @@ export default function ScoreDropdown({
   const userId = session?.data?.user?.id;
   const router = useRouter();
   const [userWatchStatus, setUserWatchStatus] = useState<
-    AnimeUserStatus | KdramaUserStatus | null
+    AnimeUserStatus | KdramaUserStatus | MovieUserStatus | null
   >(watchStatus);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -90,6 +92,18 @@ export default function ScoreDropdown({
           id: userWatchStatus?.id || undefined,
           score,
           kdramaId: info.id,
+          userId,
+        },
+      });
+      setUserWatchStatus(upsertData[0]);
+    }
+    if (contentType === "movie") {
+      const upsertData = await upsertMovieWatchStatus({
+        movieInsert: info,
+        data: {
+          id: userWatchStatus?.id || undefined,
+          score,
+          movieId: info.id,
           userId,
         },
       });
