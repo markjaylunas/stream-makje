@@ -124,7 +124,6 @@ export default function Navbar({ user }: Props) {
           {routesConfig.mainNav.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Accordion
-                defaultExpandedKeys={["Anime"]}
                 itemClasses={{
                   base: "max-w-sm mx-auto",
                   title: "text-foreground-500/90",
