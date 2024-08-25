@@ -1,6 +1,7 @@
 import { AnimeProviders } from "./types";
 
 export const sourcePriority = [
+  "auto",
   "1080p",
   "720p",
   "480p",

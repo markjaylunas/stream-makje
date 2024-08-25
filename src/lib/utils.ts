@@ -2,7 +2,8 @@ import { TitleSchema } from "@/lib/consumet-validations";
 import { type ClassValue, clsx } from "clsx";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
-import { DataObject, SearchParamValue, Tag } from "./types";
+import { sourcePriority } from "./constants";
+import { DataObject, EpisodeStream, SearchParamValue, Tag } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -196,3 +197,11 @@ export function encodeSlashId(id: string) {
 export function decodeSlashId(id: string) {
   return id.replace(/%2F/g, "/"); // Decodes '%2F' back to '/'
 }
+
+export const sortSourcePriority = (sourceList: EpisodeStream["sources"]) =>
+  sourceList.sort((a, b) => {
+    const qualityA = a.quality ? sourcePriority.indexOf(a.quality) : -1;
+    const qualityB = b.quality ? sourcePriority.indexOf(b.quality) : -1;
+
+    return qualityA - qualityB;
+  });

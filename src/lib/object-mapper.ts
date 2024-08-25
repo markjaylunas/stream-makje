@@ -36,6 +36,7 @@ import {
   jaroWinklerDistance,
   pickTitle,
   searchKeysInObject,
+  sortSourcePriority,
 } from "./utils";
 
 export const consumetAnimeObjectMapper = ({
@@ -504,11 +505,13 @@ export const consumetKdramaInfoEpisodesObjectMapper = (
 export const consumetKdramaEpisodeStreamObjectMapper = (
   source: DCWatchDataSchema
 ): EpisodeStream => ({
-  sources: source.sources.map((source, sourceIdx) => ({
-    type: source.isM3U8 ? "m3u8" : "",
-    url: source.url,
-    quality: ["default", "backup", ...sourcePriority][sourceIdx],
-  })),
+  sources: sortSourcePriority(
+    source.sources.map((source, sourceIdx) => ({
+      type: source.isM3U8 ? "m3u8" : "",
+      url: source.url,
+      quality: ["default", "backup", ...sourcePriority][sourceIdx],
+    }))
+  ),
   tracks: [],
   download: source.download,
 });
@@ -590,11 +593,13 @@ export const consumetMovieInfoObjectMapper = (
 export const consumetMovieEpisodeStreamObjectMapper = (
   source: FHQSourceDataSchema
 ): EpisodeStream => ({
-  sources: source.sources.map((source, sourceIdx) => ({
-    type: source.isM3U8 ? "m3u8" : "",
-    url: source.url,
-    quality: source.quality,
-  })),
+  sources: sortSourcePriority(
+    source.sources.map((source, sourceIdx) => ({
+      type: source.isM3U8 ? "m3u8" : "",
+      url: source.url,
+      quality: source.quality,
+    }))
+  ),
   tracks: source.subtitles.map((sub) => {
     const match = sub.url.match(/\/([^\/]+)\.vtt$/);
     let label = "";
