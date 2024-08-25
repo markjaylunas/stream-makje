@@ -84,8 +84,6 @@ export default async function Page() {
       </ListSectionWrapper>
 
       <Spacer className="h-1.5" />
-
-      <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
     </main>
   );
 }
