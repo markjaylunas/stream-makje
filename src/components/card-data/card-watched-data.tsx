@@ -57,8 +57,8 @@ export default function CardWatchedData({
         src={props.image}
         classNames={{
           wrapper:
-            "z-0 w-full h-full mx-auto bg-blur-md flex items-center justify-center",
-          img: "object-cover min-w-full min-h-full",
+            "z-0 w-full h-full bg-blur-md flex items-center justify-center",
+          img: "w-full object-cover",
         }}
       />
 
