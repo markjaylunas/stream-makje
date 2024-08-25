@@ -1,68 +1,78 @@
-import { searchMovieGenre } from "@/actions/consumet";
-import GenreCarouselList from "@/components/card-data/button-carousel-list";
+import { fetchCountryMovieData } from "@/actions/consumet";
+import { default as ButtonCarouselList } from "@/components/card-data/button-carousel-list";
 import { CardDataProps } from "@/components/card-data/card-data";
 import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
-import { MovieGenresArray } from "@/lib/constants";
+import { COUNTRY_LIST } from "@/lib/constants";
 import { consumetMovieObjectMapper } from "@/lib/object-mapper";
 import { SearchParams, Tag } from "@/lib/types";
-import { parseSearchParamInt, toTitleCase } from "@/lib/utils";
+import { parseSearchParamInt } from "@/lib/utils";
 import { notFound } from "next/navigation";
 
-export default async function GenrePage({
+export default async function CountryPage({
   searchParams,
   params,
 }: {
-  params: { genreId: string };
+  params: { countryId: string };
   searchParams?: SearchParams;
 }) {
-  const { genreId } = params;
-  const parsedGenre = genreId.split(" ").join("-").toLowerCase();
-  const genre = genreId === "Sci-Fi" ? "science-fiction" : parsedGenre;
-  if (!MovieGenresArray.includes(genre)) return notFound();
+  const { countryId } = params;
+
+  const country = COUNTRY_LIST.find(
+    (country) => country.value.toLowerCase() === countryId.toLowerCase()
+  );
+
+  if (!country) return notFound();
 
   const page = parseSearchParamInt({
     value: searchParams?.page,
     defaultValue: 1,
   });
 
-  const data = await searchMovieGenre({
-    page,
-    genreId: genre,
-  });
-
-  if (!data) throw new Error("Failed to fetch (Anime List) data");
+  const data = await fetchCountryMovieData({ country: countryId, page });
+  if (!data) throw new Error("Failed to fetch (movie List) data");
 
   const tagList: Tag[] = [
-    { name: "type", color: "secondary" },
+    { name: "releaseDate", color: "secondary" },
     {
-      name: "releaseDate",
+      name: "duration",
+      color: "default",
+    },
+    {
+      name: "season",
+      color: "secondary",
+    },
+    {
+      name: "latestEpisode",
       color: "default",
     },
   ];
 
-  let animeList: CardDataProps[] = [];
+  let movieList: CardDataProps[] = [];
 
   if (data) {
-    animeList = consumetMovieObjectMapper({
+    movieList = consumetMovieObjectMapper({
       movieList: data.results,
       tagList,
     });
   }
+
   return (
     <main>
-      <GenreCarouselList genreList={MovieGenresArray} pathName="/movie/genre" />
+      <ButtonCarouselList
+        selected={country.value}
+        buttonList={COUNTRY_LIST}
+        pathName="/movie/country"
+      />
+
       <div className="max-w-screen-xl mx-auto p-4 mb-10">
         <div className="flex justify-between p-2">
           <Heading order="xl" className="text-gray-700 dark:text-gray-300">
-            {`Genre: ${genre
-              .split("-")
-              .map((v) => toTitleCase(v))
-              .join(" ")}`}
+            {`Country: ${country.name}`}
           </Heading>
 
-          {animeList.length > 0 && (
+          {movieList.length > 0 && (
             <div className="flex justify-center">
               <PageNavigation
                 nextDisabled={!data.hasNextPage}
@@ -71,7 +81,7 @@ export default async function GenrePage({
             </div>
           )}
         </div>
-        <CardList infoList={animeList} />
+        <CardList infoList={movieList} />
 
         <div className="flex justify-end px-2 mt-2">
           <PageNavigation
@@ -80,8 +90,11 @@ export default async function GenrePage({
           />
         </div>
       </div>
-
-      <GenreCarouselList genreList={MovieGenresArray} pathName="/movie/genre" />
+      <ButtonCarouselList
+        selected={country.value}
+        buttonList={COUNTRY_LIST}
+        pathName="/movie/country"
+      />
     </main>
   );
 }

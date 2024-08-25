@@ -117,8 +117,8 @@ export const consumetAPIQuery = {
       genre: ({ genreId, ...params }: { genreId: string; page?: number }) =>
         createURL(flixhqBase, `genre/${genreId}`, params),
 
-      country: ({ country }: { country: string }) =>
-        createURL(flixhqBase, `country/${country}`, {}),
+      country: ({ country, ...params }: { country: string; page?: number }) =>
+        createURL(flixhqBase, `country/${country}`, params),
 
       trending: (params: { type?: TrendingType }) =>
         createURL(flixhqBase, `trending`, params),

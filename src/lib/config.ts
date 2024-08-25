@@ -119,7 +119,7 @@ export const routesConfig: RoutesConfig = {
         },
         {
           title: "By Country",
-          href: "/movie/by-country",
+          href: "/movie/country/us",
           label: "Find movies based on country or region of production.",
           icon: "globe",
           iconClass: "text-orange-500",

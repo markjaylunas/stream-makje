@@ -1,10 +1,10 @@
 import { searchAnime } from "@/actions/consumet";
+import ButtonCarouselList from "@/components/card-data/button-carousel-list";
 import { CardDataProps } from "@/components/card-data/card-data";
 import CardList from "@/components/card-data/card-list";
-import GenreCarouselList from "@/components/card-data/genre-carousel-list";
 import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
-import { genreList } from "@/lib/constants";
+import { GENRE_BUTTON_LIST, genreList } from "@/lib/constants";
 import { consumetSearchAnimeObjectMapper } from "@/lib/object-mapper";
 import { ASGenres, SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
@@ -53,9 +53,14 @@ export default async function GenrePage({
       tagList,
     });
   }
+
   return (
     <main>
-      <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
+      <ButtonCarouselList
+        buttonList={GENRE_BUTTON_LIST}
+        pathName="/anime/genre"
+        selected={genreId}
+      />
 
       <div className="max-w-screen-xl mx-auto p-4 mb-10">
         <div className="flex justify-between p-2">
@@ -86,7 +91,11 @@ export default async function GenrePage({
         </div>
       </div>
 
-      <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
+      <ButtonCarouselList
+        selected={genreId}
+        buttonList={GENRE_BUTTON_LIST}
+        pathName="/anime/genre"
+      />
     </main>
   );
 }

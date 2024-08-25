@@ -1,4 +1,4 @@
-import GenreCarouselList from "@/components/card-data/genre-carousel-list";
+import GenreCarouselList from "@/components/card-data/button-carousel-list";
 import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
 import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
 import CardWatchedCarouselListSkeleton from "@/components/card-data/skeleton/card-watched-carousel-list-skeleton";

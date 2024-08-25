@@ -1,9 +1,11 @@
+import ButtonCarouselList from "@/components/card-data/button-carousel-list";
 import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
 import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
 import CardWatchedCarouselListSkeleton from "@/components/card-data/skeleton/card-watched-carousel-list-skeleton";
 import Heading from "@/components/ui/heading";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import { siteConfig } from "@/lib/config";
+import { COUNTRY_LIST } from "@/lib/constants";
 import { Suspense } from "react";
 import CountryMovieList from "./_components/country-movies";
 import RecentMovieList from "./_components/recent-movies";
@@ -58,6 +60,8 @@ export default async function Page() {
           <RecentMovieList />
         </Suspense>
       </ListSectionWrapper>
+
+      <ButtonCarouselList buttonList={COUNTRY_LIST} pathName="/movie/country" />
 
       <ListSectionWrapper title="Country Movies">
         <Suspense fallback={<CardCarouselListSkeleton count={8} />}>

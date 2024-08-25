@@ -437,10 +437,16 @@ export async function fetchRecentShowsMovieData() {
   }
 }
 
-export async function fetchCountryMovieData({ country }: { country: string }) {
+export async function fetchCountryMovieData({
+  country,
+  page,
+}: {
+  country: string;
+  page?: number;
+}) {
   try {
     const response = await fetch(
-      consumetAPIQuery.movies.flixhq.country({ country }),
+      consumetAPIQuery.movies.flixhq.country({ country, page }),
       {
         next: { revalidate: 3600 },
       }
