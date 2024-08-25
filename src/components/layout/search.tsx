@@ -238,9 +238,11 @@ export default function Search({
                     <ResultList
                       dataList={animeDataList}
                       topContent={
-                        <p className="bg-secondary-500/20 text-center rounded-lg py-2">
-                          Anime
-                        </p>
+                        animeDataList.length > 0 && (
+                          <p className="bg-secondary-500/20 text-center rounded-lg py-2">
+                            Anime
+                          </p>
+                        )
                       }
                     />
                   )}
@@ -249,9 +251,11 @@ export default function Search({
                     <ResultList
                       dataList={kdramaDataList}
                       topContent={
-                        <p className="bg-secondary-500/20 text-center rounded-lg py-2">
-                          K-drama
-                        </p>
+                        kdramaDataList.length > 0 && (
+                          <p className="bg-secondary-500/20 text-center rounded-lg py-2">
+                            K-drama
+                          </p>
+                        )
                       }
                     />
                   )}
@@ -260,9 +264,11 @@ export default function Search({
                     <ResultList
                       dataList={movieDataList}
                       topContent={
-                        <p className="bg-secondary-500/20 text-center rounded-lg py-2">
-                          Movie
-                        </p>
+                        movieDataList.length > 0 && (
+                          <p className="bg-secondary-500/20 text-center rounded-lg py-2">
+                            Movie
+                          </p>
+                        )
                       }
                     />
                   )}

@@ -27,14 +27,17 @@ export default function SearchInput() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const q = searchParams.get("q")?.toString();
-  const year = searchParams.get("year")?.toString();
+  const paramQ = searchParams.get("q")?.toString();
+  const paramYear = searchParams.get("year")?.toString();
   const paramSeason = searchParams.get("season")?.toString();
   const paramFormat = searchParams.get("format")?.toString();
   const paramStatus = searchParams.get("status")?.toString();
   const paramGenres = searchParams.get("genres");
   const paramSort = searchParams.get("sort");
   const paramContentType = searchParams.get("contentType");
+
+  const q = paramQ ? paramQ : undefined;
+  const year = paramYear ? paramYear : undefined;
 
   const season: ASSeason | undefined = ASSeasonArray.includes(
     paramSeason as ASSeason
@@ -73,6 +76,13 @@ export default function SearchInput() {
   const handleSearch = useCallback(
     debounce(async (key: string, value: string) => {
       const params = new URLSearchParams(searchParams);
+      if (key === "contentType") {
+        params.forEach((_, paramKey) => {
+          if (paramKey === "q") return;
+          if (paramKey === "contentType") return;
+          params.delete(paramKey);
+        });
+      }
       if (value) {
         params.set(key, value);
       } else {
@@ -98,9 +108,9 @@ export default function SearchInput() {
         placeholder="Search title..."
         classNames={{ input: "text-foreground" }}
         startContent={<SvgIcon.search className="size-5" />}
-        onClear={() => handleSearch("q", "")}
+        onClear={() => handleSearch("q")}
         onChange={(e) => {
-          handleSearch("q", e.target.value);
+          handleSearch("q", e.target.value ? e.target.value : undefined);
         }}
       />
 
@@ -126,7 +136,7 @@ export default function SearchInput() {
         <div
           className={cn(
             "flex gap-2 flex-wrap",
-            (contentType === "K-DRAMA" || contentType === "MOVIE") && "hidden"
+            contentType !== "ANIME" && "hidden"
           )}
         >
           {/* year */}
