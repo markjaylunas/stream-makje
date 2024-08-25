@@ -1,9 +1,9 @@
-import GenreCarouselList from "@/components/card-data/button-carousel-list";
+import ButtonCarouselList from "@/components/card-data/button-carousel-list";
 import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
 import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
 import CardWatchedCarouselListSkeleton from "@/components/card-data/skeleton/card-watched-carousel-list-skeleton";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
-import { genreList } from "@/lib/constants";
+import { GENRE_BUTTON_LIST } from "@/lib/constants";
 import { Skeleton, Spacer } from "@nextui-org/react";
 import { Suspense } from "react";
 import AiringScheduleList from "./_components/airing-schedules";
@@ -36,7 +36,10 @@ export default async function Page() {
         </Suspense>
       </ListSectionWrapper>
 
-      <GenreCarouselList genreList={genreList} pathName="/anime/genre" />
+      <ButtonCarouselList
+        buttonList={GENRE_BUTTON_LIST}
+        pathName="/anime/genre"
+      />
 
       <ListSectionWrapper title="Recent Episodes">
         <Suspense
