@@ -17,6 +17,7 @@ import {
   FHQDataSchema,
   FHQEpisodeDataSchema,
   FHQInfoDataSchema,
+  FHQSourceDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
 import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
@@ -584,3 +585,21 @@ export const consumetMovieInfoObjectMapper = (
     otherInfo,
   };
 };
+
+export const consumetMovieEpisodeStreamObjectMapper = (
+  source: FHQSourceDataSchema
+): EpisodeStream => ({
+  sources: source.sources.map((source, sourceIdx) => ({
+    type: source.isM3U8 ? "m3u8" : "",
+    url: source.url,
+    quality: source.quality,
+  })),
+  tracks: source.subtitles.map((sub) => {
+    const match = sub.url.match(/\/([^\/]+)\.vtt$/);
+    let label = "";
+    if (match) {
+      label = match[1];
+    }
+    return { file: sub.url, kind: "captions", label };
+  }),
+});

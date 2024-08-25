@@ -14,6 +14,7 @@ import {
   fHQInfoDataSchema,
   fHQListDataSchema,
   fHQSearchDataSchema,
+  fHQSourceDataSchema,
 } from "@/lib/consumet-validations";
 import {
   AnimeAdvancedSearchParams,
@@ -470,6 +471,38 @@ export async function fetchMovieInfo({ movieId }: { movieId: string }) {
     const data = await response.json();
 
     const parsed = fHQInfoDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchMovieEpisodeSource({
+  episodeId,
+  mediaId,
+}: {
+  episodeId: string;
+  mediaId: string;
+}) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.watch({
+        episodeId,
+        mediaId: decodeSlashId(mediaId),
+      }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = fHQSourceDataSchema.safeParse(data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());
