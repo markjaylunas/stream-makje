@@ -2,6 +2,7 @@ import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carou
 import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import { Suspense } from "react";
+import CountryMovieList from "./_components/country-movies";
 import RecentMovieList from "./_components/recent-movies";
 import RecentShowList from "./_components/recent-show";
 import { default as TrendingMovieList } from "./_components/trending-movies";
@@ -26,6 +27,12 @@ export default async function Page() {
           }
         >
           <RecentMovieList />
+        </Suspense>
+      </ListSectionWrapper>
+
+      <ListSectionWrapper title="Country Movies">
+        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
+          <CountryMovieList />
         </Suspense>
       </ListSectionWrapper>
 

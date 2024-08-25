@@ -6,7 +6,7 @@ import { Tag } from "@/lib/types";
 export default async function RecentMovieList() {
   const data = await fetchRecentMoviesMovieData();
 
-  if (!data) throw new Error("Failed to fetch (Anime List) data");
+  if (!data) throw new Error("Failed to fetch (RecentMovieList) data");
 
   const tagList: Tag[] = [
     { name: "releaseDate", color: "secondary" },

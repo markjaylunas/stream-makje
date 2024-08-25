@@ -140,6 +140,14 @@ export const parseSearchParamInt = ({
 }) =>
   typeof value === "string" ? parseInt(value) || defaultValue : defaultValue;
 
+export const searchParamString = ({
+  value,
+  defaultValue,
+}: {
+  value: SearchParamValue;
+  defaultValue: string;
+}) => (typeof value === "string" ? value || defaultValue : defaultValue);
+
 export function formatTimestamp(timestamp: number): string {
   const date = moment.unix(timestamp);
   return date.format("MM-DD HH:mm").toString();

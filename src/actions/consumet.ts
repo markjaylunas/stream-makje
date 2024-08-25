@@ -12,6 +12,7 @@ import {
   episodeDataSchema,
   episodeSourceDataSchema,
   fHQListDataSchema,
+  fHQSearchDataSchema,
 } from "@/lib/consumet-validations";
 import {
   AnimeAdvancedSearchParams,
@@ -421,6 +422,30 @@ export async function fetchRecentShowsMovieData() {
 
     const data = await response.json();
     const parsed = fHQListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchCountryMovieData({ country }: { country: string }) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.country({ country }),
+      {
+        next: { revalidate: 3600 },
+      }
+    );
+
+    const data = await response.json();
+    const parsed = fHQSearchDataSchema.safeParse(data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());
