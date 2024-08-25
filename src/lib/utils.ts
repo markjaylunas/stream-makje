@@ -205,3 +205,7 @@ export const sortSourcePriority = (sourceList: EpisodeStream["sources"]) =>
 
     return qualityA - qualityB;
   });
+
+export const getRandomSpotlightIndex = (arrayLength: number): number => {
+  return Math.floor(Math.random() * arrayLength);
+};
