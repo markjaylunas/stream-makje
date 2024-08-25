@@ -4,7 +4,7 @@ import { CardDataProps } from "@/components/card-data/card-data";
 import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
-import { GENRE_BUTTON_LIST, genreList } from "@/lib/constants";
+import { GENRE_BUTTON_LIST } from "@/lib/constants";
 import { consumetSearchAnimeObjectMapper } from "@/lib/object-mapper";
 import { ASGenres, SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
@@ -18,7 +18,10 @@ export default async function GenrePage({
   searchParams?: SearchParams;
 }) {
   const { genreId } = params;
-  if (!genreList.includes(genreId)) return notFound();
+  const genre = GENRE_BUTTON_LIST.find(
+    (v) => v.value === decodeURIComponent(genreId)
+  );
+  if (!genre) return notFound();
   const page = parseSearchParamInt({
     value: searchParams?.page,
     defaultValue: 1,
@@ -31,7 +34,7 @@ export default async function GenrePage({
   const data = await searchAnime({
     page,
     perPage,
-    genres: [genreId as ASGenres],
+    genres: [genre.name as ASGenres],
   });
 
   if (!data) throw new Error("Failed to fetch (Anime List) data");
@@ -59,13 +62,13 @@ export default async function GenrePage({
       <ButtonCarouselList
         buttonList={GENRE_BUTTON_LIST}
         pathName="/anime/genre"
-        selected={genreId}
+        selected={genre.value}
       />
 
       <div className="max-w-screen-xl mx-auto p-4 mb-10">
         <div className="flex justify-between p-2">
           <Heading order="xl" className="text-gray-700 dark:text-gray-300">
-            {`Genre: ${genreId}`}
+            {`Genre: ${genre.name}`}
           </Heading>
 
           {animeList.length > 0 && (
@@ -92,7 +95,7 @@ export default async function GenrePage({
       </div>
 
       <ButtonCarouselList
-        selected={genreId}
+        selected={genre.value}
         buttonList={GENRE_BUTTON_LIST}
         pathName="/anime/genre"
       />

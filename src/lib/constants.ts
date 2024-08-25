@@ -11,27 +11,6 @@ export const sourcePriority = [
   "backup",
 ];
 
-export const genreList = [
-  "Action",
-  "Adventure",
-  "Cars",
-  "Comedy",
-  "Drama",
-  "Fantasy",
-  "Horror",
-  "Mahou Shoujo",
-  "Mecha",
-  "Music",
-  "Mystery",
-  "Psychological",
-  "Romance",
-  "Sci-Fi",
-  "Slice of Life",
-  "Sports",
-  "Supernatural",
-  "Thriller",
-];
-
 export const DEFAULT_PAGE_LIMIT = 10;
 
 export const ASTypeArray = ["ANIME", "MANGA"] as const;
@@ -189,9 +168,9 @@ export const COUNTRY_LIST = [
   { name: "Philippines", value: "PH" },
 ];
 
-export const GENRE_BUTTON_LIST = genreList.map((genre) => ({
+export const GENRE_BUTTON_LIST = ASGenresArray.map((genre) => ({
   name: genre,
-  value: genre,
+  value: genre.toLowerCase(),
 }));
 
 export const MOVIE_GENRE_BUTTON_LIST = MovieGenresArray.map((genre) => ({

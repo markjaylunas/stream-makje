@@ -99,7 +99,7 @@ export default function InfoSection({
                     as={!isGenreLinkDisabled ? NextLink : undefined}
                     href={
                       !isGenreLinkDisabled
-                        ? `/${contentType}/genre/${genre}`
+                        ? `/${contentType}/genre/${genre.toLowerCase()}`
                         : undefined
                     }
                     key={genre}

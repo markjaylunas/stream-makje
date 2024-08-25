@@ -5,7 +5,7 @@ import CardWatchedCarouselListSkeleton from "@/components/card-data/skeleton/car
 import Heading from "@/components/ui/heading";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import { siteConfig } from "@/lib/config";
-import { COUNTRY_LIST } from "@/lib/constants";
+import { COUNTRY_LIST, MOVIE_GENRE_BUTTON_LIST } from "@/lib/constants";
 import { Suspense } from "react";
 import CountryMovieList from "./_components/country-movies";
 import RecentMovieList from "./_components/recent-movies";
@@ -61,13 +61,10 @@ export default async function Page() {
         </Suspense>
       </ListSectionWrapper>
 
-      <ButtonCarouselList buttonList={COUNTRY_LIST} pathName="/movie/country" />
-
-      <ListSectionWrapper title="Country Movies">
-        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
-          <CountryMovieList />
-        </Suspense>
-      </ListSectionWrapper>
+      <ButtonCarouselList
+        buttonList={MOVIE_GENRE_BUTTON_LIST}
+        pathName="/movie/genre"
+      />
 
       <ListSectionWrapper title="Trending TV Shows">
         <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
@@ -85,6 +82,14 @@ export default async function Page() {
           }
         >
           <RecentShowList />
+        </Suspense>
+      </ListSectionWrapper>
+
+      <ButtonCarouselList buttonList={COUNTRY_LIST} pathName="/movie/country" />
+
+      <ListSectionWrapper title="Country Movies">
+        <Suspense fallback={<CardCarouselListSkeleton count={8} />}>
+          <CountryMovieList />
         </Suspense>
       </ListSectionWrapper>
     </main>

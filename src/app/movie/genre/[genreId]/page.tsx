@@ -1,20 +1,12 @@
-import { searchAnime, searchMovieGenre } from "@/actions/consumet";
+import { searchMovieGenre } from "@/actions/consumet";
 import ButtonCarouselList from "@/components/card-data/button-carousel-list";
 import { CardDataProps } from "@/components/card-data/card-data";
 import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
 import PageNavigation from "@/components/ui/page-navigation";
-import {
-  GENRE_BUTTON_LIST,
-  genreList,
-  MOVIE_GENRE_BUTTON_LIST,
-  MovieGenresArray,
-} from "@/lib/constants";
-import {
-  consumetMovieObjectMapper,
-  consumetSearchAnimeObjectMapper,
-} from "@/lib/object-mapper";
-import { ASGenres, SearchParams, Tag } from "@/lib/types";
+import { MOVIE_GENRE_BUTTON_LIST } from "@/lib/constants";
+import { consumetMovieObjectMapper } from "@/lib/object-mapper";
+import { SearchParams, Tag } from "@/lib/types";
 import { parseSearchParamInt } from "@/lib/utils";
 import { notFound } from "next/navigation";
 
@@ -26,8 +18,12 @@ export default async function GenrePage({
   searchParams?: SearchParams;
 }) {
   const { genreId } = params;
+  const decodedGenreId = decodeURIComponent(genreId);
   const parsedGenre =
-    genreId.toLowerCase() === "sci-fi" ? "science-fiction" : genreId;
+    decodedGenreId.toLowerCase() === "sci-fi" ||
+    decodedGenreId.toLowerCase() === "science fiction"
+      ? "science-fiction"
+      : decodedGenreId;
   const genre = MOVIE_GENRE_BUTTON_LIST.find((v) => v.value === parsedGenre);
   if (!genre) return notFound();
   const page = parseSearchParamInt({
