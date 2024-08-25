@@ -1,7 +1,9 @@
 import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
 import CardListSkeleton from "@/components/card-data/skeleton/card-list-skeleton";
 import CardWatchedCarouselListSkeleton from "@/components/card-data/skeleton/card-watched-carousel-list-skeleton";
+import Heading from "@/components/ui/heading";
 import ListSectionWrapper from "@/components/ui/list-section-wrapper";
+import { siteConfig } from "@/lib/config";
 import { Suspense } from "react";
 import CountryMovieList from "./_components/country-movies";
 import RecentMovieList from "./_components/recent-movies";
@@ -12,7 +14,26 @@ import TrendingShowList from "./_components/trending-shows";
 
 export default async function Page() {
   return (
-    <main className="space-y-8 mb-12">
+    <main className="space-y-8 min-h-screen my-10">
+      <div>
+        <Heading className="text-center">
+          <span className="text-primary-500">Stream</span> &nbsp;
+          <span className="text-secondary-500">Movie</span>
+        </Heading>
+        <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
+          Built by&nbsp;
+          <a
+            href={siteConfig.links.website}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium underline underline-offset-4"
+          >
+            makje
+          </a>
+          .
+        </p>
+      </div>
+
       <ListSectionWrapper title="History">
         <Suspense fallback={<CardWatchedCarouselListSkeleton count={8} />}>
           <RecentlyWatchedList />
