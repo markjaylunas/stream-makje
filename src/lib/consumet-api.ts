@@ -91,8 +91,8 @@ export const consumetAPIQuery = {
 
   movies: {
     dramacool: {
-      search: ({ query }: { query: string }) =>
-        createURL(dramacoolBase, `${query}`, {}),
+      search: ({ query, ...params }: { query: string; page?: number }) =>
+        createURL(dramacoolBase, `${query}`, params),
 
       info: (params: { id: string }) =>
         createURL(dramacoolBase, `info`, params),
@@ -103,7 +103,7 @@ export const consumetAPIQuery = {
       popular: () => createURL(dramacoolBase, `popular`, {}),
     },
     flixhq: {
-      search: ({ query, ...params }: { query: string; page: number }) =>
+      search: ({ query, ...params }: { query: string; page?: number }) =>
         createURL(flixhqBase, `${query}`, params),
 
       info: (params: { id: string }) => createURL(flixhqBase, `info`, params),

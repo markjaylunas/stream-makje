@@ -1,9 +1,10 @@
 "use client";
 
-import { searchAnime, searchKdrama } from "@/actions/consumet";
+import { searchAnime, searchKdrama, searchMovie } from "@/actions/consumet";
 import { ASContentTypeArray } from "@/lib/constants";
 import {
   consumetKDramacoolObjectMapper,
+  consumetMovieObjectMapper,
   consumetSearchAnimeObjectMapper,
 } from "@/lib/object-mapper";
 import { ASContentType, Status, Tag } from "@/lib/types";
@@ -28,7 +29,7 @@ import {
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import { CardDataProps } from "../card-data/card-data";
 import { SvgIcon } from "../ui/svg-icons";
 
@@ -41,6 +42,9 @@ const tagList: Tag[] = [
   },
   {
     name: "totalEpisodes",
+  },
+  {
+    name: "seasons",
   },
 ];
 
@@ -55,7 +59,9 @@ export default function Search({
   const defaultContentType = ASContentTypeArray.find(
     (v) => v === pathname.split("/")[1]
   );
-  const [dataList, setDataList] = useState<CardDataProps[]>([]);
+  const [animeDataList, setAnimeDataList] = useState<CardDataProps[]>([]);
+  const [kdramaDataList, setKdramaDataList] = useState<CardDataProps[]>([]);
+  const [movieDataList, setMovieDataList] = useState<CardDataProps[]>([]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [selectedContentType, setSelectedContentType] = useState(
@@ -75,6 +81,7 @@ export default function Search({
     });
     return mappedList;
   };
+
   const handleSearchKdrama = async (q: string) => {
     const kdramaListData = await searchKdrama({ query: q });
     if (!kdramaListData) return [];
@@ -84,23 +91,51 @@ export default function Search({
     return mappedList;
   };
 
+  const handleSearchMovie = async (q: string) => {
+    const movieListData = await searchMovie({ query: q });
+    if (!movieListData) return [];
+    const mappedList = consumetMovieObjectMapper({
+      movieList: movieListData.results,
+      tagList,
+    });
+    return mappedList;
+  };
+
   const handleSearch = useCallback(
     debounce(async (q: string, contentType: string) => {
       try {
         setStatus("loading");
-        let mappedList: CardDataProps[] = [];
 
-        if (contentType === "ANIME") mappedList = await handleSearchAnime(q);
-        else if (contentType === "K-DRAMA")
-          mappedList = await handleSearchKdrama(q);
-        else {
-          const [animeMappedList, kdramaMappedList] = await Promise.all([
-            handleSearchAnime(q),
-            handleSearchKdrama(q),
-          ]);
-          mappedList = [...animeMappedList, ...kdramaMappedList];
+        if (contentType === "ANIME") {
+          const dataList = await handleSearchAnime(q);
+
+          setAnimeDataList(dataList);
+          setKdramaDataList([]);
+          setMovieDataList([]);
+        } else if (contentType === "K-DRAMA") {
+          const dataList = await handleSearchKdrama(q);
+
+          setKdramaDataList(dataList);
+          setAnimeDataList([]);
+          setMovieDataList([]);
+        } else if (contentType === "MOVIE") {
+          const dataList = await handleSearchMovie(q);
+
+          setMovieDataList(dataList);
+          setAnimeDataList([]);
+          setKdramaDataList([]);
+        } else {
+          const [animeMappedList, kdramaMappedList, movieMappedList] =
+            await Promise.all([
+              handleSearchAnime(q),
+              handleSearchKdrama(q),
+              handleSearchMovie(q),
+            ]);
+
+          setAnimeDataList(animeMappedList);
+          setKdramaDataList(kdramaMappedList);
+          setMovieDataList(movieMappedList);
         }
-        setDataList(mappedList);
       } catch (error) {
         console.log(error);
       } finally {
@@ -109,6 +144,8 @@ export default function Search({
     }, 300),
     []
   );
+
+  const dataList = [...animeDataList, ...kdramaDataList, ...movieDataList];
 
   return (
     <>
@@ -167,6 +204,7 @@ export default function Search({
                     <DropdownItem key="ALL">All</DropdownItem>
                     <DropdownItem key="ANIME">Anime</DropdownItem>
                     <DropdownItem key="K-DRAMA">K-drama</DropdownItem>
+                    <DropdownItem key="MOVIE">Movie</DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </ModalHeader>
@@ -175,11 +213,14 @@ export default function Search({
                   {query &&
                     status === "loading" &&
                     dataList.map((data) => (
-                      <div className="flex gap-2 px-3 size-full" key={data.id}>
-                        <Skeleton className="w-24 aspect-2/3 rounded-xl" />
-                        <div className="flex flex-col justify-center gap-2 size-full mt-6">
-                          <Skeleton className="h-7 w-2/3 rounded-lg" />
-                          <Skeleton className="h-5 w-1/3 rounded-lg" />
+                      <div className="flex flex-col gap-4" key={data.id}>
+                        <Skeleton className="w-full h-9 rounded-lg" />
+                        <div className="flex gap-2 px-3 size-full">
+                          <Skeleton className="w-24 aspect-2/3 rounded-xl" />
+                          <div className="flex flex-col justify-center gap-2 size-full mt-6">
+                            <Skeleton className="h-7 w-2/3 rounded-lg" />
+                            <Skeleton className="h-5 w-1/3 rounded-lg" />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -192,55 +233,39 @@ export default function Search({
                       Nothing found.
                     </Chip>
                   )}
-                  <Listbox aria-label="Search list" hideEmptyContent>
-                    {dataList.map((data) => {
-                      const type = data.tagList?.find(
-                        (tag) => tag.name === "type"
-                      )?.value;
-                      const releaseDate = data.tagList?.find(
-                        (tag) => tag.name === "releaseDate"
-                      )?.value;
-                      const totalEpisodes = data.tagList?.find(
-                        (tag) => tag.name === "totalEpisodes"
-                      )?.value;
 
-                      let description = "";
-                      if (type) description += `${type}`;
-                      if (releaseDate) description += ` • ${releaseDate}`;
-                      if (totalEpisodes)
-                        description += ` • ${totalEpisodes} Episode`;
-                      return (
-                        <ListboxItem
-                          href={data.href}
-                          classNames={{ title: "text-wrap line-clamp-2" }}
-                          startContent={
-                            <Image
-                              alt={data.name}
-                              src={data.image}
-                              isZoomed
-                              classNames={{
-                                wrapper:
-                                  "z-0 w-24 aspect-2/3 mx-auto bg-blur-md flex items-center justify-center overflow-hidden",
-                                img: "object-cover min-w-full min-h-full",
-                              }}
-                            />
-                          }
-                          description={
-                            <span>
-                              {description}
-                              {/* {`${type}`}&nbsp;&#183;&nbsp;{`${releaseDate}`}
-                              &nbsp;&#183;&nbsp;{`${totalEpisodes}`}
-                              &nbsp;Episode
-                              {Number(totalEpisodes) || 0 > 1 ? "s" : ""} */}
-                            </span>
-                          }
-                          key={data.id}
-                        >
-                          {data.name}
-                        </ListboxItem>
-                      );
-                    })}
-                  </Listbox>
+                  {(selectedValue === "ALL" || selectedValue === "ANIME") && (
+                    <ResultList
+                      dataList={animeDataList}
+                      topContent={
+                        <p className="bg-secondary-500/20 text-center rounded-lg py-2">
+                          Anime
+                        </p>
+                      }
+                    />
+                  )}
+
+                  {(selectedValue === "ALL" || selectedValue === "K-DRAMA") && (
+                    <ResultList
+                      dataList={kdramaDataList}
+                      topContent={
+                        <p className="bg-secondary-500/20 text-center rounded-lg py-2">
+                          K-drama
+                        </p>
+                      }
+                    />
+                  )}
+
+                  {(selectedValue === "ALL" || selectedValue === "MOVIE") && (
+                    <ResultList
+                      dataList={movieDataList}
+                      topContent={
+                        <p className="bg-secondary-500/20 text-center rounded-lg py-2">
+                          Movie
+                        </p>
+                      }
+                    />
+                  )}
                 </>
               </ModalBody>
               <ModalFooter>
@@ -262,5 +287,61 @@ export default function Search({
         </ModalContent>
       </Modal>
     </>
+  );
+}
+
+function ResultList({
+  dataList,
+  topContent,
+}: {
+  dataList: CardDataProps[];
+  topContent?: ReactNode;
+}) {
+  return (
+    <Listbox aria-label="Search list" topContent={topContent} hideEmptyContent>
+      {dataList.map((data) => {
+        const type = data.tagList?.find((tag) => tag.name === "type")?.value;
+        const releaseDate = data.tagList?.find(
+          (tag) => tag.name === "releaseDate"
+        )?.value;
+        const totalEpisodes = data.tagList?.find(
+          (tag) => tag.name === "totalEpisodes"
+        )?.value;
+        const seasons = data.tagList?.find(
+          (tag) => tag.name === "seasons"
+        )?.value;
+
+        let description = "";
+        if (type) description += `${type}`;
+        if (releaseDate) description += ` • ${releaseDate}`;
+        if (totalEpisodes) description += ` • ${totalEpisodes} Episode`;
+        if (seasons)
+          description += ` • ${seasons} Season${
+            parseInt(`${seasons}`) > 1 ? "s" : ""
+          }`;
+        return (
+          <ListboxItem
+            href={data.href}
+            classNames={{ title: "text-wrap line-clamp-2" }}
+            startContent={
+              <Image
+                alt={data.name}
+                src={data.image}
+                isZoomed
+                classNames={{
+                  wrapper:
+                    "z-0 w-24 aspect-2/3 mx-auto bg-blur-md flex items-center justify-center overflow-hidden",
+                  img: "object-cover min-w-full min-h-full",
+                }}
+              />
+            }
+            description={<span>{description}</span>}
+            key={data.id}
+          >
+            {data.name}
+          </ListboxItem>
+        );
+      })}
+    </Listbox>
   );
 }

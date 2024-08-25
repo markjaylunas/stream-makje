@@ -273,7 +273,7 @@ export const dCDramaDataSchema = z.object({
 });
 
 export const dCDramaListDataSchema = z.object({
-  currentPage: z.number(),
+  currentPage: stringOrNumberSchema,
   totalPages: z.number(),
   hasNextPage: z.boolean(),
   results: z.array(dCDramaDataSchema),
@@ -342,7 +342,7 @@ export const fHQDataSchema = z.object({
   duration: z.string().optional(),
   releaseDate: z.string().optional(),
   season: z.string().optional(),
-  seasons: z.number().optional(),
+  seasons: z.number().optional().nullable(),
   latestEpisode: z.string().optional(),
   url: z.string().optional(),
 });
@@ -351,7 +351,7 @@ export const fHQListDataSchema = z.array(fHQDataSchema);
 
 // by country, genre, search
 export const fHQSearchDataSchema = z.object({
-  currentPage: z.number(),
+  currentPage: stringOrNumberSchema,
   hasNextPage: z.boolean(),
   results: z.array(fHQDataSchema),
 });

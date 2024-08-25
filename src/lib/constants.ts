@@ -103,7 +103,7 @@ export const ASStatusArray = [
   "HIATUS",
 ] as const;
 
-export const ASContentTypeArray = ["ALL", "ANIME", "K-DRAMA"] as const;
+export const ASContentTypeArray = ["ALL", "ANIME", "K-DRAMA", "MOVIE"] as const;
 
 export const ONE_WEEK = 604800;
 

@@ -347,7 +347,7 @@ export async function fetchDCEpisodeSourceData({
   }
 }
 
-export async function searchKdrama(params: { query: string }) {
+export async function searchKdrama(params: { query: string; page?: number }) {
   try {
     const response = await fetch(
       consumetAPIQuery.movies.dramacool.search(params)
@@ -509,6 +509,25 @@ export async function fetchMovieEpisodeSource({
       return;
     }
 
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function searchMovie(params: { query: string; page?: number }) {
+  try {
+    const response = await fetch(consumetAPIQuery.movies.flixhq.search(params));
+
+    const data = await response.json();
+
+    const parsed = fHQSearchDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
     return parsed.data;
   } catch (error) {
     console.log(error);

@@ -126,7 +126,7 @@ export default function SearchInput() {
         <div
           className={cn(
             "flex gap-2 flex-wrap",
-            contentType === "K-DRAMA" && "hidden"
+            (contentType === "K-DRAMA" || contentType === "MOVIE") && "hidden"
           )}
         >
           {/* year */}
