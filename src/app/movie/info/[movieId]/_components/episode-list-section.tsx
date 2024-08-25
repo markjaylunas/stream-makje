@@ -23,8 +23,8 @@ export default function EpisodeListSection({
   currentEpisodeNumber,
   className,
 }: Props) {
-  const { kdramaId } = useParams<{
-    kdramaId: string;
+  const { movieId } = useParams<{
+    movieId: string;
   }>();
 
   const ref = useRef<(HTMLDivElement | null)[]>([]);
@@ -55,10 +55,10 @@ export default function EpisodeListSection({
         </h3>
 
         <p className="text-foreground-500 text-center text-pretty mt-2">
-          This Kdrama is set to captivate audiences with its intriguing
-          storyline and unforgettable characters. Stay tuned for the release of
-          upcoming episodes. Check back regularly for updates and be among the
-          first to watch as the story unfolds!
+          This movie is set to captivate audiences with its intriguing storyline
+          and unforgettable characters. Stay tuned for the release of upcoming
+          episodes. Check back regularly for updates and be among the first to
+          watch as the story unfolds!
         </p>
       </Chip>
     );
@@ -95,14 +95,14 @@ export default function EpisodeListSection({
             currentEpisodeNumber={currentEpisodeNumber}
             episodeRef={ref}
             list={sortedList}
-            kdramaId={kdramaId}
+            movieId={movieId}
           />
         ) : (
           <EpisodeGridView
             currentEpisodeNumber={currentEpisodeNumber}
             episodeRef={ref}
             list={sortedList}
-            kdramaId={kdramaId}
+            movieId={movieId}
           />
         )}
       </ScrollShadow>
@@ -114,12 +114,12 @@ const EpisodeListView = ({
   list,
   currentEpisodeNumber,
   episodeRef,
-  kdramaId,
+  movieId,
 }: {
   list: Episode[];
   currentEpisodeNumber?: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
-  kdramaId: string;
+  movieId: string;
 }) => (
   <Listbox
     aria-label="Single selection example"
@@ -134,7 +134,7 @@ const EpisodeListView = ({
         color={episode.isFiller ? "warning" : "primary"}
         textValue={episode.title || `${episode.number}`}
         href={createURL({
-          path: `/k-drama/watch/${kdramaId}`,
+          path: `/movie/watch/${movieId}`,
           params: {
             episodeId: episode.episodeId,
             episodeNumber: `${episode.number}`,
@@ -166,19 +166,19 @@ const EpisodeGridView = ({
   list,
   currentEpisodeNumber,
   episodeRef,
-  kdramaId,
+  movieId,
 }: {
   list: Episode[];
   currentEpisodeNumber?: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
-  kdramaId: string;
+  movieId: string;
 }) => (
   <div className="flex flex-wrap justify-start flex-grow gap-2 mx-auto">
     {list.map((episode, episodeIdx) => (
       <Button
         as={NextLink}
         href={createURL({
-          path: `/anime/watch/${kdramaId}`,
+          path: `/anime/watch/${movieId}`,
           params: {
             episodeId: episode.episodeId,
             episodeNumber: `${episode.number}`,
