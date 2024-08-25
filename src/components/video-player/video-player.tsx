@@ -12,7 +12,15 @@ import {
   upsertKdramaEpisodeProgress,
   UpsertKdramaEpisodeProgressData,
 } from "@/actions/kdrama-action";
-import { EpisodeProgress, KdramaEpisodeProgress } from "@/db/schema";
+import {
+  upsertMovieEpisodeProgress,
+  UpsertMovieEpisodeProgressData,
+} from "@/actions/movie-action";
+import {
+  EpisodeProgress,
+  KdramaEpisodeProgress,
+  MovieEpisodeProgress,
+} from "@/db/schema";
 import {
   ContentType,
   Source,
@@ -54,7 +62,11 @@ type Props = {
   intro?: TimeLine;
   outro?: TimeLine;
   userId?: string;
-  episodeProgress: EpisodeProgress | KdramaEpisodeProgress | null;
+  episodeProgress:
+    | EpisodeProgress
+    | KdramaEpisodeProgress
+    | MovieEpisodeProgress
+    | null;
   provider: VSProvider;
   infoEpisodeId: string;
   download?: string;
@@ -180,6 +192,45 @@ export default function VideoPlayer({
     setEpisodeProgress(progress);
   };
 
+  const handleInsertMovieProgress = async ({
+    userId,
+    currentTime,
+    durationTime,
+  }: {
+    userId: string;
+    currentTime: number;
+    durationTime: number;
+  }) => {
+    const data: UpsertMovieEpisodeProgressData = {
+      movie: {
+        id: info.id,
+        title: info.title,
+        image: info.image,
+        cover: info.cover || "",
+      },
+      movieEpisode: {
+        id: infoEpisodeId,
+        movieId: info.id,
+        number: episode.number,
+        title: episode.title,
+        image: episode.image,
+        durationTime,
+      },
+      movieEpisodeProgress: {
+        id: episodeProgress?.id,
+        userId,
+        movieId: info.id,
+        episodeId: infoEpisodeId,
+        currentTime,
+        isFinished: currentTime / durationTime > 0.9,
+        provider: provider.name,
+        providerEpisodeId: provider.episodeId,
+      },
+    };
+    const progress = await upsertMovieEpisodeProgress({ data });
+    setEpisodeProgress(progress);
+  };
+
   const handleProgress = (isSeeked = false) => {
     const currentTime = Math.floor(player.current?.currentTime || 0);
     const durationTime = player.current?.duration;
@@ -199,6 +250,8 @@ export default function VideoPlayer({
       handleInsertAnimeProgress({ userId, currentTime, durationTime });
     if (contentType === "k-drama")
       handleInsertKdramaProgress({ userId, currentTime, durationTime });
+    if (contentType === "movie")
+      handleInsertMovieProgress({ userId, currentTime, durationTime });
   };
 
   return (

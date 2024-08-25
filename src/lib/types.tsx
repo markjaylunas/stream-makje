@@ -9,6 +9,7 @@ import {
   ASSortArray,
   ASStatusArray,
   ASTypeArray,
+  MovieGenresArray,
 } from "./constants";
 import { TrailerSchema } from "./consumet-validations";
 
@@ -52,7 +53,7 @@ export type SearchParamValue = string | string[] | undefined;
 
 export type OAuthProvider = "google" | "github";
 
-export type ContentType = "anime" | "k-drama";
+export type ContentType = "anime" | "k-drama" | "movie";
 
 // Start: Consumet API types
 
@@ -63,6 +64,7 @@ export type ASSort = (typeof ASSortArray)[number];
 export type ASGenres = (typeof ASGenresArray)[number];
 export type ASStatus = (typeof ASStatusArray)[number];
 export type ASContentType = (typeof ASContentTypeArray)[number];
+export type MovieGenres = (typeof MovieGenresArray)[number];
 
 export type AnimeProviders = "provider_1" | "provider_2";
 export type AnimeProviderAPI = "aniwatch" | "gogoanime";
@@ -198,3 +200,9 @@ export type VSProvider = {
 };
 
 // End: Video Stream types
+
+// Start: Movie/Tv types
+
+export type TrendingType = "movie" | "tv";
+
+// End: Movie/Tv types

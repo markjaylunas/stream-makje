@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Carousel,
   CarouselApi,
@@ -11,20 +9,25 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@nextui-org/react";
 import NextLink from "next/link";
-import { useState } from "react";
+
+type Button = {
+  name: string;
+  value: string;
+};
 
 type Props = {
   pathName: string;
-  genreList: string[];
+  selected?: string;
+  buttonList: Button[];
   className?: string;
 };
 
-export default function GenreCarouselList({
-  genreList,
+export default function ButtonCarouselList({
+  buttonList,
   className,
   pathName,
+  selected,
 }: Props) {
-  const [_, setApi] = useState<CarouselApi>();
   return (
     <section className={cn("space-y-2", className)}>
       <Carousel
@@ -32,13 +35,12 @@ export default function GenreCarouselList({
           dragFree: true,
           slidesToScroll: "auto",
         }}
-        setApi={setApi}
         className="w-full bg-default-50"
       >
         <CarouselContent className="-ml-1 py-4">
-          {genreList.map((genre, index) => (
+          {buttonList.map((button, index) => (
             <CarouselItem
-              key={`${genre}-${index}`}
+              key={`${button.value}-${index}`}
               className={cn(
                 "p-1 rounded-xl basis-auto",
                 index === 0 && "ml-4 md:ml-10"
@@ -46,13 +48,14 @@ export default function GenreCarouselList({
             >
               <Button
                 as={NextLink}
-                href={`${pathName}/${genre}`}
+                href={`${pathName}/${button.value}`}
                 radius="full"
                 size="sm"
                 variant="bordered"
                 color="default"
+                isDisabled={selected === button.value}
               >
-                {genre}
+                {button.name}
               </Button>
             </CarouselItem>
           ))}

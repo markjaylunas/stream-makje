@@ -80,6 +80,10 @@ const kdramaIdRef = text("kdrama_id")
   .references(() => kdrama.id)
   .notNull();
 
+const movieIdRef = text("movie_id")
+  .references(() => movie.id)
+  .notNull();
+
 export const anime = pgTable("anime", {
   id: text("id").primaryKey().notNull(),
   title: text("title").notNull(),
@@ -98,9 +102,29 @@ export const kdrama = pgTable("kdrama", {
   createdAt,
 });
 
+export const movie = pgTable("movie", {
+  id: text("id").primaryKey().notNull(),
+  title: text("title").notNull(),
+  image: text("image").notNull(),
+  cover: text("cover").notNull(),
+  updatedAt,
+  createdAt,
+});
+
 export const episode = pgTable("episode", {
   id: text("id").primaryKey().notNull(),
   animeId: animeIdRef,
+  number: integer("number").notNull(),
+  title: text("title"),
+  image: text("image"),
+  durationTime: real("duration_time").notNull(),
+  updatedAt,
+  createdAt,
+});
+
+export const movieEpisode = pgTable("movie-episode", {
+  id: text("id").primaryKey().notNull(),
+  movieId: movieIdRef,
   number: integer("number").notNull(),
   title: text("title"),
   image: text("image"),
@@ -168,6 +192,30 @@ export const kdramaEpisodeProgress = pgTable(
   })
 );
 
+export const movieEpisodeProgress = pgTable(
+  "movie_episode_progress",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: userIdRef,
+    movieId: movieIdRef,
+    episodeId: text("episode_id")
+      .references(() => movieEpisode.id)
+      .notNull(),
+    provider: text("provider"),
+    providerEpisodeId: text("provider_episode_id"),
+    currentTime: real("current_time").notNull(),
+    isFinished: boolean("is_finished").notNull(),
+    updatedAt,
+    createdAt,
+  },
+  (t) => ({
+    uniqueMovieEpisodeProgress: unique("unique_movie_episode_progress").on(
+      t.userId,
+      t.episodeId
+    ),
+  })
+);
+
 export const watchStatus = pgEnum("watch_status", [
   "WATCHING",
   "COMPLETED",
@@ -214,6 +262,25 @@ export const kdramaUserStatus = pgTable(
   })
 );
 
+export const movieUserStatus = pgTable(
+  "movie_user_status",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: userIdRef,
+    movieId: movieIdRef,
+    status: watchStatus("status").default("WATCHING").notNull(),
+    score: integer("score").default(0).notNull(),
+    updatedAt,
+    createdAt,
+  },
+  (t) => ({
+    uniqueMovieUserStatus: unique("unique_movie_user_status").on(
+      t.userId,
+      t.movieId
+    ),
+  })
+);
+
 export type AnimeInsert = typeof anime.$inferInsert;
 export type Anime = typeof anime.$inferSelect;
 
@@ -238,6 +305,19 @@ export type KdramaEpisodeProgress = typeof kdramaEpisodeProgress.$inferSelect;
 
 export type KdramaUserStatusInsert = typeof kdramaUserStatus.$inferInsert;
 export type KdramaUserStatus = typeof kdramaUserStatus.$inferSelect;
+
+export type MovieInsert = typeof movie.$inferInsert;
+export type Movie = typeof movie.$inferSelect;
+
+export type MovieEpisodeInsert = typeof movieEpisode.$inferInsert;
+export type MovieEpisode = typeof movieEpisode.$inferSelect;
+
+export type MovieEpisodeProgressInsert =
+  typeof movieEpisodeProgress.$inferInsert;
+export type MovieEpisodeProgress = typeof movieEpisodeProgress.$inferSelect;
+
+export type MovieUserStatusInsert = typeof movieUserStatus.$inferInsert;
+export type MovieUserStatus = typeof movieUserStatus.$inferSelect;
 
 export type WatchStatus =
   | "WATCHING"

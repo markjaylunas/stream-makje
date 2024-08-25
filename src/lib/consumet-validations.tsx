@@ -273,7 +273,7 @@ export const dCDramaDataSchema = z.object({
 });
 
 export const dCDramaListDataSchema = z.object({
-  currentPage: z.number(),
+  currentPage: stringOrNumberSchema,
   totalPages: z.number(),
   hasNextPage: z.boolean(),
   results: z.array(dCDramaDataSchema),
@@ -330,3 +330,74 @@ export type DCCharacterDataSchema = z.infer<typeof dCCharacterDataSchema>;
 export type DCInfoDataSchema = z.infer<typeof dCInfoDataSchema>;
 export type DCSourceDataSchema = z.infer<typeof dCSourceDataSchema>;
 export type DCWatchDataSchema = z.infer<typeof dCWatchDataSchema>;
+
+// flixhq
+
+export const fHQDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  image: z.string(),
+  type: z.string(),
+
+  duration: z.string().optional(),
+  releaseDate: z.string().optional(),
+  season: z.string().optional(),
+  seasons: z.number().optional().nullable(),
+  latestEpisode: z.string().optional(),
+  url: z.string().optional(),
+});
+
+export const fHQListDataSchema = z.array(fHQDataSchema);
+
+// by country, genre, search
+export const fHQSearchDataSchema = z.object({
+  currentPage: stringOrNumberSchema,
+  hasNextPage: z.boolean(),
+  results: z.array(fHQDataSchema),
+});
+
+export const fHQEpisodeDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  url: z.string(),
+});
+
+export const fHQInfoDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  url: z.string(),
+  cover: z.string(),
+  image: z.string(),
+  description: z.string(),
+  type: z.string(),
+  releaseDate: z.string(),
+  genres: z.array(z.string()),
+  casts: z.array(z.string()),
+  tags: z.array(z.string()),
+  production: z.string(),
+  country: z.string(),
+  duration: z.string(),
+  rating: z.number().nullable().optional(),
+  recommendations: z.array(fHQDataSchema),
+  episodes: z.array(fHQEpisodeDataSchema),
+});
+
+export const fHQServerDataSchema = z.array(
+  z.object({ name: z.string(), ur: z.string() })
+);
+
+export const fHQSourceDataSchema = z.object({
+  headers: z.object({ Referer: z.string() }),
+  sources: z.array(
+    z.object({ url: z.string(), quality: z.string(), isM3U8: z.boolean() })
+  ),
+  subtitles: z.array(z.object({ url: z.string(), lang: z.string() })),
+});
+
+export type FHQDataSchema = z.infer<typeof fHQDataSchema>;
+export type FHQListDataSchema = z.infer<typeof fHQListDataSchema>;
+export type FHQSearchDataSchema = z.infer<typeof fHQSearchDataSchema>;
+export type FHQEpisodeDataSchema = z.infer<typeof fHQEpisodeDataSchema>;
+export type FHQInfoDataSchema = z.infer<typeof fHQInfoDataSchema>;
+export type FHQServerDataSchema = z.infer<typeof fHQServerDataSchema>;
+export type FHQSourceDataSchema = z.infer<typeof fHQSourceDataSchema>;

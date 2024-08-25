@@ -2,7 +2,8 @@ import { TitleSchema } from "@/lib/consumet-validations";
 import { type ClassValue, clsx } from "clsx";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
-import { DataObject, SearchParamValue, Tag } from "./types";
+import { sourcePriority } from "./constants";
+import { DataObject, EpisodeStream, SearchParamValue, Tag } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -140,6 +141,14 @@ export const parseSearchParamInt = ({
 }) =>
   typeof value === "string" ? parseInt(value) || defaultValue : defaultValue;
 
+export const searchParamString = ({
+  value,
+  defaultValue,
+}: {
+  value: SearchParamValue;
+  defaultValue: string;
+}) => (typeof value === "string" ? value || defaultValue : defaultValue);
+
 export function formatTimestamp(timestamp: number): string {
   const date = moment.unix(timestamp);
   return date.format("MM-DD HH:mm").toString();
@@ -181,10 +190,18 @@ export function getSeasonAndYear(position: SeasonPosition): {
   return { season: SEASONS[seasonIndex], year };
 }
 
-export function encodeKdramaId(id: string) {
+export function encodeSlashId(id: string) {
   return id.replace(/\//g, "%2F"); // Encodes '/'
 }
 
-export function decodeKdramaId(id: string) {
+export function decodeSlashId(id: string) {
   return id.replace(/%2F/g, "/"); // Decodes '%2F' back to '/'
 }
+
+export const sortSourcePriority = (sourceList: EpisodeStream["sources"]) =>
+  sourceList.sort((a, b) => {
+    const qualityA = a.quality ? sourcePriority.indexOf(a.quality) : -1;
+    const qualityB = b.quality ? sourcePriority.indexOf(b.quality) : -1;
+
+    return qualityA - qualityB;
+  });

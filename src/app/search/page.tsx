@@ -1,4 +1,4 @@
-import { searchAnime, searchKdrama } from "@/actions/consumet";
+import { searchAnime, searchKdrama, searchMovie } from "@/actions/consumet";
 import { CardDataProps } from "@/components/card-data/card-data";
 import CardList from "@/components/card-data/card-list";
 import PageNavigation from "@/components/ui/page-navigation";
@@ -12,6 +12,7 @@ import {
 } from "@/lib/constants";
 import {
   consumetKDramacoolObjectMapper,
+  consumetMovieObjectMapper,
   consumetSearchAnimeObjectMapper,
 } from "@/lib/object-mapper";
 import {
@@ -97,13 +98,6 @@ export default async function SearchAnimeResultsPage({
     ? (paramContentType as ASContentType)
     : undefined;
 
-  let paginationData = {
-    currentPage: 1,
-    hasNextPage: false,
-    totalPages: 1,
-    totalResults: 0,
-  };
-
   const tagList: Tag[] = [
     {
       name: "type",
@@ -137,27 +131,28 @@ export default async function SearchAnimeResultsPage({
       searchData: animeListData,
       tagList,
     });
-    paginationData = {
-      currentPage: animeListData.currentPage,
-      hasNextPage: animeListData.hasNextPage,
-      totalPages: animeListData.totalPages,
-      totalResults: animeListData.totalResults,
-    };
     return mappedList;
   };
 
   const handleSearchKdrama = async () => {
-    const kdramaListData = await searchKdrama({ query: q || "" });
+    const kdramaListData = await searchKdrama({ query: q || "", page });
     if (!kdramaListData) return [];
     const mappedList = consumetKDramacoolObjectMapper({
       kdramaList: kdramaListData.results,
     });
-    // paginationData = {
-    //   currentPage: kdramaListData.currentPage,
-    //   hasNextPage: kdramaListData.hasNextPage,
-    //   totalPages: kdramaListData.totalPages,
-    //   totalResults: kdramaListData.results.length,
-    // };
+    return mappedList;
+  };
+
+  const handleSearchMovie = async () => {
+    const movieListData = await searchMovie({
+      query: q || "",
+      page,
+    });
+    if (!movieListData) return [];
+    const mappedList = consumetMovieObjectMapper({
+      movieList: movieListData.results,
+      tagList,
+    });
     return mappedList;
   };
 
@@ -167,31 +162,31 @@ export default async function SearchAnimeResultsPage({
     dataList = await handleSearchAnime();
   } else if (contentType === "K-DRAMA") {
     dataList = await handleSearchKdrama();
+  } else if (contentType === "MOVIE") {
+    dataList = await handleSearchMovie();
   } else {
-    const [animeMappedList, kdramaMappedList] = await Promise.all([
-      handleSearchAnime(),
-      handleSearchKdrama(),
-    ]);
-    dataList = [...animeMappedList, ...kdramaMappedList];
+    const [animeMappedList, kdramaMappedList, movieMappedList] =
+      await Promise.all([
+        handleSearchAnime(),
+        handleSearchKdrama(),
+        handleSearchMovie(),
+      ]);
+    dataList = [...animeMappedList, ...kdramaMappedList, ...movieMappedList];
   }
 
   const hasAnime = dataList.length > 0;
 
   return (
     <>
-      {hasAnime && <CardList infoList={dataList} />}
-      <div className="flex justify-end px-2 mt-2">
-        <PageNavigation
-          nextDisabled={!paginationData?.hasNextPage || true}
-          prevDisabled={page <= 1}
-        />
-      </div>
-
       {!hasAnime && (
         <Chip variant="bordered" color="warning">
           Nothing found!
         </Chip>
       )}
+      {hasAnime && <CardList infoList={dataList} />}
+      <div className="flex justify-end px-2 mt-2">
+        <PageNavigation nextDisabled={false} prevDisabled={page <= 1} />
+      </div>
     </>
   );
 }

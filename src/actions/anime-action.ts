@@ -12,6 +12,8 @@ import {
   EpisodeProgressInsert,
   kdrama,
   kdramaUserStatus,
+  movie,
+  movieUserStatus,
   WatchStatus,
 } from "@/db/schema";
 import { DEFAULT_PAGE_LIMIT } from "@/lib/constants";
@@ -199,12 +201,19 @@ export type FetchAllWatchStatusSort =
   | "score";
 
 type SortOptions = {
-  title: typeof anime.title | typeof kdrama.title;
-  status: typeof animeUserStatus.status | typeof kdramaUserStatus.status;
-  score: typeof animeUserStatus.score | typeof kdramaUserStatus.score;
+  title: typeof anime.title | typeof kdrama.title | typeof movie.title;
+  status:
+    | typeof animeUserStatus.status
+    | typeof kdramaUserStatus.status
+    | typeof movieUserStatus.status;
+  score:
+    | typeof animeUserStatus.score
+    | typeof kdramaUserStatus.score
+    | typeof movieUserStatus.score;
   updatedAt:
     | typeof animeUserStatus.updatedAt
-    | typeof kdramaUserStatus.updatedAt;
+    | typeof kdramaUserStatus.updatedAt
+    | typeof movieUserStatus.updatedAt;
 };
 
 export async function fetchAllWatchStatus({
@@ -268,17 +277,42 @@ export async function fetchAllWatchStatus({
   const kdramaDirectionOrder = direction === "ascending" ? asc : desc;
   const kdramaSortQuery = kdramaDirectionOrder(kdramaOrderBy);
 
-  // end: anime filters
+  // end: kdrama filters
+
+  // start: movie filters
+  const movieFilters = and(
+    eq(movieUserStatus.userId, userId),
+    status.length > 0 ? inArray(movieUserStatus.status, status) : undefined,
+    query ? ilike(kdrama.title, `%${query}%`) : undefined
+  );
+
+  const movieSortOptions: SortOptions = {
+    title: movie.title,
+    status: movieUserStatus.status,
+    score: movieUserStatus.score,
+    updatedAt: movieUserStatus.updatedAt,
+  };
+
+  const movieOrderBy = sort
+    ? movieSortOptions[sort]
+    : movieUserStatus.updatedAt;
+  const movieDirectionOrder = direction === "ascending" ? asc : desc;
+  const movieSortQuery = movieDirectionOrder(movieOrderBy);
+
+  // end: movie filters
 
   const isAll = contentType.includes("ALL");
   const isAnime = contentType.includes("ANIME");
   const isKdrama = contentType.includes("K-DRAMA");
+  const isMovie = contentType.includes("MOVIE");
 
   const [
     animeWatchListData,
     animeTotalCount,
     kdramaWatchListData,
     kdramaTotalCount,
+    movieWatchListData,
+    movieTotalCount,
   ] = await Promise.all([
     isAll || isAnime
       ? db
@@ -316,6 +350,24 @@ export async function fetchAllWatchStatus({
           .innerJoin(kdramaUserStatus, eq(kdrama.id, kdramaUserStatus.kdramaId))
           .where(kdramaFilters)
       : [],
+    isAll || isMovie
+      ? db
+          .select()
+          .from(movie)
+          .innerJoin(movieUserStatus, eq(movie.id, movieUserStatus.movieId))
+          .where(movieFilters)
+          .limit(limit)
+          .offset((page - 1) * limit)
+          .orderBy(movieSortQuery)
+      : [],
+
+    isAll || isMovie
+      ? db
+          .select({ count: count() })
+          .from(movie)
+          .innerJoin(movieUserStatus, eq(movie.id, movieUserStatus.movieId))
+          .where(movieFilters)
+      : [],
     ,
   ]);
 
@@ -345,9 +397,24 @@ export async function fetchAllWatchStatus({
       contentType: "K-DRAMA",
     }));
 
+  const movieWatchList: FetchAllWatchStatusReturnType["watchList"] =
+    movieWatchListData.map((data) => ({
+      id: data.movie_user_status.id,
+      dataId: data.movie.id,
+      title: data.movie.title,
+      image: data.movie.image,
+      status: data.movie_user_status.status,
+      score: data.movie_user_status.score,
+      updatedAt: data.movie_user_status.updatedAt,
+      href: `/movie/info/${data.movie.id}`,
+      contentType: "MOVIE",
+    }));
+
   return {
-    watchList: [...animeWatchList, ...kdramaWatchList],
+    watchList: [...animeWatchList, ...kdramaWatchList, ...movieWatchList],
     totalCount:
-      (animeTotalCount[0]?.count || 0) + (kdramaTotalCount[0]?.count || 0),
+      (animeTotalCount[0]?.count || 0) +
+      (kdramaTotalCount[0]?.count || 0) +
+      (movieTotalCount[0]?.count || 0),
   };
 }

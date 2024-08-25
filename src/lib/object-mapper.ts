@@ -1,5 +1,6 @@
 import { FetchAllEpisodeProgress } from "@/actions/anime-action";
 import { FetchAllKdramaEpisodeProgress } from "@/actions/kdrama-action";
+import { FetchAllMovieEpisodeProgress } from "@/actions/movie-action";
 import { CardDataProps } from "@/components/card-data/card-data";
 import { CardWatchedDataProps } from "@/components/card-data/card-watched-data";
 import { AWEpisodeSourceDataSchema } from "@/lib/aniwatch-validations";
@@ -14,6 +15,10 @@ import {
   DCWatchDataSchema,
   EpisodeSchema,
   EpisodeSourceDataSchema,
+  FHQDataSchema,
+  FHQEpisodeDataSchema,
+  FHQInfoDataSchema,
+  FHQSourceDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
 import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
@@ -27,10 +32,11 @@ import {
 } from "./types";
 import {
   createURL,
-  encodeKdramaId,
+  encodeSlashId,
   jaroWinklerDistance,
   pickTitle,
   searchKeysInObject,
+  sortSourcePriority,
 } from "./utils";
 
 export const consumetAnimeObjectMapper = ({
@@ -422,13 +428,13 @@ export const consumetKDramacoolObjectMapper = ({
     id: drama.id,
     name: drama.title,
     image: drama.image,
-    href: `/k-drama/watch/${encodeKdramaId(drama.id)}`,
+    href: `/k-drama/watch/${encodeSlashId(drama.id)}`,
   }));
 
 export const consumetKDramaInfoObjectMapper = (
   rawInfo: DCInfoDataSchema
 ): Info => {
-  const id = encodeKdramaId(rawInfo.id);
+  const id = encodeSlashId(rawInfo.id);
   const otherInfo: OtherInfo = [
     {
       key: "status",
@@ -499,11 +505,155 @@ export const consumetKdramaInfoEpisodesObjectMapper = (
 export const consumetKdramaEpisodeStreamObjectMapper = (
   source: DCWatchDataSchema
 ): EpisodeStream => ({
-  sources: source.sources.map((source, sourceIdx) => ({
-    type: source.isM3U8 ? "m3u8" : "",
-    url: source.url,
-    quality: ["default", "backup", ...sourcePriority][sourceIdx],
-  })),
+  sources: sortSourcePriority(
+    source.sources.map((source, sourceIdx) => ({
+      type: source.isM3U8 ? "m3u8" : "",
+      url: source.url,
+      quality: ["default", "backup", ...sourcePriority][sourceIdx],
+    }))
+  ),
   tracks: [],
   download: source.download,
 });
+
+export const consumetMovieObjectMapper = ({
+  movieList,
+  tagList,
+}: {
+  movieList: FHQDataSchema[];
+  tagList: Tag[];
+}): CardDataProps[] =>
+  movieList.map((movie, movieIdx) => {
+    const { id, title, image, ...others } = movie;
+    return {
+      id,
+      name: title,
+      image,
+      href: `/movie/info/${encodeSlashId(id)}`,
+      tagList: searchKeysInObject(tagList, others as DataObject).filter(
+        (v) => v.value
+      ),
+    };
+  });
+
+export const consumetMovieInfoEpisodesObjectMapper = (
+  episodes: FHQEpisodeDataSchema[]
+): Episode[] =>
+  episodes.map((episode, episodeIdx) => ({
+    episodeId: episode.id,
+    title: episode.title ? episode.title : null,
+    number: episodeIdx + 1,
+  }));
+
+export const consumetMovieInfoObjectMapper = (
+  rawInfo: FHQInfoDataSchema
+): Info => {
+  const id = encodeSlashId(rawInfo.id);
+  const otherInfo: OtherInfo = [
+    {
+      key: "type",
+      value: rawInfo.type,
+    },
+    {
+      key: "duration",
+      value: rawInfo.duration,
+    },
+    {
+      key: "rating",
+      value: rawInfo.rating?.toString() || "",
+    },
+    {
+      key: "release date",
+      value: rawInfo.releaseDate,
+    },
+    {
+      key: "production",
+      value: rawInfo.production,
+    },
+    {
+      key: "country",
+      value: rawInfo.country,
+    },
+  ].filter((c) => Boolean(c.value));
+
+  return {
+    id,
+    infoId: id,
+    name: rawInfo.title,
+    poster: rawInfo.image,
+    cover: null,
+    type: null,
+    genres: rawInfo.genres,
+    synonyms: "",
+    description: rawInfo.description,
+    otherInfo,
+  };
+};
+
+export const consumetMovieEpisodeStreamObjectMapper = (
+  source: FHQSourceDataSchema
+): EpisodeStream => ({
+  sources: sortSourcePriority(
+    source.sources.map((source, sourceIdx) => ({
+      type: source.isM3U8 ? "m3u8" : "",
+      url: source.url,
+      quality: source.quality,
+    }))
+  ),
+  tracks: source.subtitles.map((sub) => {
+    const match = sub.url.match(/\/([^\/]+)\.vtt$/);
+    let label = "";
+    if (match) {
+      label = match[1];
+    }
+    return { file: sub.url, kind: "captions", label };
+  }),
+});
+
+export const consumetMovieWatchedObjectMapper = ({
+  movieList,
+  tagList,
+}: {
+  movieList: FetchAllMovieEpisodeProgress["episodes"];
+  tagList: Tag[];
+}): CardWatchedDataProps[] =>
+  movieList.map((movie) => {
+    const {
+      title,
+      episodeTitle,
+      episodeImage,
+      episodeId,
+      image: infoImage,
+      infoId,
+      currentTime,
+      durationTime,
+      provider,
+      providerEpisodeId,
+      episodeProgressUpdatedAt: _,
+      ...others
+    } = movie;
+
+    const name = title || "";
+    const episodeName = episodeTitle || "";
+    const episodeNumber = movie.episodeNumber || 1;
+    const image = episodeImage || infoImage || "";
+    const href = createURL({
+      path: `/movie/watch/${infoId}`,
+      params: {
+        episodeId: providerEpisodeId,
+        episodeNumber,
+        provider,
+      },
+    });
+    return {
+      id: infoId || "",
+      name,
+      episodeName,
+      episodeNumber,
+      image,
+      currentTime,
+      durationTime: durationTime || 0,
+      href,
+      tagList: searchKeysInObject(tagList, others as DataObject),
+    };
+  });

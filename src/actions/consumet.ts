@@ -11,13 +11,18 @@ import {
   dCWatchDataSchema,
   episodeDataSchema,
   episodeSourceDataSchema,
+  fHQInfoDataSchema,
+  fHQListDataSchema,
+  fHQSearchDataSchema,
+  fHQSourceDataSchema,
 } from "@/lib/consumet-validations";
 import {
   AnimeAdvancedSearchParams,
   AnimeProviderAPI,
   AnimeProviders,
+  TrendingType,
 } from "@/lib/types";
-import { decodeKdramaId } from "@/lib/utils";
+import { decodeSlashId } from "@/lib/utils";
 
 export async function fetchPopularAnimeData({
   page = 1,
@@ -295,7 +300,7 @@ export async function fetchPopularKdramaData() {
 export async function fetchKdramaInfo({ kdramaId }: { kdramaId: string }) {
   try {
     const response = await fetch(
-      consumetAPIQuery.movies.dramacool.info({ id: decodeKdramaId(kdramaId) }),
+      consumetAPIQuery.movies.dramacool.info({ id: decodeSlashId(kdramaId) }),
       { next: { revalidate: 3600 } }
     );
 
@@ -342,7 +347,7 @@ export async function fetchDCEpisodeSourceData({
   }
 }
 
-export async function searchKdrama(params: { query: string }) {
+export async function searchKdrama(params: { query: string; page?: number }) {
   try {
     const response = await fetch(
       consumetAPIQuery.movies.dramacool.search(params)
@@ -351,6 +356,201 @@ export async function searchKdrama(params: { query: string }) {
     const data = await response.json();
 
     const parsed = dCDramaListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchTrendingMovieData({
+  type,
+}: {
+  type?: TrendingType;
+}) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.trending({ type }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+    const parsed = fHQListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchRecentMoviesMovieData() {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.recentMovies(),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+    const parsed = fHQListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchRecentShowsMovieData() {
+  try {
+    const response = await fetch(consumetAPIQuery.movies.flixhq.recentShows(), {
+      next: { revalidate: 3600 },
+    });
+
+    const data = await response.json();
+    const parsed = fHQListDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchCountryMovieData({
+  country,
+  page,
+}: {
+  country: string;
+  page?: number;
+}) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.country({ country, page }),
+      {
+        next: { revalidate: 3600 },
+      }
+    );
+
+    const data = await response.json();
+    const parsed = fHQSearchDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchMovieInfo({ movieId }: { movieId: string }) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.info({ id: decodeSlashId(movieId) }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = fHQInfoDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchMovieEpisodeSource({
+  episodeId,
+  mediaId,
+}: {
+  episodeId: string;
+  mediaId: string;
+}) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.watch({
+        episodeId,
+        mediaId: decodeSlashId(mediaId),
+      }),
+      { next: { revalidate: 3600 } }
+    );
+
+    const data = await response.json();
+
+    const parsed = fHQSourceDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function searchMovie(params: { query: string; page?: number }) {
+  try {
+    const response = await fetch(consumetAPIQuery.movies.flixhq.search(params));
+
+    const data = await response.json();
+
+    const parsed = fHQSearchDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function searchMovieGenre(params: {
+  genreId: string;
+  page?: number;
+}) {
+  try {
+    const response = await fetch(consumetAPIQuery.movies.flixhq.genre(params));
+
+    const data = await response.json();
+
+    const parsed = fHQSearchDataSchema.safeParse(data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());

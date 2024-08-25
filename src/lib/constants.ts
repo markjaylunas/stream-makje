@@ -1,6 +1,8 @@
 import { AnimeProviders } from "./types";
+import { toTitleCase } from "./utils";
 
 export const sourcePriority = [
+  "auto",
   "1080p",
   "720p",
   "480p",
@@ -74,6 +76,36 @@ export const ASSortArray = [
   "ID_DESC",
 ] as const;
 
+export const MovieGenresArray = [
+  "action",
+  "action-adventure",
+  "adventure",
+  "animation",
+  "biography",
+  "comedy",
+  "crime",
+  "documentary",
+  "drama",
+  "family",
+  "fantasy",
+  "history",
+  "horror",
+  "kids",
+  "music",
+  "mystery",
+  "news",
+  "reality",
+  "romance",
+  "sci-fi-fantasy",
+  "science-fiction",
+  "soap",
+  "talk",
+  "thriller",
+  "tv-movie",
+  "war",
+  "war-politics",
+  "western",
+];
 export const ASGenresArray = [
   "Action",
   "Adventure",
@@ -103,7 +135,7 @@ export const ASStatusArray = [
   "HIATUS",
 ] as const;
 
-export const ASContentTypeArray = ["ALL", "ANIME", "K-DRAMA"] as const;
+export const ASContentTypeArray = ["ALL", "ANIME", "K-DRAMA", "MOVIE"] as const;
 
 export const ONE_WEEK = 604800;
 
@@ -116,3 +148,56 @@ export const ANIME_PROVIDER_LIST: AnimeProviders[] = [
   "provider_1",
   "provider_2",
 ];
+
+export const COUNTRY_LIST = [
+  { name: "Argentina", value: "AR" },
+  { name: "Australia", value: "AU" },
+  { name: "Austria", value: "AT" },
+  { name: "Belgium", value: "BE" },
+  { name: "Brazil", value: "BR" },
+  { name: "Canada", value: "CA" },
+  { name: "China", value: "CN" },
+  { name: "Czech Republic", value: "CZ" },
+  { name: "Denmark", value: "DK" },
+  { name: "Finland", value: "FI" },
+  { name: "France", value: "FR" },
+  { name: "Germany", value: "DE" },
+  { name: "Hong Kong", value: "HK" },
+  { name: "Hungary", value: "HU" },
+  { name: "India", value: "IN" },
+  { name: "Ireland", value: "IE" },
+  { name: "Israel", value: "IL" },
+  { name: "Italy", value: "IT" },
+  { name: "Japan", value: "JP" },
+  { name: "Luxembourg", value: "LU" },
+  { name: "Mexico", value: "MX" },
+  { name: "Netherlands", value: "NL" },
+  { name: "New Zealand", value: "NZ" },
+  { name: "Norway", value: "NO" },
+  { name: "Poland", value: "PL" },
+  { name: "Romania", value: "RO" },
+  { name: "Russia", value: "RU" },
+  { name: "South Africa", value: "ZA" },
+  { name: "South Korea", value: "KR" },
+  { name: "Spain", value: "ES" },
+  { name: "Sweden", value: "SE" },
+  { name: "Switzerland", value: "CH" },
+  { name: "Taiwan", value: "TW" },
+  { name: "Thailand", value: "TH" },
+  { name: "United Kingdom", value: "GB" },
+  { name: "United States of America", value: "US" },
+  { name: "Philippines", value: "PH" },
+];
+
+export const GENRE_BUTTON_LIST = genreList.map((genre) => ({
+  name: genre,
+  value: genre,
+}));
+
+export const MOVIE_GENRE_BUTTON_LIST = MovieGenresArray.map((genre) => ({
+  name: genre
+    .split("-")
+    .map((m) => toTitleCase(m))
+    .join(" "),
+  value: genre,
+}));

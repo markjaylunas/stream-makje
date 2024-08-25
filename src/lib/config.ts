@@ -6,6 +6,7 @@ export const siteConfig = {
   description:
     "A premier platform for streaming a diverse collection of anime content. We offer high-quality, uninterrupted viewing experiences to anime enthusiasts around the globe.",
   links: {
+    website: "https://makje.com",
     github: "https://github.com/markjaylunas",
     portfolio: "https://makje.com",
     kofi: "https://ko-fi.com/V7V411PJ17",
@@ -17,7 +18,6 @@ export type SiteConfig = typeof siteConfig;
 type RoutesConfig = {
   mainNav: NavItemWithChildren[];
 };
-
 export const routesConfig: RoutesConfig = {
   mainNav: [
     {
@@ -81,6 +81,14 @@ export const routesConfig: RoutesConfig = {
           icon: "chevronDoubleRight",
           iconClass: "text-purple-500",
         },
+        {
+          title: "Genres",
+          href: "/anime/genre/Action",
+          label: "Explore anime by different genres.",
+          icon: "tag",
+          iconClass: "text-blue-500",
+          items: [],
+        },
       ],
     },
     {
@@ -93,6 +101,36 @@ export const routesConfig: RoutesConfig = {
             "Explore all k-drama-related content, from trending series to new releases.",
           icon: "home",
           iconClass: "text-primary",
+          items: [],
+        },
+      ],
+    },
+    {
+      title: "Movie",
+      items: [
+        {
+          title: "Movie Homepage",
+          href: "/movie",
+          label:
+            "Explore all movie and tv related content, from trending series to new releases.",
+          icon: "home",
+          iconClass: "text-primary",
+          items: [],
+        },
+        {
+          title: "By Country",
+          href: "/movie/country/us",
+          label: "Find movies based on country or region of production.",
+          icon: "globe",
+          iconClass: "text-orange-500",
+          items: [],
+        },
+        {
+          title: "Genres",
+          href: "/movie/genre/action",
+          label: "Explore movies by different genres.",
+          icon: "tag",
+          iconClass: "text-blue-500",
           items: [],
         },
       ],
