@@ -534,3 +534,25 @@ export async function searchMovie(params: { query: string; page?: number }) {
     return null;
   }
 }
+
+export async function searchMovieGenre(params: {
+  genreId: string;
+  page?: number;
+}) {
+  try {
+    const response = await fetch(consumetAPIQuery.movies.flixhq.genre(params));
+
+    const data = await response.json();
+
+    const parsed = fHQSearchDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}

@@ -9,6 +9,7 @@ import {
   ASSortArray,
   ASStatusArray,
   ASTypeArray,
+  MovieGenresArray,
 } from "./constants";
 import { TrailerSchema } from "./consumet-validations";
 
@@ -63,6 +64,7 @@ export type ASSort = (typeof ASSortArray)[number];
 export type ASGenres = (typeof ASGenresArray)[number];
 export type ASStatus = (typeof ASStatusArray)[number];
 export type ASContentType = (typeof ASContentTypeArray)[number];
+export type MovieGenres = (typeof MovieGenresArray)[number];
 
 export type AnimeProviders = "provider_1" | "provider_2";
 export type AnimeProviderAPI = "aniwatch" | "gogoanime";
