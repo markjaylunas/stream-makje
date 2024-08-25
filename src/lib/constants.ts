@@ -1,4 +1,5 @@
 import { AnimeProviders } from "./types";
+import { toTitleCase } from "./utils";
 
 export const sourcePriority = [
   "auto",
@@ -190,5 +191,13 @@ export const COUNTRY_LIST = [
 
 export const GENRE_BUTTON_LIST = genreList.map((genre) => ({
   name: genre,
+  value: genre,
+}));
+
+export const MOVIE_GENRE_BUTTON_LIST = MovieGenresArray.map((genre) => ({
+  name: genre
+    .split("-")
+    .map((m) => toTitleCase(m))
+    .join(" "),
   value: genre,
 }));
