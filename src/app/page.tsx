@@ -55,25 +55,23 @@ const categoryCards: CategoryCardProps[] = [
 export default async function Home() {
   return (
     <main className="min-h-screen mx-auto space-y-8 pb-12">
-      <div className="px-4 py-8 space-y-8">
-        <div>
-          <Heading className="text-center">Stream | Makje</Heading>
-          <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
-            Built by&nbsp;
-            <a
-              href={siteConfig.links.website}
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              makje
-            </a>
-            .
-          </p>
-        </div>
+      <div>
+        <Heading className="text-center">Stream | Makje</Heading>
+        <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
+          Built by&nbsp;
+          <a
+            href={siteConfig.links.website}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium underline underline-offset-4"
+          >
+            makje
+          </a>
+          .
+        </p>
       </div>
 
-      <section className="max-w-screen-sm mx-auto grid grid-cols-4 gap-4 px-4">
+      <section className="max-w-screen-sm lg:max-w-screen-md mx-auto grid grid-cols-4 gap-4 px-4">
         {categoryCards.map((cat) => (
           <CategoryCard
             key={cat.link}
