@@ -22,7 +22,6 @@ import {
   AnimeProviders,
   TrendingType,
 } from "@/lib/types";
-import { decodeSlashId } from "@/lib/utils";
 
 export async function fetchPopularAnimeData({
   page = 1,
@@ -300,7 +299,9 @@ export async function fetchPopularKdramaData() {
 export async function fetchKdramaInfo({ kdramaId }: { kdramaId: string }) {
   try {
     const response = await fetch(
-      consumetAPIQuery.movies.dramacool.info({ id: decodeSlashId(kdramaId) }),
+      consumetAPIQuery.movies.dramacool.info({
+        id: decodeURIComponent(kdramaId),
+      }),
       { next: { revalidate: 3600 } }
     );
 
@@ -470,7 +471,7 @@ export async function fetchCountryMovieData({
 export async function fetchMovieInfo({ movieId }: { movieId: string }) {
   try {
     const response = await fetch(
-      consumetAPIQuery.movies.flixhq.info({ id: decodeSlashId(movieId) }),
+      consumetAPIQuery.movies.flixhq.info({ id: decodeURIComponent(movieId) }),
       { next: { revalidate: 3600 } }
     );
 
@@ -501,7 +502,7 @@ export async function fetchMovieEpisodeSource({
     const response = await fetch(
       consumetAPIQuery.movies.flixhq.watch({
         episodeId,
-        mediaId: decodeSlashId(mediaId),
+        mediaId: decodeURIComponent(mediaId),
       }),
       { next: { revalidate: 3600 } }
     );

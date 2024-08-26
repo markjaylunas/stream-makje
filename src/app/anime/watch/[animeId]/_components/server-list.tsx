@@ -1,6 +1,5 @@
 import { fetchAWEpisodeServersData } from "@/actions/aniwatch";
 import Text from "@/components/ui/text";
-import { decodeEpisodeId } from "@/lib/utils";
 import { Chip } from "@nextui-org/react";
 import ServerDropdown from "./server-dropdown";
 
@@ -10,7 +9,7 @@ type Props = {
 
 export default async function ServerList({ episodeId }: Props) {
   const episodeServersData = await fetchAWEpisodeServersData({
-    episodeId: decodeEpisodeId(episodeId),
+    episodeId: decodeURIComponent(episodeId),
   });
 
   if (!episodeServersData)

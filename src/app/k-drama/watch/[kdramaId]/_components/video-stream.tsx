@@ -6,7 +6,6 @@ import VideoPlayer from "@/components/video-player/video-player";
 import { KdramaEpisodeProgress } from "@/db/schema";
 import { consumetKdramaEpisodeStreamObjectMapper } from "@/lib/object-mapper";
 import { EpisodeStream, VSEpisode, VSInfo } from "@/lib/types";
-import { decodeEpisodeId } from "@/lib/utils";
 
 type VideoStreamProps = {
   kdrama: VSInfo;
@@ -25,7 +24,7 @@ export default async function VideoStream({
 }: VideoStreamProps) {
   const session = await auth();
   const userId = session?.user?.id;
-  const decodedEpisodeId = decodeEpisodeId(episode.id);
+  const decodedEpisodeId = decodeURIComponent(episode.id);
   const infoEpisodeId = `${kdrama.id}-${episode.number}`;
   const kdramaEpisodeId = `${kdrama.id}-${episode.number}`;
   let source: EpisodeStream | null = null;

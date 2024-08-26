@@ -32,7 +32,6 @@ import {
 } from "./types";
 import {
   createURL,
-  encodeSlashId,
   jaroWinklerDistance,
   pickTitle,
   searchKeysInObject,
@@ -428,13 +427,13 @@ export const consumetKDramacoolObjectMapper = ({
     id: drama.id,
     name: drama.title,
     image: drama.image,
-    href: `/k-drama/watch/${encodeSlashId(drama.id)}`,
+    href: `/k-drama/watch/${encodeURIComponent(drama.id)}`,
   }));
 
 export const consumetKDramaInfoObjectMapper = (
   rawInfo: DCInfoDataSchema
 ): Info => {
-  const id = encodeSlashId(rawInfo.id);
+  const id = encodeURIComponent(rawInfo.id);
   const otherInfo: OtherInfo = [
     {
       key: "status",
@@ -529,7 +528,7 @@ export const consumetMovieObjectMapper = ({
       id,
       name: title,
       image,
-      href: `/movie/info/${encodeSlashId(id)}`,
+      href: `/movie/info/${encodeURIComponent(id)}`,
       tagList: searchKeysInObject(tagList, others as DataObject).filter(
         (v) => v.value
       ),
@@ -548,7 +547,7 @@ export const consumetMovieInfoEpisodesObjectMapper = (
 export const consumetMovieInfoObjectMapper = (
   rawInfo: FHQInfoDataSchema
 ): Info => {
-  const id = encodeSlashId(rawInfo.id);
+  const id = encodeURIComponent(rawInfo.id);
   const otherInfo: OtherInfo = [
     {
       key: "type",

@@ -15,14 +15,6 @@ export function pickTitle(title: TitleSchema): string {
   );
 }
 
-export function encodeEpisodeId(id: string) {
-  return id.replace(/\?/g, "%3F").replace(/=/g, "%3D");
-}
-
-export function decodeEpisodeId(id: string) {
-  return id.replace(/%3F/g, "?").replace(/%3D/g, "=");
-}
-
 export function toTitleCase(str: string): string {
   return str.replace(
     /\w\S*/g,
@@ -188,14 +180,6 @@ export function getSeasonAndYear(position: SeasonPosition): {
   }
 
   return { season: SEASONS[seasonIndex], year };
-}
-
-export function encodeSlashId(id: string) {
-  return id.replace(/\//g, "%2F"); // Encodes '/'
-}
-
-export function decodeSlashId(id: string) {
-  return id.replace(/%2F/g, "/"); // Decodes '%2F' back to '/'
 }
 
 export const sortSourcePriority = (sourceList: EpisodeStream["sources"]) =>

@@ -13,7 +13,7 @@ import {
   consumetKDramaInfoObjectMapper,
 } from "@/lib/object-mapper";
 import { EpisodeList, SearchParams } from "@/lib/types";
-import { createURL, encodeEpisodeId } from "@/lib/utils";
+import { createURL } from "@/lib/utils";
 import { Button, Skeleton, Spacer } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -87,7 +87,8 @@ export default async function EpisodePage({
   const episodeIndex = hasEpisode
     ? episodeList.list.findIndex(
         (episode) =>
-          encodeEpisodeId(episode.episodeId) === encodeEpisodeId(episodeId)
+          encodeURIComponent(episode.episodeId) ===
+          encodeURIComponent(episodeId)
       )
     : 1;
   const episode = hasEpisode ? episodeList.list[episodeIndex] : null;

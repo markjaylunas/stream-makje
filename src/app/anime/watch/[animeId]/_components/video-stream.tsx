@@ -11,7 +11,6 @@ import {
   metaEpisodeStreamObjectMapper,
 } from "@/lib/object-mapper";
 import { EpisodeStream, VSEpisode, VSInfo, VSProvider } from "@/lib/types";
-import { decodeEpisodeId } from "@/lib/utils";
 
 type VideoStreamProps = {
   provider: VSProvider;
@@ -36,7 +35,7 @@ export default async function VideoStream({
 }: VideoStreamProps) {
   const session = await auth();
   const userId = session?.user?.id;
-  const decodedEpisodeId = decodeEpisodeId(episode.id);
+  const decodedEpisodeId = decodeURIComponent(episode.id);
   const animeEpisodeId = `${anime.id}-${episode.number}`;
   let source: EpisodeStream | null = null;
   let episodeProgress: EpisodeProgress | null = null;

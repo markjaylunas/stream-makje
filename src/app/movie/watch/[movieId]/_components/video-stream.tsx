@@ -1,16 +1,11 @@
-import {
-  fetchAnimeEpisodeSource,
-  fetchDCEpisodeSourceData,
-  fetchMovieEpisodeSource,
-} from "@/actions/consumet";
+import { fetchMovieEpisodeSource } from "@/actions/consumet";
 import { fetchMovieEpisodeProgress } from "@/actions/movie-action";
 import { auth } from "@/auth";
 import NoVideo from "@/components/video-player/no-video";
 import VideoPlayer from "@/components/video-player/video-player";
-import { MovieEpisodeProgress, movieEpisodeProgress } from "@/db/schema";
+import { MovieEpisodeProgress } from "@/db/schema";
 import { consumetMovieEpisodeStreamObjectMapper } from "@/lib/object-mapper";
 import { EpisodeStream, VSEpisode, VSInfo } from "@/lib/types";
-import { decodeEpisodeId } from "@/lib/utils";
 
 type VideoStreamProps = {
   movie: VSInfo;
@@ -29,7 +24,7 @@ export default async function VideoStream({
 }: VideoStreamProps) {
   const session = await auth();
   const userId = session?.user?.id;
-  const decodedEpisodeId = decodeEpisodeId(episode.id);
+  const decodedEpisodeId = decodeURIComponent(episode.id);
   const infoEpisodeId = `${movie.id}-${episode.number}`;
   const movieEpisodeId = `${movie.id}-${episode.number}`;
   let source: EpisodeStream | null = null;

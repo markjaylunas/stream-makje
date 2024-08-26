@@ -12,7 +12,6 @@ import {
   mapAnimeByName,
 } from "@/lib/object-mapper";
 import { AnimeProviders, EpisodeList } from "@/lib/types";
-import { encodeEpisodeId } from "@/lib/utils";
 import { fetchEpisodeData } from "./consumet";
 
 export async function fetchAWEpisodeData({ animeId }: { animeId: string }) {
@@ -93,7 +92,7 @@ export async function fetchEpisodeByProviderData({
       const returnData: EpisodeList = {
         list: episodeData.episodes.map((episode) => ({
           ...episode,
-          episodeId: encodeEpisodeId(episode.episodeId),
+          episodeId: encodeURIComponent(episode.episodeId),
         })),
         totalEpisodes: episodeData ? episodeData.totalEpisodes : 0,
       };
