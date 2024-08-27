@@ -108,8 +108,11 @@ export const consumetAPIQuery = {
 
       info: (params: { id: string }) => createURL(flixhqBase, `info`, params),
 
-      watch: (params: { episodeId: string; mediaId: string }) =>
-        createURL(flixhqBase, `watch`, params),
+      watch: (params: {
+        episodeId: string;
+        mediaId: string;
+        server?: string;
+      }) => createURL(flixhqBase, `watch`, params),
 
       servers: (params: { episodeId: string; mediaId: string }) =>
         createURL(flixhqBase, `servers`, params),

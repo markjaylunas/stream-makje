@@ -1,10 +1,8 @@
 import { fetchMovieInfo } from "@/actions/consumet";
 import { fetchMovieWatchStatus } from "@/actions/movie-action";
 import { auth } from "@/auth";
-import CardImageCarouselList from "@/components/card-data/card-image-carousel-list";
 import CardList from "@/components/card-data/card-list";
 import Heading from "@/components/ui/heading";
-import ListSectionWrapper from "@/components/ui/list-section-wrapper";
 import ScoreDropdown from "@/components/ui/score-dropdown";
 import ShareButton from "@/components/ui/share-button";
 import { SvgIcon } from "@/components/ui/svg-icons";
@@ -15,12 +13,13 @@ import {
   consumetMovieObjectMapper,
 } from "@/lib/object-mapper";
 import { EpisodeList, SearchParams, Tag } from "@/lib/types";
-import { createURL } from "@/lib/utils";
+import { createURL, searchParamString } from "@/lib/utils";
 import { Button, Skeleton, Spacer } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import EpisodeListSection from "../../info/[movieId]/_components/episode-list-section";
+import MovieServerSection from "./_components/movie-server-section";
 import VideoStream from "./_components/video-stream";
 
 export default async function EpisodePage({
@@ -35,15 +34,20 @@ export default async function EpisodePage({
   const session = await auth();
   const userId = session?.user?.id;
 
-  const episodeId =
-    typeof searchParams?.episodeId === "string"
-      ? searchParams?.episodeId || undefined
-      : undefined;
+  const episodeId = searchParamString({
+    value: searchParams?.episodeId,
+    defaultValue: undefined,
+  });
 
-  const episodeNumber =
-    typeof searchParams?.episodeNumber === "string"
-      ? searchParams?.episodeNumber || ""
-      : "";
+  const episodeNumber = searchParamString({
+    value: searchParams?.episodeNumber,
+    defaultValue: "",
+  });
+
+  const server = searchParamString({
+    value: searchParams?.server,
+    defaultValue: undefined,
+  });
 
   const [infoData, movieWatchStatus] = await Promise.all([
     fetchMovieInfo({ movieId }),
@@ -122,6 +126,7 @@ export default async function EpisodePage({
             fallback={<Skeleton className=" w-full aspect-video rounded-xl" />}
           >
             <VideoStream
+              server={server}
               movie={{
                 id: movieId,
                 image: movieInfo.poster,
@@ -191,6 +196,14 @@ export default async function EpisodePage({
           </div>
 
           <Spacer className="h-2" />
+
+          <Suspense fallback={<Skeleton className="w-full h-8 rounded-xl" />}>
+            <MovieServerSection
+              movieId={movieId}
+              episodeId={episodeId}
+              episodeNumber={episodeNumber || ""}
+            />
+          </Suspense>
         </div>
 
         <div className="col-span-full md:col-span-3 px-4 md:px-0">

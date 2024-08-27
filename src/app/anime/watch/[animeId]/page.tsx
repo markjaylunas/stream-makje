@@ -22,7 +22,7 @@ import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import EpisodeListSection from "../../info/[animeId]/_components/episode-list-section";
-import Control from "./_components/control";
+import AnimeServerSection from "./_components/anime-server-section";
 import VideoStream from "./_components/video-stream";
 
 export default async function EpisodePage({
@@ -218,7 +218,13 @@ export default async function EpisodePage({
 
           <Spacer className="h-2" />
 
-          <Control animeId={animeId} episodeId={episodeId} />
+          <Suspense fallback={<Skeleton className="w-full h-8 rounded-xl" />}>
+            <AnimeServerSection
+              animeId={animeId}
+              provider={provider}
+              episodeId={episodeId}
+            />
+          </Suspense>
         </div>
 
         <div className="col-span-full md:col-span-3 px-4 md:px-0">

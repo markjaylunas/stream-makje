@@ -14,7 +14,7 @@ export default async function CountryMovieList({
     defaultValue: "us",
   });
 
-  const data = await fetchCountryMovieData({ country });
+  const data = await fetchCountryMovieData({ country: country || "" });
 
   if (!data) throw new Error("Failed to fetch (CountryMovieList) data");
 

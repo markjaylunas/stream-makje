@@ -3,7 +3,10 @@ import { FetchAllKdramaEpisodeProgress } from "@/actions/kdrama-action";
 import { FetchAllMovieEpisodeProgress } from "@/actions/movie-action";
 import { CardDataProps } from "@/components/card-data/card-data";
 import { CardWatchedDataProps } from "@/components/card-data/card-watched-data";
-import { AWEpisodeSourceDataSchema } from "@/lib/aniwatch-validations";
+import {
+  AWEpisodeServersDataSchema,
+  AWEpisodeSourceDataSchema,
+} from "@/lib/aniwatch-validations";
 import {
   AnimeDataSchema,
   AnimeSchema,
@@ -18,6 +21,7 @@ import {
   FHQDataSchema,
   FHQEpisodeDataSchema,
   FHQInfoDataSchema,
+  FHQServerDataSchema,
   FHQSourceDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
@@ -28,6 +32,7 @@ import {
   EpisodeStream,
   Info,
   OtherInfo,
+  ServerOption,
   Tag,
 } from "./types";
 import {
@@ -656,3 +661,93 @@ export const consumetMovieWatchedObjectMapper = ({
       tagList: searchKeysInObject(tagList, others as DataObject),
     };
   });
+
+export const animeServerObjectMapper = ({
+  serverData: { sub, dub, raw, episodeId, episodeNo },
+  animeId,
+  provider,
+}: {
+  serverData: AWEpisodeServersDataSchema;
+  animeId: string;
+  provider: string;
+}): ServerOption[] => {
+  return [
+    {
+      type: "sub",
+      list: sub.map((server) => ({
+        name: server.serverName,
+        href: createURL({
+          path: `/anime/watch/${animeId}`,
+          params: {
+            episodeId,
+            episodeNumber: episodeNo,
+            provider,
+            server: server.serverName,
+            category: "sub",
+          },
+        }),
+      })),
+    },
+    {
+      type: "dub",
+      list: dub.map((server) => ({
+        name: server.serverName,
+        href: createURL({
+          path: `/anime/watch/${animeId}`,
+          params: {
+            episodeId,
+            episodeNumber: episodeNo,
+            provider,
+            server: server.serverName,
+            category: "dub",
+          },
+        }),
+      })),
+    },
+    {
+      type: "raw",
+      list: raw.map((server) => ({
+        name: server.serverName,
+        href: createURL({
+          path: `/anime/watch/${animeId}`,
+          params: {
+            episodeId,
+            episodeNumber: episodeNo,
+            provider,
+            server: server.serverName,
+            category: "raw",
+          },
+        }),
+      })),
+    },
+  ].filter((server) => server.list.length > 0);
+};
+
+export const movieServerObjectMapper = ({
+  serverData,
+  movieId,
+  episodeId,
+  episodeNumber,
+}: {
+  serverData: FHQServerDataSchema;
+  movieId: string;
+  episodeId: string;
+  episodeNumber: string;
+}): ServerOption[] => {
+  return [
+    {
+      type: "raw",
+      list: serverData.map((server) => ({
+        name: server.name,
+        href: createURL({
+          path: `/movie/watch/${movieId}`,
+          params: {
+            episodeId,
+            episodeNumber,
+            server: server.name,
+          },
+        }),
+      })),
+    },
+  ].filter((server) => server.list.length > 0);
+};

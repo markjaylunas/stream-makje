@@ -138,7 +138,7 @@ export const searchParamString = ({
   defaultValue,
 }: {
   value: SearchParamValue;
-  defaultValue: string;
+  defaultValue: string | undefined;
 }) => (typeof value === "string" ? value || defaultValue : defaultValue);
 
 export function formatTimestamp(timestamp: number): string {

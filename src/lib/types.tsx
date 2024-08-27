@@ -55,6 +55,16 @@ export type OAuthProvider = "google" | "github";
 
 export type ContentType = "anime" | "k-drama" | "movie";
 
+export type ServerOption = {
+  type: string;
+  list: ServerData[];
+};
+
+export type ServerData = {
+  name: string;
+  href: string;
+};
+
 // Start: Consumet API types
 
 export type ASType = (typeof ASTypeArray)[number];

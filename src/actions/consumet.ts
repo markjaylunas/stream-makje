@@ -14,6 +14,7 @@ import {
   fHQInfoDataSchema,
   fHQListDataSchema,
   fHQSearchDataSchema,
+  fHQServerDataSchema,
   fHQSourceDataSchema,
 } from "@/lib/consumet-validations";
 import {
@@ -494,15 +495,18 @@ export async function fetchMovieInfo({ movieId }: { movieId: string }) {
 export async function fetchMovieEpisodeSource({
   episodeId,
   mediaId,
+  server,
 }: {
   episodeId: string;
   mediaId: string;
+  server?: string;
 }) {
   try {
     const response = await fetch(
       consumetAPIQuery.movies.flixhq.watch({
         episodeId,
         mediaId: decodeURIComponent(mediaId),
+        server,
       }),
       { next: { revalidate: 3600 } }
     );
@@ -557,6 +561,38 @@ export async function searchMovieGenre(params: {
       console.error(parsed.error.toString());
       return;
     }
+    return parsed.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function fetchMovieEpisodeServer({
+  episodeId,
+  mediaId,
+}: {
+  episodeId: string;
+  mediaId: string;
+}) {
+  try {
+    const response = await fetch(
+      consumetAPIQuery.movies.flixhq.servers({
+        episodeId,
+        mediaId: decodeURIComponent(mediaId),
+      }),
+      { next: { revalidate: ONE_WEEK } }
+    );
+
+    const data = await response.json();
+
+    const parsed = fHQServerDataSchema.safeParse(data);
+
+    if (!parsed.success) {
+      console.error(parsed.error.toString());
+      return;
+    }
+
     return parsed.data;
   } catch (error) {
     console.log(error);

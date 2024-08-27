@@ -10,6 +10,7 @@ import { EpisodeStream, VSEpisode, VSInfo } from "@/lib/types";
 type VideoStreamProps = {
   movie: VSInfo;
   episode: VSEpisode;
+  server?: string;
 };
 
 export type UpdateProgressInput = {
@@ -21,6 +22,7 @@ export type UpdateProgressInput = {
 export default async function VideoStream({
   movie,
   episode,
+  server,
 }: VideoStreamProps) {
   const session = await auth();
   const userId = session?.user?.id;
@@ -34,6 +36,7 @@ export default async function VideoStream({
     fetchMovieEpisodeSource({
       episodeId: decodedEpisodeId,
       mediaId: movie.id,
+      server,
     }),
     userId
       ? await fetchMovieEpisodeProgress({
@@ -52,7 +55,11 @@ export default async function VideoStream({
 
   if (!source)
     return (
-      <NoVideo bgSrc={movie.cover || movie.image} title={`No source found`} />
+      <NoVideo
+        bgSrc={movie.image}
+        title={`No source found`}
+        description="Please try other stream servers below ⬇️"
+      />
     );
 
   const { tracks, sources } = source;

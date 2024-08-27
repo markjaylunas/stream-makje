@@ -383,7 +383,7 @@ export const fHQInfoDataSchema = z.object({
 });
 
 export const fHQServerDataSchema = z.array(
-  z.object({ name: z.string(), ur: z.string() })
+  z.object({ name: z.string(), url: z.string() })
 );
 
 export const fHQSourceDataSchema = z.object({
