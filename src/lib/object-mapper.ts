@@ -54,7 +54,7 @@ export const consumetAnimeObjectMapper = ({
 }): CardDataProps[] =>
   animeList.map((anime, animeIdx) => {
     const { id, title, description, image, cover, trailer, ...others } = anime;
-    let href = `/anime/info/${id}`;
+    let href = `/anime/watch/${id}`;
     if (others.episodeNumber)
       href = createURL({
         path: `/anime/watch/${id}`,
@@ -94,7 +94,7 @@ export const consumetSearchAnimeObjectMapper = ({
       description: description ? description : undefined,
       image: image ? image : "",
       cover: cover ? cover : undefined,
-      href: `/anime/info/${id}`,
+      href: `/anime/watch/${id}`,
       tagList: searchKeysInObject(tagList, others as DataObject).filter(
         (v) => v.value
       ),
@@ -224,7 +224,7 @@ export const consumetInfoAnimeObjectMapper = ({
         image: image || "",
         cover: cover ? cover : undefined,
         rank: isRanked ? animeIdx + 1 : undefined,
-        href: `/anime/info/${id}`,
+        href: `/anime/watch/${id}`,
         tagList: searchKeysInObject(
           tagList,
           others as unknown as DataObject
@@ -533,7 +533,7 @@ export const consumetMovieObjectMapper = ({
       id,
       name: title,
       image,
-      href: `/movie/info/${encodeURIComponent(id)}`,
+      href: `/movie/watch/${encodeURIComponent(id)}`,
       tagList: searchKeysInObject(tagList, others as DataObject).filter(
         (v) => v.value
       ),
