@@ -91,20 +91,7 @@ export const routesConfig: RoutesConfig = {
         },
       ],
     },
-    {
-      title: "K-drama",
-      items: [
-        {
-          title: "K-drama Homepage",
-          href: "/k-drama",
-          label:
-            "Explore all k-drama-related content, from trending series to new releases.",
-          icon: "home",
-          iconClass: "text-primary",
-          items: [],
-        },
-      ],
-    },
+
     {
       title: "Movie",
       items: [
@@ -131,6 +118,20 @@ export const routesConfig: RoutesConfig = {
           label: "Explore movies by different genres.",
           icon: "tag",
           iconClass: "text-blue-500",
+          items: [],
+        },
+      ],
+    },
+    {
+      title: "K-drama",
+      items: [
+        {
+          title: "K-drama Homepage",
+          href: "/k-drama",
+          label:
+            "Explore all k-drama-related content, from trending series to new releases.",
+          icon: "home",
+          iconClass: "text-primary",
           items: [],
         },
       ],
