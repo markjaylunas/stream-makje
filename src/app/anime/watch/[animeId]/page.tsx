@@ -164,12 +164,12 @@ export default async function EpisodePage({
             />
           </Suspense>
 
-          <div className="flex flex-col sm:flex-row justify-start sm:justify-between gap-2 mt-2 px-4 md:px-0">
+          <div className="flex flex-col justify-center gap-2 mt-2 px-4 md:px-0">
             <Heading className="text-primary-500 text-lg sm:text-xl">
               {animeInfo.name}
             </Heading>
-            <div className="flex justify-end flex-col flex-wrap items-center gap-2">
-              <div className="flex gap-2 justify-end w-full">
+            <div className="flex gap-2 justify-between w-full flex-wrap">
+              <div className="flex gap-2">
                 <Button
                   as={NextLink}
                   href={`/anime/info/${animeId}`}
@@ -185,7 +185,7 @@ export default async function EpisodePage({
                   Share
                 </ShareButton>
               </div>
-              <div className="flex gap-2 justify-end w-full">
+              <div className="flex gap-2">
                 <WatchListDropdown
                   contentType="anime"
                   watchStatus={
