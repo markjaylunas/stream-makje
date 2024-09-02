@@ -605,12 +605,7 @@ export const consumetMovieEpisodeStreamObjectMapper = (
     }))
   ),
   tracks: source.subtitles.map((sub) => {
-    const match = sub.url.match(/\/([^\/]+)\.vtt$/);
-    let label = "";
-    if (match) {
-      label = match[1];
-    }
-    return { file: sub.url, kind: "captions", label };
+    return { file: sub.url, kind: "captions", label: sub.lang };
   }),
 });
 
