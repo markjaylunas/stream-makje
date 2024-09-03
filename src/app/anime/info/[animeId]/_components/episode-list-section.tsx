@@ -3,7 +3,13 @@
 import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { ANIME_PROVIDER, ANIME_PROVIDER_LIST } from "@/lib/constants";
-import { AnimeProviders, Episode, EpisodeList, Status } from "@/lib/types";
+import {
+  AnimeProviders,
+  AnimeTitle,
+  Episode,
+  EpisodeList,
+  Status,
+} from "@/lib/types";
 import { cn, createURL } from "@/lib/utils";
 import { Button } from "@nextui-org/button";
 import {
@@ -23,7 +29,7 @@ import { HTMLProps, MutableRefObject, useMemo, useRef, useState } from "react";
 
 type Props = {
   animeEpisodeList: EpisodeList;
-  animeTitle: string;
+  animeTitle: AnimeTitle;
   episodeTitle?: string;
   currentEpisodeNumber?: number;
   className?: string;

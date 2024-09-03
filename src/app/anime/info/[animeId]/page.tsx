@@ -157,7 +157,7 @@ export default async function InfoPage({
         </div>
 
         <EpisodeListSection
-          animeTitle={animeInfo.name}
+          animeTitle={infoData.title}
           animeEpisodeList={episodeList}
         />
       </InfoSection>

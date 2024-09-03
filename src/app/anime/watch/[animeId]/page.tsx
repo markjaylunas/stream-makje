@@ -230,7 +230,7 @@ export default async function EpisodePage({
         <div className="col-span-full md:col-span-3 px-4 md:px-0">
           <EpisodeListSection
             animeEpisodeList={episodeList}
-            animeTitle={animeInfo.name}
+            animeTitle={infoData.title}
             episodeTitle={episode?.title || ""}
             currentEpisodeNumber={
               episodeNumber ? parseInt(episodeNumber) : undefined
