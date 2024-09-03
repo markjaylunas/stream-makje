@@ -55,6 +55,13 @@ export type OAuthProvider = "google" | "github";
 
 export type ContentType = "anime" | "k-drama" | "movie";
 
+export type AnimeTitle = {
+  native?: string | null | undefined;
+  romaji?: string | null | undefined;
+  english?: string | null | undefined;
+  userPreferred?: string | null | undefined;
+};
+
 export type ServerOption = {
   type: string;
   list: ServerData[];

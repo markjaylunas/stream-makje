@@ -3,7 +3,13 @@ import { type ClassValue, clsx } from "clsx";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 import { sourcePriority } from "./constants";
-import { DataObject, EpisodeStream, SearchParamValue, Tag } from "./types";
+import {
+  AnimeTitle,
+  DataObject,
+  EpisodeStream,
+  SearchParamValue,
+  Tag,
+} from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -11,7 +17,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function pickTitle(title: TitleSchema): string {
   return (
-    title.english || title.userPreferred || title.native || title.romaji || ""
+    title.userPreferred || title.romaji || title.english || title.native || ""
   );
 }
 
@@ -72,57 +78,142 @@ export function createURL({
   return `${path}${paramString}`;
 }
 
-// Helper function to calculate Jaro-Winkler distance
-export const jaroWinklerDistance = (s1: string, s2: string) => {
-  if (s1 === s2) return 1;
+export function sanitizeTitle(title: string): string {
+  // Convert the title to lowercase
+  let lowercased = title.toLowerCase();
 
-  const maxLength = Math.max(s1.length, s2.length);
-  const matchWindow = Math.floor(maxLength / 2) - 1;
+  // Remove non-alphanumeric characters and non-spaces
+  lowercased = lowercased.replace(/[^a-z0-9\s]/g, "");
 
-  const matches = []; // Array to store matching characters
-  const s1Matches = new Array(s1.length).fill(false); // Flags to track matching characters in s1
-  const s2Matches = new Array(s2.length).fill(false); // Flags to track matching characters in s2
+  // Remove ordinal suffixes (st, nd, rd, th) from numbers
+  lowercased = lowercased.replace(/(\d+)(st|nd|rd|th)\b/g, "$1");
 
-  // Find matching characters
-  for (let i = 0; i < s1.length; i++) {
-    const start = Math.max(0, i - matchWindow);
-    const end = Math.min(i + matchWindow + 1, s2.length);
+  // List of words to remove from the title
+  const wordsToRemove = ["season", "cour", "part"];
 
-    for (let j = start; j < end; j++) {
-      if (!s2Matches[j] && s1[i] === s2[j]) {
-        s1Matches[i] = true;
-        s2Matches[j] = true;
-        matches.push(s1[i]);
-        break;
-      }
+  // Split the lowercased title into words
+  const words = lowercased.split(/\s+/);
+
+  // Filter out unwanted words
+  const sanitizedWords = words.filter((word) => !wordsToRemove.includes(word));
+
+  // Join the sanitized words back into a string
+  return sanitizedWords.join(" ");
+}
+
+export function jaroWinkler(s1: string, s2: string): number {
+  const m = s1.length;
+  const n = s2.length;
+
+  if (m === 0 && n === 0) return 1.0;
+  if (m === 0 || n === 0) return 0.0;
+
+  const matchDistance = Math.floor(Math.max(m, n) / 2) - 1;
+  const s1Matches = new Array(m).fill(false);
+  const s2Matches = new Array(n).fill(false);
+
+  let matches = 0;
+  let transpositions = 0;
+  for (let i = 0; i < m; i++) {
+    const start = Math.max(0, i - matchDistance);
+    const end = Math.min(n - 1, i + matchDistance);
+
+    for (let j = start; j <= end; j++) {
+      if (s2Matches[j]) continue;
+      if (s1[i] !== s2[j]) continue;
+      s1Matches[i] = true;
+      s2Matches[j] = true;
+      matches++;
+      break;
     }
   }
 
-  if (matches.length === 0) return 0;
+  if (matches === 0) return 0.0;
 
-  // Calculate transpositions
-  let t = 0;
   let k = 0;
-  for (let i = 0; i < s1.length; i++) {
-    if (s1Matches[i]) {
-      while (!s2Matches[k]) k++;
-      if (s1[i] !== s2[k]) t++;
-      k++;
+  for (let i = 0; i < m; i++) {
+    if (!s1Matches[i]) continue;
+    while (!s2Matches[k]) k++;
+    if (s1[i] !== s2[k]) transpositions++;
+    k++;
+  }
+
+  transpositions /= 2;
+
+  const jaro =
+    (matches / m + matches / n + (matches - transpositions) / matches) / 3;
+
+  let prefix = 0;
+  for (let i = 0; i < Math.min(4, m, n); i++) {
+    if (s1[i] === s2[i]) {
+      prefix++;
+    } else {
+      break;
     }
   }
 
-  // Calculate Jaro similarity
-  const m = matches.length;
-  const jaroSimilarity = (m / s1.length + m / s2.length + (m - t) / m) / 3;
+  const p = 0.1;
+  return jaro + prefix * p * (1 - jaro);
+}
 
-  // Calculate prefix scale
-  let l = 0;
-  while (s1[l] === s2[l] && l < 4) l++;
+export function findBestMatch(
+  mainString: string,
+  targets: { id: string; name: string }[]
+) {
+  if (targets.length === 0) return null;
 
-  const jaroWinklerDistance = jaroSimilarity + l * 0.1 * (1 - jaroSimilarity);
+  let bestMatch = targets[0];
+  let highestScore = jaroWinkler(mainString, bestMatch.name);
 
-  return jaroWinklerDistance;
-};
+  for (let i = 1; i < targets.length; i++) {
+    const currentScore = jaroWinkler(mainString, targets[i].name);
+    if (currentScore > highestScore) {
+      highestScore = currentScore;
+      bestMatch = targets[i];
+    }
+  }
+
+  return bestMatch;
+}
+
+export function findOriginalTitle(
+  title: AnimeTitle,
+  titles: { id: string; name: string }[]
+) {
+  const romaji = sanitizeTitle(title.romaji || "");
+  const english = sanitizeTitle(title.english || "");
+  const native = sanitizeTitle(title.native || "");
+
+  const romajiBestMatch = findBestMatch(romaji, titles);
+  const englishBestMatch = findBestMatch(english, titles);
+  const nativeBestMatch = findBestMatch(native, titles);
+
+  const romajiScore = romajiBestMatch
+    ? jaroWinkler(romaji, romajiBestMatch.name)
+    : 0;
+  const englishScore = englishBestMatch
+    ? jaroWinkler(english, englishBestMatch.name)
+    : 0;
+  const nativeScore = nativeBestMatch
+    ? jaroWinkler(native, nativeBestMatch.name)
+    : 0;
+
+  console.log("romajiBestMatch: ", romajiBestMatch);
+  console.log("englishBestMatch: ", englishBestMatch);
+  console.log("nativeBestMatch: ", nativeBestMatch);
+
+  console.log("romajiScore: ", romajiScore);
+  console.log("englishScore: ", englishScore);
+  console.log("nativeScore: ", nativeScore);
+
+  if (englishScore >= romajiScore && englishScore >= nativeScore) {
+    return englishBestMatch;
+  } else if (romajiScore >= englishScore && romajiScore >= nativeScore) {
+    return romajiBestMatch;
+  } else {
+    return nativeBestMatch;
+  }
+}
 
 export const parseSearchParamInt = ({
   value,

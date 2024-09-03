@@ -74,7 +74,7 @@ export default async function EpisodePage({
 
   const [episodeList] = await Promise.all([
     await fetchEpisodeByProviderData({
-      title: pickTitle(infoData.title),
+      title: infoData.title,
       animeId,
       provider,
     }),

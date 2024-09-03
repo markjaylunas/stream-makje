@@ -64,7 +64,7 @@ export default async function InfoPage({
   };
   if (infoData.status !== "Not yet aired") {
     episodeList = await fetchEpisodeByProviderData({
-      title: pickTitle(infoData.title),
+      title: infoData.title,
       animeId,
       provider,
     });

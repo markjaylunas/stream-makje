@@ -7,11 +7,9 @@ import {
   aWEpisodeSourceDataSchema,
   aWSearchDataSchema,
 } from "@/lib/aniwatch-validations";
-import {
-  consumetAnimeInfoEpisodesObjectMapper,
-  mapAnimeByName,
-} from "@/lib/object-mapper";
-import { AnimeProviders, EpisodeList } from "@/lib/types";
+import { consumetAnimeInfoEpisodesObjectMapper } from "@/lib/object-mapper";
+import { AnimeProviders, AnimeTitle, EpisodeList } from "@/lib/types";
+import { findOriginalTitle, pickTitle, sanitizeTitle } from "@/lib/utils";
 import { fetchEpisodeData } from "./consumet";
 
 export async function fetchAWEpisodeData({ animeId }: { animeId: string }) {
@@ -42,7 +40,7 @@ export async function fetchEpisodeByProviderData({
 }: {
   animeId: string;
   provider: AnimeProviders;
-  title: string;
+  title: AnimeTitle;
 }) {
   const empty = {
     list: [],
@@ -51,7 +49,9 @@ export async function fetchEpisodeByProviderData({
   try {
     if (provider === "provider_1") {
       const response = await fetch(
-        aniwatchAPIQuery.search({ q: encodeURIComponent(title) }),
+        aniwatchAPIQuery.search({
+          q: encodeURIComponent(sanitizeTitle(pickTitle(title))),
+        }),
         {
           next: { revalidate: 3600 },
         }
@@ -67,13 +67,11 @@ export async function fetchEpisodeByProviderData({
 
       const animeIDAndTitleList = parsed.data.animes.map((anime) => ({
         id: anime.id,
-        name: anime.name,
+        name: sanitizeTitle(anime.jname) || sanitizeTitle(anime.name),
       }));
 
-      const animeMatched = await mapAnimeByName({
-        list: animeIDAndTitleList,
-        title,
-      });
+      const animeMatched = findOriginalTitle(title, animeIDAndTitleList);
+
       if (!animeMatched)
         return {
           list: [],
@@ -83,6 +81,7 @@ export async function fetchEpisodeByProviderData({
       const episodeData = await fetchAWEpisodeData({
         animeId: animeMatched.id,
       });
+
       if (!episodeData)
         return {
           list: [],

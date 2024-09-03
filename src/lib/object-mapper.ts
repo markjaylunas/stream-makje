@@ -27,6 +27,7 @@ import {
 import moment from "moment";
 import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
 import {
+  AnimeTitle,
   DataObject,
   Episode,
   EpisodeStream,
@@ -37,7 +38,7 @@ import {
 } from "./types";
 import {
   createURL,
-  jaroWinklerDistance,
+  findOriginalTitle,
   pickTitle,
   searchKeysInObject,
   sortSourcePriority,
@@ -231,70 +232,6 @@ export const consumetInfoAnimeObjectMapper = ({
         ).filter((v) => v.value),
       };
     });
-
-export const mapAnimeByName = async ({
-  list,
-  title,
-}: {
-  title: string;
-  list: { id: string; name: string }[];
-}) => {
-  try {
-    const normalizedTitle = title.trim().toLowerCase();
-    let mappedResult = null;
-    let maxScore = 0;
-
-    // Function to extract numeric components (e.g., "2", "2010")
-    const extractNumericComponent = (name: string) => {
-      const match = name.match(/\d+/g); // Finds numeric sequences in the string
-      return match ? match.join("") : null; // Join in case there are multiple numbers
-    };
-
-    const titleNumericComponent = extractNumericComponent(normalizedTitle);
-
-    // Function to calculate Jaro-Winkler similarity
-    const calculateSimilarity = (itemName: string) => {
-      const itemNameNormalized = itemName.trim().toLowerCase();
-      let score = jaroWinklerDistance(normalizedTitle, itemNameNormalized);
-
-      // Boost the score if numeric components match
-      const itemNumericComponent = extractNumericComponent(itemNameNormalized);
-      if (
-        titleNumericComponent !== null &&
-        itemNumericComponent !== null &&
-        titleNumericComponent === itemNumericComponent
-      ) {
-        score += 0.2; // Adjust this weight as needed
-      }
-
-      return score;
-    };
-
-    // Find exact match first
-    mappedResult = list.find(
-      (item) => item.name && item.name.toLowerCase() === normalizedTitle
-    );
-
-    // If no exact match, find closest match using Jaro-Winkler distance
-    if (!mappedResult) {
-      list.forEach((item) => {
-        const itemName = item.name;
-        if (itemName) {
-          const score = calculateSimilarity(itemName);
-          if (score > maxScore) {
-            maxScore = score;
-            mappedResult = item;
-          }
-        }
-      });
-    }
-
-    return mappedResult || null;
-  } catch (error) {
-    console.error("Error in MapAnimeByTitle:", error);
-    return null;
-  }
-};
 
 export const metaEpisodeStreamObjectMapper = (
   source: EpisodeSourceDataSchema
