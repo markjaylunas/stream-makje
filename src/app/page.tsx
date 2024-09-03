@@ -60,7 +60,7 @@ export default async function Home() {
         </p>
       </div>
 
-      <section className="max-w-screen-sm lg:max-w-screen-md mx-auto grid grid-cols-4 gap-4 px-4">
+      <section className="max-w-screen-sm lg:max-w-screen-md mx-auto grid grid-cols-3 gap-4 px-4">
         {categoryCards.map((cat) => (
           <CategoryCard
             key={cat.link}
