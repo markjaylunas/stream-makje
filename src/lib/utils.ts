@@ -198,14 +198,6 @@ export function findOriginalTitle(
     ? jaroWinkler(native, nativeBestMatch.name)
     : 0;
 
-  console.log("romajiBestMatch: ", romajiBestMatch);
-  console.log("englishBestMatch: ", englishBestMatch);
-  console.log("nativeBestMatch: ", nativeBestMatch);
-
-  console.log("romajiScore: ", romajiScore);
-  console.log("englishScore: ", englishScore);
-  console.log("nativeScore: ", nativeScore);
-
   if (englishScore >= romajiScore && englishScore >= nativeScore) {
     return englishBestMatch;
   } else if (romajiScore >= englishScore && romajiScore >= nativeScore) {
