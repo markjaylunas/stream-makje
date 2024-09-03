@@ -15,7 +15,7 @@ import {
   consumetAnimeInfoObjectMapper,
   consumetInfoAnimeObjectMapper,
 } from "@/lib/object-mapper";
-import { SearchParams, Tag } from "@/lib/types";
+import { EpisodeList, SearchParams, Tag } from "@/lib/types";
 import { createURL, pickTitle } from "@/lib/utils";
 import { Button, Skeleton, Spacer } from "@nextui-org/react";
 import NextLink from "next/link";
@@ -72,13 +72,19 @@ export default async function EpisodePage({
   const animeInfo = consumetAnimeInfoObjectMapper(infoData);
   const { relations, recommendations } = infoData;
 
-  const [episodeList] = await Promise.all([
-    await fetchEpisodeByProviderData({
+  let episodeList: EpisodeList = {
+    list: [],
+    totalEpisodes: 0,
+  };
+  if (infoData.status !== "Not yet aired") {
+    episodeList = await fetchEpisodeByProviderData({
       title: infoData.title,
       animeId,
       provider,
-    }),
-  ]);
+    });
+  } else {
+    redirect(`/anime/info/${animeId}`);
+  }
 
   if (episodeId === "undefined" || !episodeId) {
     let episode = null;

@@ -17,7 +17,7 @@ export default function ShareButton({ children, ...props }: ButtonProps) {
       try {
         await navigator.share({
           title: "Stream | Makje",
-          text: "A streaming web app, discover anime, movies, k-drama, and manga here.",
+          text: "A streaming web app, discover anime, movies, and k-drama here.",
           url: path,
         });
       } catch (error) {

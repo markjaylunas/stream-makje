@@ -25,7 +25,12 @@ import {
   FHQSourceDataSchema,
 } from "@/lib/consumet-validations";
 import moment from "moment";
-import { ANIME_PROVIDER, ASFormatArray, sourcePriority } from "./constants";
+import {
+  ANIME_PROVIDER,
+  ASDisabledFormatArray,
+  ASFormatArray,
+  sourcePriority,
+} from "./constants";
 import {
   AnimeTitle,
   DataObject,
@@ -53,31 +58,37 @@ export const consumetAnimeObjectMapper = ({
   isRanked?: boolean;
   tagList: Tag[];
 }): CardDataProps[] =>
-  animeList.map((anime, animeIdx) => {
-    const { id, title, description, image, cover, trailer, ...others } = anime;
-    let href = `/anime/watch/${id}`;
-    if (others.episodeNumber)
-      href = createURL({
-        path: `/anime/watch/${id}`,
-        params: {
-          episodeId: undefined,
-          episodeNumber: `${others.episodeNumber}`,
-          provider: ANIME_PROVIDER.P1,
-        },
-      });
+  animeList
+    .filter(
+      (anime) =>
+        !ASDisabledFormatArray.includes(anime.type?.toUpperCase() || "")
+    )
+    .map((anime, animeIdx) => {
+      const { id, title, description, image, cover, trailer, ...others } =
+        anime;
+      let href = `/anime/watch/${id}`;
+      if (others.episodeNumber)
+        href = createURL({
+          path: `/anime/watch/${id}`,
+          params: {
+            episodeId: undefined,
+            episodeNumber: `${others.episodeNumber}`,
+            provider: ANIME_PROVIDER.P1,
+          },
+        });
 
-    return {
-      id,
-      name: pickTitle(title),
-      description: description ? description : undefined,
-      image,
-      cover: cover ? cover : undefined,
-      rank: isRanked ? animeIdx + 1 : undefined,
-      href: href,
-      trailer: trailer ? trailer : undefined,
-      tagList: searchKeysInObject(tagList, others as DataObject),
-    };
-  });
+      return {
+        id,
+        name: pickTitle(title),
+        description: description ? description : undefined,
+        image,
+        cover: cover ? cover : undefined,
+        rank: isRanked ? animeIdx + 1 : undefined,
+        href: href,
+        trailer: trailer ? trailer : undefined,
+        tagList: searchKeysInObject(tagList, others as DataObject),
+      };
+    });
 
 export const consumetSearchAnimeObjectMapper = ({
   searchData,
@@ -206,6 +217,10 @@ export const consumetInfoAnimeObjectMapper = ({
   tagList: Tag[];
 }): CardDataProps[] =>
   animeList
+    .filter(
+      (anime) =>
+        !ASDisabledFormatArray.includes(anime.type?.toUpperCase() || "")
+    )
     .sort((a, b) => {
       const formatA = ASFormatArray.indexOf(
         a.type?.toUpperCase() as (typeof ASFormatArray)[number]

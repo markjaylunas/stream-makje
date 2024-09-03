@@ -4,7 +4,7 @@ export const siteConfig = {
   name: "Stream",
   url: "https://stream.makje.com",
   description:
-    "A premier platform for streaming a diverse collection of anime content. We offer high-quality, uninterrupted viewing experiences to anime enthusiasts around the globe.",
+    "A premier platform for streaming a diverse collection of anime, movie, tv shows, and k-drama content.",
   links: {
     website: "https://makje.com",
     github: "https://github.com/markjaylunas",

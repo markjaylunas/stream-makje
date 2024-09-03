@@ -1,6 +1,5 @@
 import GIFAnime from "@/assets/anime.gif";
 import GIFKdrama from "@/assets/kdrama.gif";
-import GIFManga from "@/assets/manga.gif";
 import GIFMovie from "@/assets/movie.gif";
 import CategoryCard from "@/components/card-data/category-card";
 import CardCarouselListSkeleton from "@/components/card-data/skeleton/card-carousel-list-skeleton";
@@ -27,13 +26,6 @@ const categoryCards: CategoryCardProps[] = [
     image: GIFAnime,
     link: "/anime",
     // className: "row-span-3 col-span-2 ",
-  },
-  {
-    description: "Manga",
-    image: GIFManga,
-    link: "#",
-    isDisabled: true,
-    // className: "row-span-2 col-start-3 self-start",
   },
   {
     description: "Movie",

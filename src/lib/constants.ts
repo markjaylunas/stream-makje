@@ -28,6 +28,8 @@ export const ASFormatArray = [
   "MUSIC",
 ] as const;
 
+export const ASDisabledFormatArray = ["MANGA", "MUSIC", "NOVEL"];
+
 export const ASSortArray = [
   "POPULARITY_DESC",
   "POPULARITY",
