@@ -9,7 +9,12 @@ import {
 } from "@/lib/aniwatch-validations";
 import { consumetAnimeInfoEpisodesObjectMapper } from "@/lib/object-mapper";
 import { AnimeProviders, AnimeTitle, EpisodeList } from "@/lib/types";
-import { findOriginalTitle, pickTitle, sanitizeTitle } from "@/lib/utils";
+import {
+  findOriginalTitle,
+  pickMappingTitle,
+  pickTitle,
+  sanitizeTitle,
+} from "@/lib/utils";
 import { fetchEpisodeData } from "./consumet";
 
 export async function fetchAWEpisodeData({ animeId }: { animeId: string }) {
@@ -50,7 +55,7 @@ export async function fetchEpisodeByProviderData({
     if (provider === "provider_1") {
       const response = await fetch(
         aniwatchAPIQuery.search({
-          q: encodeURIComponent(sanitizeTitle(pickTitle(title))),
+          q: encodeURIComponent(sanitizeTitle(pickMappingTitle(title))),
         }),
         {
           next: { revalidate: 3600 },

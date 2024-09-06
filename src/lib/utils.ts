@@ -17,6 +17,11 @@ export function cn(...inputs: ClassValue[]) {
 
 export function pickTitle(title: TitleSchema): string {
   return (
+    title.english || title.romaji || title.native || title.userPreferred || ""
+  );
+}
+export function pickMappingTitle(title: TitleSchema): string {
+  return (
     title.userPreferred || title.romaji || title.english || title.native || ""
   );
 }
