@@ -16,7 +16,7 @@ import {
   consumetInfoAnimeObjectMapper,
 } from "@/lib/object-mapper";
 import { EpisodeList, SearchParams, Tag } from "@/lib/types";
-import { createURL, pickTitle } from "@/lib/utils";
+import { createURL, parseSearchParamInt, pickTitle } from "@/lib/utils";
 import { Button, Skeleton, Spacer } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -39,13 +39,13 @@ export default async function EpisodePage({
 
   const episodeId =
     typeof searchParams?.episodeId === "string"
-      ? searchParams?.episodeId || undefined
+      ? encodeURIComponent(searchParams?.episodeId || "") || undefined
       : undefined;
 
-  const episodeNumber =
-    typeof searchParams?.episodeNumber === "string"
-      ? searchParams?.episodeNumber || ""
-      : "";
+  const episodeNumber = parseSearchParamInt({
+    value: searchParams?.episodeNumber,
+    defaultValue: 0,
+  });
 
   const provider =
     typeof searchParams?.provider === "string"
@@ -76,6 +76,7 @@ export default async function EpisodePage({
     list: [],
     totalEpisodes: 0,
   };
+
   if (infoData.status !== "Not yet aired") {
     episodeList = await fetchEpisodeByProviderData({
       title: infoData.title,
@@ -86,29 +87,6 @@ export default async function EpisodePage({
     redirect(`/anime/info/${animeId}`);
   }
 
-  if (episodeId === "undefined" || !episodeId) {
-    let episode = null;
-
-    if (episodeNumber) {
-      episode = episodeList.list.find(
-        (episode) => episode.number === Number(episodeNumber)
-      );
-    } else {
-      episode = episodeList.list[0];
-    }
-    if (!episode) return redirect(`/anime/info/${animeInfo.id}`);
-
-    return redirect(
-      createURL({
-        path: `/anime/watch/${animeInfo.id}`,
-        params: {
-          episodeId: episode.episodeId,
-          episodeNumber: episode.number,
-          provider: provider,
-        },
-      })
-    );
-  }
   const tagList: Tag[] = [
     { name: "type", color: "secondary" },
     {
@@ -131,15 +109,23 @@ export default async function EpisodePage({
     }),
   };
 
-  const hasEpisode = episodeList.list.length > 0;
-  const episodeIndex = hasEpisode
-    ? episodeList.list.findIndex(
-        (episode) =>
-          encodeURIComponent(episode.episodeId) ===
-          encodeURIComponent(episodeId)
-      )
-    : 1;
-  const episode = hasEpisode ? episodeList.list[episodeIndex] : null;
+  let episodeIndex = 0;
+
+  if (episodeId) {
+    episodeIndex = episodeList.list.findIndex(
+      (episode) => episode.episodeId === episodeId
+    );
+  } else if (!episodeId && episodeNumber) {
+    episodeIndex = episodeList.list.findIndex(
+      (episode) => episode.number === episodeNumber
+    );
+  }
+
+  if (episodeIndex < 0) episodeIndex = 0;
+
+  const episode = episodeList.list[episodeIndex];
+
+  if (!episode) return redirect(`/anime/info/${animeInfo.id}`);
 
   return (
     <>
@@ -151,7 +137,7 @@ export default async function EpisodePage({
             <VideoStream
               provider={{
                 name: provider,
-                episodeId: episodeId,
+                episodeId: episode.episodeId,
               }}
               anime={{
                 id: animeId,
@@ -160,10 +146,10 @@ export default async function EpisodePage({
                 cover: animeInfo.cover || "",
               }}
               episode={{
-                id: episodeId,
+                id: episode.episodeId,
                 title: episode?.title || "",
                 image: episode?.image || null,
-                number: Number(episodeNumber),
+                number: Number(episode.number),
               }}
               category={category}
               server={server}
@@ -228,7 +214,7 @@ export default async function EpisodePage({
             <AnimeServerSection
               animeId={animeId}
               provider={provider}
-              episodeId={episodeId}
+              episodeId={episode.episodeId}
             />
           </Suspense>
         </div>
@@ -238,9 +224,7 @@ export default async function EpisodePage({
             animeEpisodeList={episodeList}
             animeTitle={infoData.title}
             episodeTitle={episode?.title || ""}
-            currentEpisodeNumber={
-              episodeNumber ? parseInt(episodeNumber) : undefined
-            }
+            currentEpisodeNumber={episode.number}
           />
         </div>
       </section>

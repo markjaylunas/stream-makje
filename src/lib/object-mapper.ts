@@ -200,7 +200,7 @@ export const consumetAnimeInfoEpisodesObjectMapper = (
   episodes: EpisodeSchema[]
 ): Episode[] =>
   episodes.map((episode) => ({
-    episodeId: episode.id,
+    episodeId: encodeURIComponent(episode.id),
     title: episode.title ? episode.title : null,
     number: episode.number,
     image: episode.image,
@@ -453,7 +453,7 @@ export const consumetKdramaInfoEpisodesObjectMapper = (
   episodes: DCEpisodeDataSchema[]
 ): Episode[] =>
   episodes.map((episode) => ({
-    episodeId: episode.id,
+    episodeId: encodeURIComponent(episode.id),
     title: episode.title ? episode.title : null,
     number: episode.episode,
   }));
@@ -496,7 +496,7 @@ export const consumetMovieInfoEpisodesObjectMapper = (
   episodes: FHQEpisodeDataSchema[]
 ): Episode[] =>
   episodes.map((episode, episodeIdx) => ({
-    episodeId: episode.id,
+    episodeId: encodeURIComponent(episode.id),
     title: episode.title ? episode.title : null,
     number: episodeIdx + 1,
   }));
