@@ -58,23 +58,9 @@ export default async function VideoStream({
 
     episodeProgress = episodeProgressData ? episodeProgressData[0] : null;
 
-    let defaultSource;
-    if (category !== "raw" && !episodeSourceData) {
-      console.log("raw");
-      defaultSource = await fetchAWEpisodeSourceData({
-        episodeId: decodedEpisodeId,
-        server: "hd-1",
-        category: "raw",
-      });
-
-      source = defaultSource
-        ? aniwatchEpisodeStreamObjectMapper(defaultSource)
-        : null;
-    } else {
-      source = episodeSourceData
-        ? aniwatchEpisodeStreamObjectMapper(episodeSourceData)
-        : null;
-    }
+    source = episodeSourceData
+      ? aniwatchEpisodeStreamObjectMapper(episodeSourceData)
+      : null;
   }
 
   if (provider.name === ANIME_PROVIDER.P2) {
