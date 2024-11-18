@@ -1,13 +1,8 @@
 "use client";
 
-import { fetchEpisodeProgress } from "@/actions/anime-action";
-import {
-  fetchAWEpisodeSourceData,
-  fetchEpisodeByProviderData,
-} from "@/actions/aniwatch";
+import { fetchEpisodeByProviderData } from "@/actions/aniwatch";
 import { SvgIcon } from "@/components/ui/svg-icons";
 import { ANIME_PROVIDER, ANIME_PROVIDER_LIST } from "@/lib/constants";
-import { aniwatchEpisodeStreamObjectMapper } from "@/lib/object-mapper";
 import {
   AnimeProviders,
   AnimeTitle,
@@ -16,7 +11,6 @@ import {
   Status,
 } from "@/lib/types";
 import { cn, createURL } from "@/lib/utils";
-import { useVideoStore } from "@/providers/video-store-provider";
 import { Button } from "@nextui-org/button";
 import {
   Chip,
@@ -36,17 +30,18 @@ import { HTMLProps, MutableRefObject, useMemo, useRef, useState } from "react";
 type Props = {
   animeEpisodeList: EpisodeList;
   animeTitle: AnimeTitle;
+  episodeTitle?: string;
+  currentEpisodeNumber?: number;
   className?: string;
-  isRouteMethod?: boolean;
 };
 
 export default function EpisodeListSection({
   animeTitle,
   animeEpisodeList,
+  episodeTitle,
+  currentEpisodeNumber,
   className,
-  isRouteMethod,
 }: Props) {
-  const { animeId } = useParams<{ animeId: string }>();
   const searchParams = useSearchParams();
   const paramProvider = searchParams.get("provider");
   const provider =
@@ -56,9 +51,9 @@ export default function EpisodeListSection({
         : ANIME_PROVIDER.P1
       : ANIME_PROVIDER.P1;
 
-  const { setPlayer, player, setLoading, isLoading } = useVideoStore(
-    (state) => state
-  );
+  const { animeId } = useParams<{
+    animeId: string;
+  }>();
 
   const ref = useRef<(HTMLDivElement | null)[]>([]);
   const [isListView, setIsListView] = useState(true);
@@ -66,7 +61,6 @@ export default function EpisodeListSection({
   const [status, setStatus] = useState<Status>("idle");
   const [selectedProvider, setSelectedProvider] = useState(new Set([provider]));
   const [sort, setSort] = useState<"asc" | "desc">("asc");
-
   const sortedList = useMemo(
     () =>
       episodeListData.list.sort((a, b) =>
@@ -77,10 +71,10 @@ export default function EpisodeListSection({
 
   const { totalEpisodes } = episodeListData;
   const description =
-    player?.episode.number &&
-    `You are watching episode ${player.episode.number} of ${
+    currentEpisodeNumber &&
+    `You are watching episode ${currentEpisodeNumber} of ${
       episodeListData.totalEpisodes
-    } ${Boolean(player.episode.title) && " - " + player.episode.title}`;
+    } ${Boolean(episodeTitle) && " - " + episodeTitle}`;
 
   const descriptionsMap = {
     provider_1: "Watch anime with subs, dubs, and various subtitles.",
@@ -93,11 +87,11 @@ export default function EpisodeListSection({
   };
 
   const handleChangeProvider = async (provider: AnimeProviders) => {
-    if (!animeTitle) return;
+    if (!animeId) return;
     try {
       setStatus("loading");
       const newEpisodeList = await fetchEpisodeByProviderData({
-        animeId: `${animeId}`,
+        animeId,
         provider,
         title: animeTitle,
       });
@@ -119,73 +113,9 @@ export default function EpisodeListSection({
     }
   };
 
-  const handleChangeEpisode = async ({
-    episodeId,
-    number,
-    title,
-    image,
-  }: Episode) => {
-    try {
-      setLoading(true);
-      const episodeSourceData = await fetchAWEpisodeSourceData({
-        episodeId,
-      });
-
-      const episodeProgressData = player?.userId
-        ? await fetchEpisodeProgress({
-            userId: player.userId,
-            animeId,
-            episodeId,
-          })
-        : null;
-
-      let source;
-
-      if (!episodeSourceData) {
-        const rawSourceData = await fetchAWEpisodeSourceData({
-          episodeId,
-          server: "hd-1",
-          category: "raw",
-        });
-
-        source = rawSourceData
-          ? aniwatchEpisodeStreamObjectMapper(rawSourceData)
-          : null;
-      } else {
-        source = episodeSourceData
-          ? aniwatchEpisodeStreamObjectMapper(episodeSourceData)
-          : null;
-      }
-
-      if (source && player)
-        setPlayer({
-          ...player,
-          sourceList: source.sources,
-          source: source.sources[0],
-          trackList: source.tracks,
-          intro: source.intro,
-          outro: source.outro,
-          download: source.download,
-          episodeProgress: episodeProgressData,
-          episode: {
-            id: episodeId,
-            image: image || "",
-            number: Number(number),
-            title: title || "",
-          },
-          infoEpisodeId: `${animeId}-${number}`,
-          provider: { episodeId, name: provider },
-        });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <section className={cn("space-y-2 min-w-[300px]", className)}>
-      {player?.episode.number && (
+      {currentEpisodeNumber && (
         <p className="text-gray-500 line-clamp-3">{description}</p>
       )}
       <div className="flex justify-start gap-2">
@@ -262,25 +192,19 @@ export default function EpisodeListSection({
           />
         ) : isListView ? (
           <EpisodeListView
-            currentEpisodeNumber={player?.episode.number}
+            currentEpisodeNumber={currentEpisodeNumber}
             episodeRef={ref}
             list={sortedList}
             provider={provider}
             animeId={animeId}
-            isRouteMethod={isRouteMethod}
-            onEpisodeChange={handleChangeEpisode}
-            isLoading={isLoading}
           />
         ) : (
           <EpisodeGridView
-            currentEpisodeNumber={player?.episode.number}
+            currentEpisodeNumber={currentEpisodeNumber}
             episodeRef={ref}
             list={sortedList}
             provider={provider}
             animeId={animeId}
-            isRouteMethod={isRouteMethod}
-            onEpisodeChange={handleChangeEpisode}
-            isLoading={isLoading}
           />
         )}
       </ScrollShadow>
@@ -320,46 +244,33 @@ const EpisodeListView = ({
   currentEpisodeNumber,
   episodeRef,
   animeId,
-  isRouteMethod,
-  onEpisodeChange,
-  isLoading,
 }: {
   provider: AnimeProviders;
   list: Episode[];
   currentEpisodeNumber?: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
   animeId: string;
-  isRouteMethod?: boolean;
-  onEpisodeChange: (params: Episode) => void;
-  isLoading: boolean;
 }) => (
   <Listbox
-    aria-label="episode list"
+    aria-label="Single selection example"
     variant="flat"
     disallowEmptySelection
     selectionMode="single"
     emptyContent={<></>}
-    disabledKeys={isLoading ? list.map((item) => item.episodeId) : undefined}
-    hideSelectedIcon
   >
     {list.map((episode, episodeIdx) => (
       <ListboxItem
         startContent={episode.number}
         color={episode.isFiller ? "warning" : "primary"}
         textValue={episode.title || `${episode.number}`}
-        href={
-          isRouteMethod
-            ? createURL({
-                path: `/anime/watch/${animeId}`,
-                params: {
-                  episodeId: decodeURIComponent(episode.episodeId),
-                  episodeNumber: `${episode.number}`,
-                  provider: `${provider}`,
-                },
-              })
-            : ""
-        }
-        onPress={!isRouteMethod ? () => onEpisodeChange(episode) : undefined}
+        href={createURL({
+          path: `/anime/watch/${animeId}`,
+          params: {
+            episodeId: decodeURIComponent(episode.episodeId),
+            episodeNumber: `${episode.number}`,
+            provider: `${provider}`,
+          },
+        })}
         className={cn("pl-2")}
         endContent={
           episode.number === currentEpisodeNumber ? (
@@ -388,36 +299,25 @@ const EpisodeGridView = ({
   currentEpisodeNumber,
   episodeRef,
   animeId,
-  isRouteMethod,
-  onEpisodeChange,
-  isLoading,
 }: {
   provider: AnimeProviders;
   list: Episode[];
   currentEpisodeNumber?: number;
   episodeRef: MutableRefObject<(HTMLDivElement | null)[]>;
   animeId: string;
-  isRouteMethod?: boolean;
-  onEpisodeChange: (params: Episode) => void;
-  isLoading: boolean;
 }) => (
   <div className="flex flex-wrap justify-start flex-grow gap-2 mx-auto">
     {list.map((episode, episodeIdx) => (
       <Button
         as={NextLink}
-        href={
-          isRouteMethod
-            ? createURL({
-                path: `/anime/watch/${animeId}`,
-                params: {
-                  episodeId: decodeURIComponent(episode.episodeId),
-                  episodeNumber: `${episode.number}`,
-                  provider: `${provider}`,
-                },
-              })
-            : ""
-        }
-        onPress={!isRouteMethod ? () => onEpisodeChange(episode) : undefined}
+        href={createURL({
+          path: `/anime/watch/${animeId}`,
+          params: {
+            episodeId: episode.episodeId,
+            episodeNumber: `${episode.number}`,
+            provider: `${provider}`,
+          },
+        })}
         variant="flat"
         color="primary"
         startContent={
@@ -426,7 +326,6 @@ const EpisodeGridView = ({
           )
         }
         isIconOnly
-        isDisabled={isLoading}
         key={episode.episodeId}
       >
         <div

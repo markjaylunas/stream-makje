@@ -29,15 +29,13 @@ export async function fetchEpisodeProgress({
   animeId: string;
   episodeId: string;
 }) {
-  const result = await db
+  return db
     .select()
     .from(episodeProgress)
     .where(
       sql`${episodeProgress.userId} = ${userId} and ${episodeProgress.animeId} = ${animeId} and ${episodeProgress.episodeId} = ${episodeId}`
     )
     .limit(1);
-
-  return result.length ? result[0] : null;
 }
 
 export type UpsertEpisodeProgressData = {

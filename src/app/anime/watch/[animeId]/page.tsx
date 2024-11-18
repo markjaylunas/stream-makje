@@ -16,7 +16,7 @@ import {
   consumetInfoAnimeObjectMapper,
 } from "@/lib/object-mapper";
 import { EpisodeList, SearchParams, Tag } from "@/lib/types";
-import { parseSearchParamInt, pickTitle } from "@/lib/utils";
+import { createURL, parseSearchParamInt, pickTitle } from "@/lib/utils";
 import { Button, Skeleton, Spacer } from "@nextui-org/react";
 import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -223,6 +223,8 @@ export default async function EpisodePage({
           <EpisodeListSection
             animeEpisodeList={episodeList}
             animeTitle={infoData.title}
+            episodeTitle={episode?.title || ""}
+            currentEpisodeNumber={episode.number}
           />
         </div>
       </section>

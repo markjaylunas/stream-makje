@@ -31,7 +31,6 @@ import {
   VSProvider,
 } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useVideoStore } from "@/providers/video-store-provider";
 import {
   MediaLoadedDataEvent,
   MediaPlayer,
@@ -49,15 +48,16 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import MyLink from "../ui/my-link";
 import { SvgIcon } from "../ui/svg-icons";
 
-export type VideoPlayerProps = {
+type Props = {
   contentType: ContentType;
   info: VSInfo;
   episode: VSEpisode;
-  trackList: Track[];
+  thumbnail?: string;
+  captionList: Track[];
   sourceList: Source[];
   intro?: TimeLine;
   outro?: TimeLine;
@@ -72,17 +72,30 @@ export type VideoPlayerProps = {
   download?: string;
 };
 
-export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
-  const { player: vPS, setPlayer } = useVideoStore((state) => state);
-  console.log(vPS);
-
+export default function VideoPlayer({
+  contentType,
+  userId,
+  sourceList,
+  captionList,
+  thumbnail,
+  intro,
+  outro,
+  episodeProgress: initialEpisodeProgress,
+  info,
+  episode,
+  provider,
+  infoEpisodeId,
+  download,
+}: Props) {
   const player = useRef<MediaPlayerInstance>(null);
   const remote = useMediaRemote(player);
-  const captionList = vPS
-    ? vPS.trackList.filter((track) => track.kind == "captions")
-    : [];
-  const [timeBefore, setTimeBefore] = useState<number>(0);
+  const progressTime = initialEpisodeProgress?.currentTime || 0;
+  const [source, setSource] = useState<Source>(sourceList[0]);
+  const [timeBefore, setTimeBefore] = useState<number>(progressTime || 0);
   const [canSkip, setCanSkip] = useState<"intro" | "outro" | null>(null);
+  const [episodeProgress, setEpisodeProgress] = useState(
+    initialEpisodeProgress
+  );
 
   function onLoadedData(nativeEvent: MediaLoadedDataEvent) {
     setTimeout(() => {
@@ -92,13 +105,13 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
   }
 
   const handleSkipIntro = () => {
-    if (!vPS?.intro) return;
-    remote.seek(vPS?.intro.end - 3);
+    if (!intro) return;
+    remote.seek(intro.end - 3);
   };
 
   const handleSkipOutro = () => {
-    if (!vPS?.outro) return;
-    remote.seek(vPS?.outro.end - 3);
+    if (!outro) return;
+    remote.seek(outro.end - 3);
   };
 
   const handleInsertAnimeProgress = async ({
@@ -110,8 +123,6 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
     currentTime: number;
     durationTime: number;
   }) => {
-    if (!vPS) return;
-    const { info, infoEpisodeId, episode, provider } = vPS;
     const data: UpsertEpisodeProgressData = {
       anime: {
         id: info.id,
@@ -128,7 +139,7 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
         durationTime,
       },
       episodeProgress: {
-        id: vPS.episodeProgress?.id,
+        id: episodeProgress?.id,
         userId,
         animeId: info.id,
         episodeId: infoEpisodeId,
@@ -138,8 +149,8 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
         providerEpisodeId: provider.episodeId,
       },
     };
-    const progressData = await upsertEpisodeProgress({ data });
-    setPlayer({ ...vPS, episodeProgress: progressData });
+    const progress = await upsertEpisodeProgress({ data });
+    setEpisodeProgress(progress);
   };
 
   const handleInsertKdramaProgress = async ({
@@ -151,8 +162,6 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
     currentTime: number;
     durationTime: number;
   }) => {
-    if (!vPS) return;
-    const { info, infoEpisodeId, episode, provider } = vPS;
     const data: UpsertKdramaEpisodeProgressData = {
       kdrama: {
         id: info.id,
@@ -169,7 +178,7 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
         durationTime,
       },
       kdramaEpisodeProgress: {
-        id: vPS.episodeProgress?.id,
+        id: episodeProgress?.id,
         userId,
         kdramaId: info.id,
         episodeId: infoEpisodeId,
@@ -179,8 +188,8 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
         providerEpisodeId: provider.episodeId,
       },
     };
-    const progressData = await upsertKdramaEpisodeProgress({ data });
-    setPlayer({ ...vPS, episodeProgress: progressData });
+    const progress = await upsertKdramaEpisodeProgress({ data });
+    setEpisodeProgress(progress);
   };
 
   const handleInsertMovieProgress = async ({
@@ -192,8 +201,6 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
     currentTime: number;
     durationTime: number;
   }) => {
-    if (!vPS) return;
-    const { info, infoEpisodeId, episode, provider } = vPS;
     const data: UpsertMovieEpisodeProgressData = {
       movie: {
         id: info.id,
@@ -210,7 +217,7 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
         durationTime,
       },
       movieEpisodeProgress: {
-        id: vPS.episodeProgress?.id,
+        id: episodeProgress?.id,
         userId,
         movieId: info.id,
         episodeId: infoEpisodeId,
@@ -220,16 +227,14 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
         providerEpisodeId: provider.episodeId,
       },
     };
-    const progressData = await upsertMovieEpisodeProgress({ data });
-    setPlayer({ ...vPS, episodeProgress: progressData });
+    const progress = await upsertMovieEpisodeProgress({ data });
+    setEpisodeProgress(progress);
   };
 
   const handleProgress = (isSeeked = false) => {
     const currentTime = Math.floor(player.current?.currentTime || 0);
     const durationTime = player.current?.duration;
 
-    if (!vPS) return;
-    const { intro, outro, userId, contentType } = vPS;
     if (intro && currentTime >= intro.start && currentTime <= intro.end)
       setCanSkip("intro");
     else if (outro && currentTime >= outro.start && currentTime <= outro.end)
@@ -238,7 +243,7 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
 
     if (!userId) return;
     if (!currentTime || !durationTime) return;
-    const episodeProgressTime = vPS?.episodeProgress?.currentTime || 0;
+    const episodeProgressTime = episodeProgress?.currentTime || 0;
     if (currentTime < episodeProgressTime + 30 && !isSeeked) return;
 
     if (contentType === "anime")
@@ -249,29 +254,14 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
       handleInsertMovieProgress({ userId, currentTime, durationTime });
   };
 
-  useEffect(() => {
-    if (videoPlayer) {
-      if (videoPlayer.episodeProgress) {
-        setTimeBefore(videoPlayer.episodeProgress.currentTime);
-      } else {
-        setTimeBefore(0);
-      }
-      setPlayer({
-        ...videoPlayer,
-        source: videoPlayer.sourceList[0],
-      });
-      console.log(videoPlayer);
-    }
-  }, [videoPlayer]);
-
   return (
     <section className="overflow-hidden relative">
       <MediaPlayer
         aspectRatio="16/9"
         load="visible"
         posterLoad="visible"
-        title={vPS?.episode.title || vPS?.info.title}
-        src={vPS?.source?.url}
+        title={episode.title || info.title}
+        src={source.url}
         ref={player}
         viewType="video"
         streamType="on-demand"
@@ -286,8 +276,8 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
         <MediaProvider>
           <Poster
             className="vds-poster"
-            src={vPS?.episode.image || vPS?.info.cover || vPS?.info.image}
-            alt={vPS?.info.title}
+            src={episode.image || info.cover || info.image}
+            alt={info.title}
           />
           {captionList.length > 0 &&
             captionList.map((caption, captionIdx) => (
@@ -307,6 +297,7 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
 
         <DefaultVideoLayout
           icons={defaultLayoutIcons}
+          thumbnails={thumbnail}
           slots={{
             timeSlider: (
               <TimeSlider.Root className="vds-time-slider vds-slider">
@@ -318,8 +309,8 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
             ),
             downloadButton: (
               <>
-                {vPS?.download && (
-                  <MyLink href={vPS?.download} target="_blank">
+                {download && (
+                  <MyLink href={download} target="_blank">
                     <ToggleButton className="vds-button">
                       <SvgIcon.download className="size-5" />{" "}
                       <span className="sr-only">Download</span>
@@ -332,34 +323,25 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
               <Menu.Root>
                 <Menu.Button
                   className="vds-menu-item"
-                  disabled={
-                    vPS?.sourceList ? vPS?.sourceList?.length <= 1 : true
-                  }
+                  disabled={sourceList.length <= 1}
                 >
                   <SvgIcon.image className="vds-menu-icon" />
                   <span className="vds-menu-item-label ml-2">Quality</span>
-                  <span className="vds-menu-item-hint">
-                    {vPS?.source?.quality}
-                  </span>
+                  <span className="vds-menu-item-hint">{source.quality}</span>
                   <SvgIcon.chevronRight className="vds-menu-open-icon size-4" />
                 </Menu.Button>
                 <Menu.Content className="vds-menu-items">
                   <Menu.RadioGroup
                     className="vds-radio-group"
-                    value={vPS?.source?.quality || ""}
+                    value={source.quality || ""}
                   >
-                    {vPS?.sourceList.map((currSource) => (
+                    {sourceList.map((currSource) => (
                       <Menu.Radio
                         className="vds-radio"
                         value={currSource.quality || ""}
                         onSelect={() => {
                           setTimeBefore(player.current?.currentTime || 0);
-                          if (vPS) {
-                            setPlayer({
-                              ...vPS,
-                              source: currSource ? currSource : undefined,
-                            });
-                          }
+                          setSource(currSource);
                         }}
                         key={currSource.quality || ""}
                       >
@@ -375,7 +357,7 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
             ),
             beforeCurrentTime: (
               <>
-                {vPS?.intro && (
+                {intro && (
                   <ToggleButton
                     className={cn(
                       "vds-button w-20 hidden",
@@ -386,7 +368,7 @@ export default function VideoPlayer(videoPlayer: VideoPlayerProps) {
                     Skip Intro
                   </ToggleButton>
                 )}
-                {vPS?.outro && (
+                {outro && (
                   <ToggleButton
                     className={cn(
                       "vds-button w-20 hidden",
