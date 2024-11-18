@@ -159,6 +159,7 @@ export default async function InfoPage({
         <EpisodeListSection
           animeTitle={infoData.title}
           animeEpisodeList={episodeList}
+          isRouteMethod
         />
       </InfoSection>
 

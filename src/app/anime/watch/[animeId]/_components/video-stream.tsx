@@ -56,19 +56,17 @@ export default async function VideoStream({
         : null,
     ]);
 
-    episodeProgress = episodeProgressData ? episodeProgressData[0] : null;
+    episodeProgress = episodeProgressData;
 
-    let defaultSource;
     if (category !== "raw" && !episodeSourceData) {
-      console.log("raw");
-      defaultSource = await fetchAWEpisodeSourceData({
+      const rawSourceData = await fetchAWEpisodeSourceData({
         episodeId: decodedEpisodeId,
         server: "hd-1",
         category: "raw",
       });
 
-      source = defaultSource
-        ? aniwatchEpisodeStreamObjectMapper(defaultSource)
+      source = rawSourceData
+        ? aniwatchEpisodeStreamObjectMapper(rawSourceData)
         : null;
     } else {
       source = episodeSourceData
@@ -89,7 +87,7 @@ export default async function VideoStream({
         : null,
     ]);
 
-    episodeProgress = episodeProgressData ? episodeProgressData[0] : null;
+    episodeProgress = episodeProgressData;
 
     source = episodeSourceData
       ? metaEpisodeStreamObjectMapper(episodeSourceData)
@@ -105,12 +103,6 @@ export default async function VideoStream({
       />
     );
   const { tracks, sources, intro, outro } = source;
-  const captions = tracks.filter((caption) => caption.kind == "captions");
-  const thumbnailList = tracks.filter(
-    (caption) => caption.kind == "thumbnails"
-  );
-  const thumbnail =
-    thumbnailList.length > 0 ? thumbnailList[0].file : undefined;
 
   return (
     <VideoPlayer
@@ -120,9 +112,8 @@ export default async function VideoStream({
       episode={episode}
       episodeProgress={episodeProgress}
       provider={provider}
-      thumbnail={thumbnail}
       sourceList={sources}
-      captionList={captions}
+      trackList={tracks}
       intro={intro}
       outro={outro}
       infoEpisodeId={animeEpisodeId}
