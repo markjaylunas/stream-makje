@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import Unavailable from "../ui/unavailable";
 import CardData, { CardDataProps } from "./card-data";
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
 };
 
 export default function CardList({ infoList, className }: Props) {
+  if(infoList.length === 0) return <Unavailable /> 
   return (
     <ul
       className={cn(

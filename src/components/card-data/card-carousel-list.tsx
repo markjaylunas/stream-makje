@@ -6,6 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
+import Unavailable from "../ui/unavailable";
 import CardData, { CardDataProps } from "./card-data";
 import CardLink from "./card-link";
 
@@ -20,6 +21,8 @@ export default function CardCarouselList({
   infoList,
   className,
 }: Props) {
+
+  if(infoList.length === 0) return <Unavailable /> 
   return (
     <Carousel
       opts={{
