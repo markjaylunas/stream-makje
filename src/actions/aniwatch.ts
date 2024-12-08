@@ -24,7 +24,7 @@ export async function fetchAWEpisodeData({ animeId }: { animeId: string }) {
     });
 
     const data = await response.json();
-    const parsed = aWEpisodesDataSchema.safeParse(data);
+    const parsed = aWEpisodesDataSchema.safeParse(data.data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());
@@ -62,7 +62,7 @@ export async function fetchEpisodeByProviderData({
         }
       );
       const data = await response.json();
-      const parsed = aWSearchDataSchema.safeParse(data);
+      const parsed = aWSearchDataSchema.safeParse(data.data);
       if (!parsed.success) {
         console.error(parsed.error.toString());
         return empty;
@@ -137,7 +137,7 @@ export async function fetchAWEpisodeServersData({
     );
 
     const data = await response.json();
-    const parsed = aWEpisodeServersDataSchema.safeParse(data);
+    const parsed = aWEpisodeServersDataSchema.safeParse(data.data);
 
     if (!parsed.success) {
       console.error(parsed.error.toString());
@@ -162,13 +162,17 @@ export async function fetchAWEpisodeSourceData({
 }) {
   try {
     const response = await fetch(
-      aniwatchAPIQuery.episodeSource({ id: episodeId, category, server }),
+      aniwatchAPIQuery.episodeSource({
+        animeEpisodeId: episodeId,
+        category,
+        server,
+      }),
       {
         next: { revalidate: 3600 },
       }
     );
     const data = await response.json();
-    const parsed = aWEpisodeSourceDataSchema.safeParse(data);
+    const parsed = aWEpisodeSourceDataSchema.safeParse(data.data);
 
     if (!parsed.success) {
       // console.error(parsed.error.toString());

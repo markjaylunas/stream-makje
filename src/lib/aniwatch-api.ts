@@ -1,6 +1,6 @@
 import { AniwatchSearchParams } from "@/lib/types";
 
-const aniwatchBase = `${process.env.ANIWATCH_API_BASE_URL}/anime`;
+const aniwatchBase = `${process.env.ANIWATCH_API_BASE_URL}/api/v2/hianime`;
 
 function createURL(
   base: string,
@@ -52,11 +52,14 @@ export const aniwatchAPIQuery = {
     createURL(aniwatchBase, `schedule`, params),
 
   episodes: ({ animeId }: { animeId: string }) =>
-    createURL(aniwatchBase, `episodes/${animeId}`, {}),
+    createURL(aniwatchBase, `anime/${animeId}/episodes`, {}),
 
   episodeServers: (params: { episodeId: string }) =>
     createURL(aniwatchBase, `servers`, params),
 
-  episodeSource: (params: { id: string; server?: string; category?: string }) =>
-    createURL(aniwatchBase, `episode-srcs`, params),
+  episodeSource: (params: {
+    animeEpisodeId: string;
+    server?: string;
+    category?: string;
+  }) => createURL(aniwatchBase, `episode/sources`, params),
 };
