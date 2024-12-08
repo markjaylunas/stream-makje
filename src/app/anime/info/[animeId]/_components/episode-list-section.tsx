@@ -113,8 +113,6 @@ export default function EpisodeListSection({
     }
   };
 
-  console.log(episodeListData.list[0]);
-
   return (
     <section className={cn("space-y-2 min-w-[300px]", className)}>
       {currentEpisodeNumber && (
